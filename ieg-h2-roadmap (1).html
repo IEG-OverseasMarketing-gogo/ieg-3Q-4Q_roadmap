@@ -1,0 +1,1559 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IEG H2 2026 — 하반기 실행 로드맵</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #f5f7f2;
+  --bg2: #ffffff;
+  --bg3: #eef1eb;
+  --border: #d4d9cc;
+  --text: #2a2f25;
+  --text2: #5a6354;
+  --text3: #8a9482;
+  --q3: #1a7fd4;
+  --q3l: #1260a0;
+  --q3bg: #e6f2fb;
+  --q4: #2a9045;
+  --q4l: #1e6e34;
+  --q4bg: #e8f5ec;
+  --star: #b07d10;
+  --urgent: #c0392b;
+  --teal: #0f7a5a;
+  --purple: #5b52c0;
+  --amber: #c07a10;
+  --coral: #b84520;
+  --pink: #b03468;
+  --font: 'Noto Sans KR', 'Inter', sans-serif;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: var(--font);
+  background: var(--bg);
+  color: var(--text);
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+/* HEADER */
+.header {
+  background: var(--bg2);
+  border-bottom: 1px solid var(--border);
+  padding: 24px 32px 20px;
+}
+.header-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+.badge-conf {
+  font-size: 11px;
+  color: var(--text3);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  border: 1px solid var(--border);
+  padding: 3px 10px;
+  border-radius: 20px;
+}
+.title-block { margin-top: 12px; }
+.title-block h1 {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--text);
+  letter-spacing: -0.02em;
+}
+.title-block p {
+  font-size: 13px;
+  color: var(--text2);
+  margin-top: 4px;
+}
+.kpi-row {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-top: 20px;
+}
+.kpi {
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 10px 16px;
+  min-width: 130px;
+}
+.kpi-num {
+  font-size: 20px;
+  font-weight: 700;
+}
+.kpi-label {
+  font-size: 11px;
+  color: var(--text2);
+  margin-top: 2px;
+}
+.kpi-num.q3 { color: var(--q3); }
+.kpi-num.q4 { color: var(--q4); }
+.kpi-num.star { color: var(--star); }
+
+/* TABS */
+.tabs-wrapper {
+  background: var(--bg2);
+  border-bottom: 1px solid var(--border);
+  padding: 0 32px;
+  display: flex;
+  gap: 0;
+  overflow-x: auto;
+}
+.tab-btn {
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  color: var(--text2);
+  font-family: var(--font);
+  font-size: 13px;
+  font-weight: 500;
+  padding: 12px 16px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: color 0.15s, border-color 0.15s;
+}
+.tab-btn:hover { color: var(--text); }
+.tab-btn.active-q3 { color: var(--q3); border-bottom-color: var(--q3); }
+.tab-btn.active-q4 { color: var(--q4); border-bottom-color: var(--q4); }
+.tab-btn.active-log { color: var(--amber); border-bottom-color: var(--amber); }
+
+/* CONTENT PANELS */
+.panel { display: none; padding: 28px 32px; }
+.panel.active { display: block; }
+
+/* LEGEND */
+.legend {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
+  font-size: 12px;
+  color: var(--text2);
+}
+.legend span { display: flex; align-items: center; gap: 5px; }
+.dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+/* GANTT */
+.gantt-scroll { overflow-x: auto; }
+.gantt-table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 960px;
+  font-size: 12px;
+}
+.gantt-table th {
+  background: #e2e8dc;
+  border: 1px solid var(--border);
+  padding: 6px 8px;
+  text-align: center;
+  font-weight: 500;
+  color: var(--text2);
+  white-space: nowrap;
+  font-size: 11px;
+}
+.vacation-week {
+  background: #f0e6cc !important;
+  color: #9a7530 !important;
+  font-style: italic;
+}
+.gantt-table td {
+  border: 1px solid var(--border);
+  padding: 5px 7px;
+  vertical-align: middle;
+  cursor: pointer;
+  transition: background 0.1s;
+}
+.track-label {
+  font-weight: 500;
+  font-size: 11px;
+  white-space: nowrap;
+  min-width: 100px;
+  background: var(--bg2);
+  position: sticky;
+  left: 0;
+  z-index: 2;
+  padding: 5px 10px;
+}
+.cell-empty { background: var(--bg); }
+.cell-empty:hover { background: var(--bg3); }
+
+/* Q3 cells */
+.cell-q3 { background: #deeef9; }
+.cell-q3:hover { background: #cce3f5; }
+.cell-q3-active { background: #bcd8f0; border-left: 2px solid var(--q3); }
+.cell-star { background: #fdf3d8; border-left: 2px solid var(--star); }
+.cell-star:hover { background: #faecc0; }
+.cell-urgent { background: #fde8e6; border-left: 2px solid var(--urgent); }
+.cell-urgent:hover { background: #fbd6d2; }
+
+/* Q4 cells */
+.cell-q4 { background: #daf0e2; }
+.cell-q4:hover { background: #c8e8d3; }
+.cell-q4-active { background: #b8e0c8; border-left: 2px solid var(--q4); }
+
+.cell-dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  display: inline-block;
+  margin-right: 4px;
+  vertical-align: middle;
+}
+
+/* DETAIL PANEL */
+.detail-box {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 18px 20px;
+  margin-top: 20px;
+}
+.detail-box-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+.detail-box-header h3 {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text);
+  margin: 0;
+}
+.detail-progress-wrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.detail-progress-bar {
+  width: 100px;
+  height: 6px;
+  background: var(--bg3);
+  border-radius: 3px;
+  overflow: hidden;
+}
+.detail-progress-fill {
+  height: 100%;
+  background: var(--q4);
+  border-radius: 3px;
+  transition: width 0.3s;
+}
+.detail-progress-pct {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text2);
+  min-width: 32px;
+}
+.action-list { list-style: none; padding: 0; }
+.action-item {
+  padding: 8px 0;
+  border-bottom: 1px solid var(--border);
+  font-size: 13px;
+  color: var(--text);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.action-item:last-child { border-bottom: none; }
+.action-item-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+}
+.action-cb {
+  width: 15px; height: 15px;
+  flex-shrink: 0;
+  margin-top: 1px;
+  accent-color: var(--q4);
+  cursor: pointer;
+}
+.action-text {
+  flex: 1;
+  transition: color 0.2s;
+  line-height: 1.5;
+}
+.action-text.done {
+  text-decoration: line-through;
+  color: var(--text3);
+}
+.a-icon {
+  font-size: 11px;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: 4px;
+  white-space: nowrap;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+.ai-q3 { background: var(--q3bg); color: var(--q3); border: 1px solid #a0c8e8; }
+.ai-q4 { background: var(--q4bg); color: var(--q4); border: 1px solid #90c8a0; }
+.ai-star { background: #fdf3d8; color: var(--star); border: 1px solid #d4a830; }
+.ai-urgent { background: #fde8e6; color: var(--urgent); border: 1px solid #d08080; }
+.ai-memo { background: #eeeaf8; color: var(--purple); border: 1px solid #a090d8; }
+.action-note-wrap {
+  display: none;
+  padding-left: 23px;
+}
+.action-note-wrap.open { display: block; }
+.action-note {
+  width: 100%;
+  font-size: 12px;
+  font-family: var(--font);
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 6px 8px;
+  color: var(--text);
+  resize: vertical;
+  min-height: 52px;
+  outline: none;
+  transition: border-color 0.15s;
+}
+.action-note:focus { border-color: var(--q3); }
+.action-note-btn {
+  background: none;
+  border: none;
+  font-size: 11px;
+  color: var(--text3);
+  cursor: pointer;
+  padding: 0;
+  margin-left: 4px;
+  transition: color 0.15s;
+}
+.action-note-btn:hover { color: var(--q3); }
+.memo-text {
+  font-size: 12px;
+  color: var(--text2);
+  font-style: italic;
+  margin-top: 6px;
+  padding: 8px 12px;
+  border-left: 2px solid var(--border);
+}
+
+/* MILESTONE CHECK */
+.ms-card { position: relative; cursor: default; }
+.ms-check-wrap {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 8px;
+}
+.ms-check {
+  width: 14px; height: 14px;
+  accent-color: var(--q4);
+  cursor: pointer;
+  flex-shrink: 0;
+}
+.ms-check-label {
+  font-size: 11px;
+  color: var(--text3);
+  cursor: pointer;
+  user-select: none;
+}
+.ms-card.ms-done .ms-title { text-decoration: line-through; color: var(--text3); }
+.ms-card.ms-done .ms-sub { color: var(--text3); opacity: 0.6; }
+.ms-card.ms-done::after {
+  content: '✓ 완료';
+  position: absolute;
+  top: 10px; right: 12px;
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--q4);
+  background: var(--q4bg);
+  border: 1px solid #90c8a0;
+  border-radius: 20px;
+  padding: 2px 7px;
+}
+
+/* ACHIEVEMENT BANNER */
+.achieve-bar {
+  background: var(--q4bg);
+  border: 1px solid #90c8a0;
+  border-radius: 10px;
+  padding: 14px 18px;
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+.achieve-circle {
+  width: 52px; height: 52px;
+  border-radius: 50%;
+  border: 3px solid var(--q4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--q4);
+  flex-shrink: 0;
+}
+.achieve-text { font-size: 13px; }
+.achieve-text strong { font-weight: 600; color: var(--q4); }
+
+/* TRACK COLOR DOTS */
+.trk-my { color: var(--q3); }
+.trk-ph { color: var(--teal); }
+.trk-kz { color: var(--amber); }
+.trk-sa { color: var(--coral); }
+.trk-vn { color: var(--pink); }
+.trk-dk { color: var(--purple); }
+.trk-diy { color: var(--star); }
+.trk-in { color: #58a6ff; }
+.trk-na { color: #2c5f8a; }
+
+/* LOG TAB */
+.log-form {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 20px;
+  margin-bottom: 24px;
+}
+.log-form h3 { font-size: 14px; font-weight: 600; margin-bottom: 14px; }
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+.form-row.full { grid-template-columns: 1fr; }
+.form-group { display: flex; flex-direction: column; gap: 4px; }
+.form-group label { font-size: 11px; color: var(--text2); }
+.form-group input,
+.form-group select,
+.form-group textarea {
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  color: var(--text);
+  font-family: var(--font);
+  font-size: 13px;
+  padding: 7px 10px;
+  outline: none;
+  transition: border-color 0.15s;
+}
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+  border-color: var(--q3);
+}
+.form-group select option { background: var(--bg2); color: var(--text); }
+.form-group textarea { min-height: 70px; resize: vertical; }
+.btn-add {
+  background: var(--q3);
+  border: none;
+  border-radius: 7px;
+  color: #fff;
+  font-family: var(--font);
+  font-size: 13px;
+  font-weight: 600;
+  padding: 9px 20px;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.btn-add:hover { background: #1575c0; }
+
+.log-entries { display: flex; flex-direction: column; gap: 12px; }
+.log-card {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 14px 16px;
+  position: relative;
+}
+.log-card-top {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 6px;
+}
+.log-type-badge {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 20px;
+}
+.lt-fair { background: #fdf3d8; color: #8a6010; border: 1px solid #c8a030; }
+.lt-customer { background: var(--q3bg); color: var(--q3); border: 1px solid #90bce0; }
+.lt-project { background: #eeeaf8; color: var(--purple); border: 1px solid #a090d8; }
+.lt-mou { background: #fdeee8; color: var(--coral); border: 1px solid #d09080; }
+.log-date { font-size: 11px; color: var(--text3); }
+.log-title { font-size: 14px; font-weight: 600; }
+.log-desc { font-size: 12px; color: var(--text2); margin-top: 4px; }
+.log-market {
+  font-size: 10px;
+  color: var(--text3);
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 2px 8px;
+}
+.btn-del {
+  position: absolute;
+  top: 12px; right: 12px;
+  background: none;
+  border: none;
+  color: var(--text3);
+  cursor: pointer;
+  font-size: 16px;
+  transition: color 0.15s;
+  line-height: 1;
+}
+.btn-del:hover { color: var(--urgent); }
+.empty-log {
+  text-align: center;
+  color: var(--text3);
+  font-size: 13px;
+  padding: 32px 0;
+  border: 1px dashed var(--border);
+  border-radius: 10px;
+}
+
+/* MILESTONE SUMMARY */
+.milestone-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 12px;
+  margin-bottom: 24px;
+}
+.ms-card {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 14px 16px;
+}
+.ms-date { font-size: 11px; color: var(--text3); margin-bottom: 4px; }
+.ms-title { font-size: 13px; font-weight: 600; }
+.ms-sub { font-size: 12px; color: var(--text2); margin-top: 3px; }
+.ms-q3 { border-top: 2px solid var(--q3); }
+.ms-q4 { border-top: 2px solid var(--q4); }
+.ms-star { border-top: 2px solid var(--star); }
+
+/* H1 summary bar */
+.h1-summary {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 16px 20px;
+  margin-bottom: 24px;
+}
+.h1-summary h3 { font-size: 13px; font-weight: 600; color: var(--text2); margin-bottom: 10px; text-transform: uppercase; letter-spacing: 0.07em; }
+.h1-achievements { display: flex; flex-direction: column; gap: 5px; }
+.h1-item { font-size: 13px; color: var(--text); display: flex; gap: 8px; align-items: flex-start; }
+.h1-check { color: var(--q4); flex-shrink: 0; }
+
+.section-title {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text2);
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  margin: 24px 0 12px;
+}
+
+footer {
+  text-align: center;
+  font-size: 11px;
+  color: var(--text3);
+  padding: 20px 32px;
+  border-top: 1px solid var(--border);
+  margin-top: 20px;
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-top">
+    <span class="badge-conf">CONFIDENTIAL — IEG Co., Ltd. 해외사업개발팀</span>
+    <span style="font-size:11px;color:var(--text3);">기준일: 2026년 6월 | v1.0</span>
+  </div>
+  <div class="title-block">
+    <h1>H2 2026 실행 로드맵 — 3·4분기</h1>
+    <p>26주 집중 계획 (7/1–12/31) | W1: 7/1~4, W2~W14: 일요일 기준 | W5(7/26): 하계휴가 | W15~W27: 10/4~12/31 | 셀 클릭 → 주차별 액션·체크·메모</p>
+  </div>
+  <div class="kpi-row">
+    <div class="kpi">
+      <div class="kpi-num q3">3Q</div>
+      <div class="kpi-label">7·8·9월 (W1: 7/1 ~ W14: 9/27)</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-num q4">4Q</div>
+      <div class="kpi-label">10·11·12월 (W15: 10/4 ~ W27: 12/31)</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-num star">6</div>
+      <div class="kpi-label">핵심 입찰·계약 목표</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-num" style="color:var(--teal)">7/1</div>
+      <div class="kpi-label">DIY 쇼핑몰 런칭</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-num" style="color:var(--coral)">6/30</div>
+      <div class="kpi-label">말레이시아 방한 완료 ✓</div>
+    </div>
+  </div>
+</div>
+
+<div class="tabs-wrapper">
+  <button class="tab-btn active-q3" onclick="switchTab('q3',this)">3분기 로드맵</button>
+  <button class="tab-btn" onclick="switchTab('q4',this)">4분기 로드맵</button>
+  <button class="tab-btn" onclick="switchTab('log',this)">신규 등록 (전시회·고객·프로젝트)</button>
+  <button class="tab-btn" onclick="switchTab('h1',this)">상반기 결산</button>
+</div>
+
+<!-- ====== Q3 PANEL ====== -->
+<div class="panel active" id="panel-q3">
+
+  <div class="legend">
+    <span><span class="dot" style="background:var(--q3)"></span>일반 액션</span>
+    <span><span class="dot" style="background:var(--star)"></span>★ 핵심 마일스톤</span>
+    <span><span class="dot" style="background:var(--urgent)"></span>⚡ 긴급/데드라인</span>
+    <span><span class="dot" style="background:var(--teal)"></span>필리핀/KOICA</span>
+    <span><span class="dot" style="background:var(--amber)"></span>카자흐스탄</span>
+    <span><span class="dot" style="background:var(--coral)"></span>사우디/중동</span>
+    <span><span class="dot" style="background:var(--purple)"></span>덴마크/유럽</span>
+  </div>
+
+  <div class="section-title">주요 마일스톤</div>
+  <div id="q3-achieve-banner" style="display:none" class="achieve-bar">
+    <div class="achieve-circle" id="q3-achieve-circle">0%</div>
+    <div class="achieve-text">3분기 마일스톤 달성률 <strong id="q3-achieve-done">0</strong> / <strong id="q3-achieve-total">6</strong>건 완료</div>
+  </div>
+  <div class="milestone-grid" id="q3-milestone-grid">
+    <div class="ms-card ms-star" data-ms="q3-0">
+      <div class="ms-date">7월 1일</div>
+      <div class="ms-title">DIY 실습키트 쇼핑몰 런칭</div>
+      <div class="ms-sub">스마트스토어/자사몰 동시 오픈</div>
+      <div class="ms-check-wrap"><input type="checkbox" class="ms-check" onchange="toggleMilestone('q3-0',this)"><label class="ms-check-label">완료로 표시</label></div>
+    </div>
+    <div class="ms-card ms-q3" data-ms="q3-1">
+      <div class="ms-date">7월 하순</div>
+      <div class="ms-title">KOICA IBS 서류 통과 여부 확인</div>
+      <div class="ms-sub">면접 준비 즉시 착수</div>
+      <div class="ms-check-wrap"><input type="checkbox" class="ms-check" onchange="toggleMilestone('q3-1',this)"><label class="ms-check-label">완료로 표시</label></div>
+    </div>
+    <div class="ms-card ms-star" data-ms="q3-2">
+      <div class="ms-date">8월</div>
+      <div class="ms-title">베트남 호치민 자연과학대 입찰</div>
+      <div class="ms-sub">3Q 입찰 참여</div>
+      <div class="ms-check-wrap"><input type="checkbox" class="ms-check" onchange="toggleMilestone('q3-2',this)"><label class="ms-check-label">완료로 표시</label></div>
+    </div>
+    <div class="ms-card ms-q3" data-ms="q3-3">
+      <div class="ms-date">8–9월</div>
+      <div class="ms-title">말레이시아 Galaxy Global 입찰</div>
+      <div class="ms-sub">방한 성과 → 공식 입찰 전환</div>
+      <div class="ms-check-wrap"><input type="checkbox" class="ms-check" onchange="toggleMilestone('q3-3',this)"><label class="ms-check-label">완료로 표시</label></div>
+    </div>
+    <div class="ms-card ms-star" style="border-top:2px solid var(--urgent)" data-ms="q3-4">
+      <div class="ms-date">W11 · 9/6(일) 확정</div>
+      <div class="ms-title">KOICA IBS 면접</div>
+      <div class="ms-sub">W13(9/20) 합격 발표 · W15(10/4) OT</div>
+      <div class="ms-check-wrap"><input type="checkbox" class="ms-check" onchange="toggleMilestone('q3-4',this)"><label class="ms-check-label">완료로 표시</label></div>
+    </div>
+    <div class="ms-card ms-star" data-ms="q3-5">
+      <div class="ms-date">9월</div>
+      <div class="ms-title">베트남 트레이드잇 파트너 방한</div>
+      <div class="ms-sub">MOU 이행 → 비즈니스 구체화</div>
+      <div class="ms-check-wrap"><input type="checkbox" class="ms-check" onchange="toggleMilestone('q3-5',this)"><label class="ms-check-label">완료로 표시</label></div>
+    </div>
+  </div>
+
+  <div class="section-title">간트 차트 — 3분기 (W1: 7/1 ~ W14: 9/27, 일요일 기준 · 14주)</div>
+  <div class="gantt-scroll">
+  <table class="gantt-table" id="gantt-q3">
+    <thead>
+      <tr>
+        <th class="track-label">트랙</th>
+        <th>W1<br>7/1~4</th><th>W2<br>7/5(일)</th><th>W3<br>7/12(일)</th><th>W4<br>7/19(일)</th><th class="vacation-week">W5<br>7/26<br>🏖️휴가</th>
+        <th>W6<br>8/2(일)</th><th>W7<br>8/9(일)</th><th>W8<br>8/16(일)</th><th>W9<br>8/23(일)</th>
+        <th>W10<br>8/30(일)</th><th>W11<br>9/6(일)</th><th>W12<br>9/13(일)</th><th>W13<br>9/20(일)</th><th>W14<br>9/27(일)</th>
+      </tr>
+    </thead>
+    <tbody id="gantt-q3-body"></tbody>
+  </table>
+  </div>
+
+  <div class="detail-box" id="detail-q3" style="display:none">
+    <div class="detail-box-header">
+      <h3 id="detail-q3-title">주차 상세</h3>
+      <div class="detail-progress-wrap">
+        <div class="detail-progress-bar"><div class="detail-progress-fill" id="detail-q3-prog-fill" style="width:0%"></div></div>
+        <span class="detail-progress-pct" id="detail-q3-prog-pct">0%</span>
+      </div>
+    </div>
+    <ul class="action-list" id="detail-q3-list"></ul>
+    <div class="memo-text" id="detail-q3-memo"></div>
+  </div>
+</div>
+
+<!-- ====== Q4 PANEL ====== -->
+<div class="panel" id="panel-q4">
+
+  <div class="legend">
+    <span><span class="dot" style="background:var(--q4)"></span>일반 액션</span>
+    <span><span class="dot" style="background:var(--star)"></span>★ 핵심 마일스톤</span>
+    <span><span class="dot" style="background:var(--urgent)"></span>⚡ 긴급</span>
+    <span><span class="dot" style="background:var(--teal)"></span>필리핀/KOICA</span>
+    <span><span class="dot" style="background:var(--amber)"></span>카자흐스탄</span>
+    <span><span class="dot" style="background:var(--coral)"></span>사우디/북미</span>
+  </div>
+
+  <div class="section-title">주요 마일스톤</div>
+  <div id="q4-achieve-banner" style="display:none" class="achieve-bar">
+    <div class="achieve-circle" id="q4-achieve-circle">0%</div>
+    <div class="achieve-text">4분기 마일스톤 달성률 <strong id="q4-achieve-done">0</strong> / <strong id="q4-achieve-total">7</strong>건 완료</div>
+  </div>
+  <div class="milestone-grid" id="q4-milestone-grid">
+    <div class="ms-card ms-star" style="border-top:2px solid var(--urgent)" data-ms="q4-0">
+      <div class="ms-date">W15 · 10/4(일) 확정</div>
+      <div class="ms-title">KOICA IBS OT 참석</div>
+      <div class="ms-sub">사업 착수 공식 개시</div>
+      <div class="ms-check-wrap"><input type="checkbox" class="ms-check" onchange="toggleMilestone('q4-0',this)"><label class="ms-check-label">완료로 표시</label></div>
+    </div>
+    <div class="ms-card ms-q4" data-ms="q4-1">
+      <div class="ms-date">10월</div>
+      <div class="ms-title">말레이시아 UTeM HVAC AI 입찰</div>
+      <div class="ms-sub">요르단 기술자 협업 기반 제출</div>
+      <div class="ms-check-wrap"><input type="checkbox" class="ms-check" onchange="toggleMilestone('q4-1',this)"><label class="ms-check-label">완료로 표시</label></div>
+    </div>
+    <div class="ms-card ms-star" data-ms="q4-2">
+      <div class="ms-date">10–11월</div>
+      <div class="ms-title">카자흐스탄 EV/Hybrid 데모 교육</div>
+      <div class="ms-sub">코스타니아 현지 출장 또는 화상 시연</div>
+      <div class="ms-check-wrap"><input type="checkbox" class="ms-check" onchange="toggleMilestone('q4-2',this)"><label class="ms-check-label">완료로 표시</label></div>
+    </div>
+    <div class="ms-card ms-q4" data-ms="q4-3">
+      <div class="ms-date">11월</div>
+      <div class="ms-title">사우디 Prince Sattam대 팔로우업</div>
+      <div class="ms-sub">3Q 입찰 결과에 따른 계약 추진</div>
+      <div class="ms-check-wrap"><input type="checkbox" class="ms-check" onchange="toggleMilestone('q4-3',this)"><label class="ms-check-label">완료로 표시</label></div>
+    </div>
+    <div class="ms-card ms-star" data-ms="q4-4">
+      <div class="ms-date">12월</div>
+      <div class="ms-title">북미 2027 사전 포지셔닝</div>
+      <div class="ms-sub">사바나 항구 파트너십 초안 · HI-TEC 2027 준비 착수</div>
+      <div class="ms-check-wrap"><input type="checkbox" class="ms-check" onchange="toggleMilestone('q4-4',this)"><label class="ms-check-label">완료로 표시</label></div>
+    </div>
+    <div class="ms-card ms-q4" data-ms="q4-5">
+      <div class="ms-date">11–12월</div>
+      <div class="ms-title">인도/브라질 반도체 아젠다 확장</div>
+      <div class="ms-sub">Pluid Tech & 마르코스 비에이라</div>
+      <div class="ms-check-wrap"><input type="checkbox" class="ms-check" onchange="toggleMilestone('q4-5',this)"><label class="ms-check-label">완료로 표시</label></div>
+    </div>
+    <div class="ms-card ms-q4" data-ms="q4-6">
+      <div class="ms-date">12월</div>
+      <div class="ms-title">TVET Bridge Consulting 사업계획 갱신</div>
+      <div class="ms-sub">2027 독립 컨설팅 전환 로드맵</div>
+      <div class="ms-check-wrap"><input type="checkbox" class="ms-check" onchange="toggleMilestone('q4-6',this)"><label class="ms-check-label">완료로 표시</label></div>
+    </div>
+  </div>
+
+  <div class="section-title">간트 차트 — 4분기 (W15: 10/4 ~ W27: 12/31, 일요일 기준 · 13주)</div>
+  <div class="gantt-scroll">
+  <table class="gantt-table" id="gantt-q4">
+    <thead>
+      <tr>
+        <th class="track-label">트랙</th>
+        <th>W15<br>10/4(일)</th><th>W16<br>10/11(일)</th><th>W17<br>10/18(일)</th><th>W18<br>10/25(일)</th>
+        <th>W19<br>11/1(일)</th><th>W20<br>11/8(일)</th><th>W21<br>11/15(일)</th><th>W22<br>11/22(일)</th>
+        <th>W23<br>11/29(일)</th><th>W24<br>12/6(일)</th><th>W25<br>12/13(일)</th><th>W26<br>12/20(일)</th><th>W27<br>12/27(일)</th>
+      </tr>
+    </thead>
+    <tbody id="gantt-q4-body"></tbody>
+  </table>
+  </div>
+
+  <div class="detail-box" id="detail-q4" style="display:none">
+    <div class="detail-box-header">
+      <h3 id="detail-q4-title">주차 상세</h3>
+      <div class="detail-progress-wrap">
+        <div class="detail-progress-bar"><div class="detail-progress-fill" id="detail-q4-prog-fill" style="width:0%"></div></div>
+        <span class="detail-progress-pct" id="detail-q4-prog-pct">0%</span>
+      </div>
+    </div>
+    <ul class="action-list" id="detail-q4-list"></ul>
+    <div class="memo-text" id="detail-q4-memo"></div>
+  </div>
+</div>
+
+<!-- ====== LOG PANEL ====== -->
+<div class="panel" id="panel-log">
+  <div class="log-form">
+    <h3>신규 항목 등록</h3>
+    <div class="form-row">
+      <div class="form-group">
+        <label>구분</label>
+        <select id="log-type">
+          <option value="fair">전시회 / 컨퍼런스</option>
+          <option value="customer">발굴 고객</option>
+          <option value="project">신규 프로젝트</option>
+          <option value="mou">MOU / LOI</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>날짜</label>
+        <input type="date" id="log-date">
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>제목 / 기관명</label>
+        <input type="text" id="log-title" placeholder="예: HI-TEC 2026, Pluid Tech India...">
+      </div>
+      <div class="form-group">
+        <label>시장 / 국가</label>
+        <select id="log-market">
+          <option value="말레이시아">말레이시아</option>
+          <option value="필리핀">필리핀</option>
+          <option value="카자흐스탄">카자흐스탄</option>
+          <option value="사우디아라비아">사우디아라비아</option>
+          <option value="UAE">UAE</option>
+          <option value="베트남">베트남</option>
+          <option value="덴마크">덴마크</option>
+          <option value="인도">인도</option>
+          <option value="브라질">브라질</option>
+          <option value="미국">미국</option>
+          <option value="한국">한국</option>
+          <option value="기타">기타</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>분기 (간트 표시)</label>
+        <select id="log-quarter">
+          <option value="">— 간트 미표시 —</option>
+          <option value="q3">3분기 (7–9월)</option>
+          <option value="q4">4분기 (10–12월)</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>주차 선택</label>
+        <select id="log-week">
+          <option value="">— 분기 먼저 선택 —</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-row full">
+      <div class="form-group">
+        <label>이미지 URL (선택 — 구글 드라이브·링크드인·웹 이미지 주소)</label>
+        <input type="text" id="log-img" placeholder="https://... (직접 링크 붙여넣기)">
+      </div>
+    </div>
+    <div class="form-row full">
+      <div class="form-group">
+        <label>내용 / 메모</label>
+        <textarea id="log-desc" placeholder="주요 논의 내용, 다음 액션, 연락처 등..."></textarea>
+      </div>
+    </div>
+    <button class="btn-add" onclick="addLogEntry()">+ 등록 (간트 자동 반영)</button>
+  </div>
+
+  <div class="section-title">등록된 항목</div>
+  <div class="log-entries" id="log-entries">
+    <div class="empty-log" id="log-empty">아직 등록된 항목이 없습니다. 위 양식을 작성해 첫 항목을 추가하세요.</div>
+  </div>
+</div>
+
+<!-- ====== H1 SUMMARY PANEL ====== -->
+<div class="panel" id="panel-h1">
+  <div class="h1-summary">
+    <h3>상반기 주요 성과 (2026 Q1·Q2)</h3>
+    <div class="h1-achievements">
+      <div class="h1-item"><span class="h1-check">✓</span><span>KOICA IBS 필리핀 (TESDA·Innobiz·Prince Valiant) — KOPIS 마감 전 등록 완료</span></div>
+      <div class="h1-item"><span class="h1-check">✓</span><span>말레이시아 FCoEE + Galaxy Global (Sean Lim) 한국 방문 6/30 확정 성사</span></div>
+      <div class="h1-item"><span class="h1-check">✓</span><span>DX 라벨러 — KOPPEX 26 전시, OKI(유럽) 협조, 롯데GLS 조선미인 시연·견적 제시</span></div>
+      <div class="h1-item"><span class="h1-check">✓</span><span>베트남 트레이드잇 MOU 체결 → 9월 한국 방문 확정</span></div>
+      <div class="h1-item"><span class="h1-check">✓</span><span>덴마크 Rybners 6/12 풍력 에너지 시뮬레이션·커리큘럼 개발 논의 개시</span></div>
+      <div class="h1-item"><span class="h1-check">✓</span><span>HI-TEC 2027 Austin 참가 결정 → 하반기 사전준비 트랙으로 이관</span></div>
+      <div class="h1-item"><span class="h1-check">✓</span><span>Al Asala College(Sharjah) 견적서 완성, Hyundai-KIA 7개국 인터랙티브 제안서 완성</span></div>
+      <div class="h1-item"><span class="h1-check">✓</span><span>엘살바도르 대통령 직속 공무원 포함 방문단 방한 — 한국 스마트팩토리 기술도입 논의 (IEG 참여)</span></div>
+      <div class="h1-item"><span class="h1-check">✓</span><span>Emotii AI 파트너십 기반 다국어 TVET 콘텐츠 협력 구도 확립 — 해외 프로젝트 1건 발생 시 즉시 연계 투입 예정</span></div>
+      <div class="h1-item"><span class="h1-check" style="color:var(--amber)">→</span><span style="color:var(--text2)">KSA TAFE SA BTEC 커리큘럼 매핑 — 중동전쟁(호르무즈해협 긴장)으로 상반기 중단 → 해협 안정화로 하반기 3Q 재개 확정</span></div>
+    </div>
+  </div>
+
+  <div class="section-title">미완/이월 액션 아이템</div>
+  <div style="display:flex;flex-direction:column;gap:8px">
+    <div class="ms-card" style="border-top:2px solid var(--urgent)">
+      <div class="ms-date">이월 → 3Q 우선</div>
+      <div class="ms-title">KOICA IBS 면접 준비 (서류 통과 시)</div>
+      <div class="ms-sub">TESDA 커리큘럼 협의, Prince Valiant 교육장 논의 — 면접 W11(9/6일), 합격 발표 W13(9/20일), OT W15(10/4일)</div>
+    </div>
+    <div class="ms-card" style="border-top:2px solid var(--amber)">
+      <div class="ms-date">이월 → 3Q</div>
+      <div class="ms-title">카자흐스탄 코스타니아 EV/Hybrid 데모 과정 개발</div>
+      <div class="ms-sub">활발히 논의 중 → 3Q 중 과정 확정 목표 · LinkedIn 홍보 병행</div>
+    </div>
+    <div class="ms-card" style="border-top:2px solid var(--coral)">
+      <div class="ms-date">이월 → 3Q 재개</div>
+      <div class="ms-title">KSA TAFE SA BTEC 4039/4040 커리큘럼 매핑</div>
+      <div class="ms-sub">호르무즈해협 안정화 → 3Q 즉시 재개. 요르단 기술자 온라인 미팅 병행</div>
+    </div>
+    <div class="ms-card" style="border-top:2px solid var(--teal)">
+      <div class="ms-date">이월 → 4Q</div>
+      <div class="ms-title">말레이시아 UTeM HVAC AI driven 입찰</div>
+      <div class="ms-sub">10월 입찰 예정 → 3Q 중 요르단 기술자와 스펙·커리큘럼 공동 개발</div>
+    </div>
+    <div class="ms-card" style="border-top:2px solid var(--purple)">
+      <div class="ms-date">지속 팔로우업</div>
+      <div class="ms-title">엘살바도르 스마트팩토리 기술도입 후속 논의</div>
+      <div class="ms-sub">대통령 직속 방문단 방한 성과 → 공식 협력 채널 유지 및 제안서 발송</div>
+    </div>
+  </div>
+</div>
+
+<footer>IEG Co., Ltd. (주식회사 아이지) | 해외사업개발팀 | H2 2026 v1.0 | Kelly Cho, Team Manager</footer>
+
+<script>
+const Q3_TRACKS = [
+  {
+    id: 'my', label: '🇲🇾 말레이시아\nFCoEE·Galaxy·UTeM', color: '#1a8fe8',
+    weeks: {
+      1: { type:'star', text:'방한 프로그램 결산·FU', memo:'6/30 방한 완료 → W1(7/1)부터 팔로우업. 1주일 내 협의록 공유' },
+      2: { type:'q3', text:'하루머니 패키징 논의', memo:'Galaxy Global Sean Lim과 하루머니 교육 패키지 상품화 방향 협의' },
+      3: { type:'q3', text:'페낭 인텔공장 연수 발굴', memo:'인텔 말레이시아 생산직 대상 스마트제조 연수 프로그램 가능성 타진' },
+      4: { type:'q3', text:'FCoEE 커리큘럼 협의', memo:'IEG 장비 기반 NCS/BTEC 연계 커리큘럼 초안 전달' },
+      6: { type:'star', text:'★ Galaxy Global 입찰 준비', memo:'방한 논의 결과 공식 RFQ 수신 목표 (하계휴가 후 재개)' },
+      7: { type:'q3', text:'UTeM HVAC AI 입찰 사전 준비', memo:'말레이시아 UTeM(Universiti Teknikal Malaysia Melaka) HVAC AI driven 입찰 10월 예정. 요르단 기술자와 온라인 미팅을 통해 커리큘럼·장비 스펙 개발' },
+      8: { type:'q3', text:'견적 제출 (Galaxy)' },
+      9: { type:'q3', text:'입찰 결과 팔로우업' },
+      11: { type:'q3', text:'계약 협상' },
+      13: { type:'star', text:'★ LOI/계약 목표', memo:'3Q 내 서명 목표' },
+    }
+  },
+  {
+    id: 'ph', label: '🇵🇭 필리핀\nKOICA·TESDA', color: '#1d9e75',
+    weeks: {
+      1: { type:'urgent', text:'⚡ 서류 통과 모니터링', memo:'KOPIS 심사 결과 7월 중 통보 예정. KOICA 담당자 정기 연락 유지' },
+      3: { type:'q3', text:'TESDA 커리큘럼 협의 착수', memo:'EIM NC II/III 기반 32주 960시간 커리큘럼 최종 확정 논의' },
+      6: { type:'q3', text:'Prince Valiant 교육장 논의', memo:'Cavite 스마트팩토리 교육장 레이아웃·인프라 요건 협의 (하계휴가 후 재개)' },
+      7: { type:'q3', text:'Innobiz 협의' },
+      10: { type:'star', text:'★ 서류 통과 시 면접 준비', memo:'PT 자료 및 예상 Q&A 준비. 컨소시엄 역할 분담 재확인' },
+      11: { type:'urgent', text:'⚡ KOICA IBS 면접 (9/6주)', memo:'9월 첫째 주(W11, 9/6일) 면접 확정. PT 최종 리허설 및 컨소시엄 최종 조율' },
+      13: { type:'star', text:'★ 최종 합격 발표 (9/20주)', memo:'9월 셋째 주(W13, 9/20일) 합격 발표 예정. 합격 시 OT(W15, 10/4일) 준비 즉시 착수' },
+    }
+  },
+  {
+    id: 'kz', label: '🇰🇿 카자흐스탄\n코스타니아 EV', color: '#ef9f27',
+    weeks: {
+      1: { type:'q3', text:'EV/Hybrid 데모 과정 설계', memo:'코스타니아 KIA 공장 관계자 요청 기반 데모 교육과정 초안 작성' },
+      2: { type:'q3', text:'LinkedIn EV/Hybrid 홍보 런칭', memo:'LinkedIn을 통해 EV·Hybrid 자동차 시뮬레이션 데모 영상 및 커리큘럼 홍보. 관심 기관·파트너 인바운드 유입 목표' },
+      4: { type:'star', text:'★ 데모 교육 실시 (화상)', memo:'IEG EV 시뮬레이터 원격 시연 및 커리큘럼 설명' },
+      6: { type:'q3', text:'LinkedIn 반응 파트너 팔로우업', memo:'LinkedIn 홍보로 연결된 관심 기관에 개별 제안서 발송' },
+      8: { type:'q3', text:'견적 및 제안서 제출' },
+      10: { type:'q3', text:'계약 논의' },
+      12: { type:'star', text:'★ EV 패키지 계약 목표' },
+    }
+  },
+  {
+    id: 'sa', label: '🇸🇦 사우디·중동\nPrince Sattam·TAFE', color: '#d85a30',
+    weeks: {
+      1: { type:'q3', text:'입찰 서류 검토', memo:'Prince Sattam 대학교 3Q 입찰 요건 분석' },
+      2: { type:'q3', text:'TAFE SA BTEC 매핑 재개', memo:'호르무즈해협 안정화로 상반기 중단됐던 BTEC 4039/4040 커리큘럼 매핑 재개. 요르단 기술 전문가와 온라인 미팅을 통해 현지화 방향 협의' },
+      3: { type:'urgent', text:'⚡ Prince Sattam 입찰 제출', memo:'반도체/스마트팩토리 장비 패키지 입찰서 제출' },
+      6: { type:'q3', text:'요르단 기술자 온라인 미팅 2차', memo:'HVAC AI 기반 커리큘럼 개발 방향 및 말레이시아 UTeM 입찰 연계 논의 (하계휴가 후 재개)' },
+      7: { type:'q3', text:'입찰 결과 대기' },
+      9: { type:'q3', text:'결과 팔로우업' },
+      11: { type:'q3', text:'Al Asala Sharjah 추가 논의', memo:'Woji Industries와 협력 구도 구체화' },
+    }
+  },
+  {
+    id: 'vn', label: '🇻🇳 베트남\n자연과학대·MOU', color: '#d4537e',
+    weeks: {
+      1: { type:'q3', text:'호치민 자연과학대 입찰 준비', memo:'3Q 입찰 마감일 확인 및 서류 준비 착수' },
+      3: { type:'urgent', text:'⚡ 입찰 제출', memo:'스마트팩토리/MPS 장비 패키지' },
+      6: { type:'q3', text:'트레이드잇 방문 일정 확정', memo:'9월 방한 세부 일정 확정 및 환영 프로그램 준비 (하계휴가 후 재개)' },
+      7: { type:'q3', text:'입찰 결과 대기' },
+      9: { type:'star', text:'★ 트레이드잇 파트너 방한', memo:'MOU 이행 점검 및 베트남 시장 공동 진출 전략 논의' },
+      11: { type:'q3', text:'베트남 시장 후속 전략 수립' },
+    }
+  },
+  {
+    id: 'dk', label: '🇩🇰 덴마크\nRybners·풍력', color: '#7f77dd',
+    weeks: {
+      1: { type:'q3', text:'6/12 논의 결과 정리·공유', memo:'풍력 에너지 시뮬레이션 커리큘럼 개발 범위 및 역할 분담 협의록' },
+      3: { type:'q3', text:'커리큘럼 초안 작성', memo:'IEG 장비 기반 풍력 TVET 커리큘럼 모듈 초안' },
+      6: { type:'q3', text:'추가 방문 덴마크 기술교육 관계자 미팅', memo:'ICDK 연계 하반기 추가 방문단 논의 (하계휴가 후 재개)' },
+      8: { type:'q3', text:'커리큘럼 피드백 반영' },
+      10: { type:'star', text:'★ 한-덴 MOU 초안', memo:'Rybners×IEG 공동개발 MOU 초안 작성' },
+    }
+  },
+  {
+    id: 'diy', label: '🛒 DIY 쇼핑몰\n실습키트', color: '#e3b341',
+    weeks: {
+      1: { type:'star', text:'★ 쇼핑몰 런칭 (7/1)', memo:'스마트스토어 + 자사몰 동시 오픈. 첫 SKU: PLC 입문 키트, 유압 기초 키트' },
+      2: { type:'q3', text:'첫 주 매출 모니터링' },
+      3: { type:'q3', text:'SNS/유튜브 홍보 콘텐츠' },
+      6: { type:'q3', text:'신규 SKU 추가 (센서키트)' },
+      7: { type:'q3', text:'월간 매출 분석' },
+      9: { type:'q3', text:'B2B 학교 단체 판매 채널 개설' },
+      11: { type:'q3', text:'해외 배송(말레이·필리핀) 테스트' },
+      14: { type:'q3', text:'3Q 매출 결산' },
+    }
+  },
+  {
+    id: 'hitec', label: '🇺🇸 북미\n2027 사전준비', color: '#5a7a5a',
+    weeks: {
+      6: { type:'q3', text:'사바나 항구 파트너 조사', memo:'Georgia 물류·제조 생태계 TVET 수요처 사전 조사. HI-TEC 2027 참가 준비 시작 (하계휴가 후 재개)' },
+      8: { type:'q3', text:'Decide DeKalb 현황 파악', memo:'DeKalb 개발청 현황 및 M/WBE 지원 프로그램 업데이트 확인' },
+      10: { type:'q3', text:'HI-TEC 2027 출품 전략 수립', memo:'Amatrol 배급사 4곳 사전 연락, 참가 준비 로드맵 초안 작성' },
+      12: { type:'q3', text:'북미 콜드아웃리치 초안 준비', memo:'HMGMA·OSHA-Guard™ 연계 기관 접촉 문서 준비' },
+    }
+  },
+];
+
+const Q4_TRACKS = [
+  {
+    id: 'koica', label: '🇵🇭 KOICA IBS\n최종 심사·OT', color: '#1d9e75',
+    weeks: {
+      1: { type:'urgent', text:'⚡ OT 참석 (W15 · 10/4일)', memo:'합격 후 OT W15(10/4일). 착수 준비팀 구성 및 역할 분담 즉시 확정' },
+      2: { type:'q4', text:'컨소시엄 착수 킥오프', memo:'TESDA·Innobiz·Prince Valiant 4자 화상 킥오프 미팅' },
+      3: { type:'star', text:'★ 사업 착수 공식 개시', memo:'KOICA 담당 PM 배정 확인 및 수원국 현장 협의 일정 수립' },
+      5: { type:'q4', text:'TESDA 커리큘럼 협의', memo:'EIM NC II/III 기반 32주 960시간 커리큘럼 최종 확정' },
+      7: { type:'q4', text:'장비 발주 준비', memo:'IEG 6030·4000·3430·4100·6050 BOM 확정 및 조달 계획' },
+      10: { type:'q4', text:'Prince Valiant 교육장 착공 확인', memo:'Cavite 스마트팩토리 교육장 공사 일정 점검' },
+    }
+  },
+  {
+    id: 'kz4', label: '🇰🇿 카자흐스탄\nEV 계약·출장', color: '#ef9f27',
+    weeks: {
+      1: { type:'q4', text:'3Q 계약 후속 관리', memo:'코스타니아 EV/Hybrid 장비 납품 일정 관리' },
+      2: { type:'q4', text:'LinkedIn EV 홍보 지속', memo:'3Q 홍보 반응 기반 콘텐츠 고도화. 신규 파트너 유입 모니터링' },
+      3: { type:'star', text:'★ 현지 방문 출장 (검토)', memo:'코스타니아 현장 설치 또는 교육 실시' },
+      5: { type:'q4', text:'추가 장비 확장 논의', memo:'자동화 스마트팩토리 2단계 제안' },
+      8: { type:'q4', text:'카자흐스탄 레퍼런스 문서화' },
+      10: { type:'q4', text:'중앙아시아 레퍼런스 패키지 완성' },
+    }
+  },
+  {
+    id: 'sa4', label: '🇸🇦 사우디·중동\nTAFE·Al Asala', color: '#d85a30',
+    weeks: {
+      1: { type:'urgent', text:'⚡ UTeM HVAC AI 입찰 제출 (10월)', memo:'말레이시아 UTeM HVAC AI driven 입찰 10월 진행. 요르단 기술자 협업으로 개발한 커리큘럼·장비 스펙 기반 입찰서 제출' },
+      2: { type:'q4', text:'Prince Sattam 결과 팔로우업', memo:'3Q 입찰 결과에 따른 계약 협상 또는 재입찰 대응' },
+      3: { type:'q4', text:'TAFE SA BTEC 4039/4040 매핑 완료', memo:'Track ③ 디지털 워크스루 콘텐츠 + Track ⑤ TTT 프로그램 제안서 제출' },
+      5: { type:'star', text:'★ 중동·말레이 계약 체결 목표', memo:'Al Asala or Prince Sattam + UTeM 최소 1건 계약' },
+      7: { type:'q4', text:'Al Asala Sharjah 2차 견적', memo:'추가 장비 확장 패키지 제안' },
+      10: { type:'q4', text:'중동·말레이 레퍼런스 문서화' },
+    }
+  },
+  {
+    id: 'ind', label: '🇮🇳🇧🇷 인도·브라질\n반도체 아젠다', color: '#58a6ff',
+    weeks: {
+      1: { type:'q4', text:'Pluid Tech 반도체 제안서', memo:'인도 IEG 반도체 제조공정 장비 제안서 발송' },
+      3: { type:'q4', text:'마르코스 비에이라 협의', memo:'브라질 TVET 시장 공동 진출 파트너십 논의' },
+      5: { type:'q4', text:'화상 미팅 실시' },
+      7: { type:'star', text:'★ 인도·브라질 MOU 목표', memo:'아젠다 확장을 위한 공식 협력 문서 체결' },
+      9: { type:'q4', text:'현지 파트너 확장 리서치' },
+      11: { type:'q4', text:'남미·남아시아 전략 수립' },
+    }
+  },
+  {
+    id: 'na4', label: '🇺🇸 북미\n사바나 포지셔닝', color: '#2c5f8a',
+    weeks: {
+      1: { type:'q4', text:'사바나 항구 파트너 리스트업', memo:'Georgia 물류·제조 생태계 TVET 수요처 조사' },
+      3: { type:'q4', text:'현지 파트너 콜드아웃리치', memo:'Decide DeKalb 또는 HMGMA 연계 기관 접촉' },
+      6: { type:'star', text:'★ 북미 LOI 또는 MOU 초안', memo:'2027 진출을 위한 사전 파트너십 문서' },
+      8: { type:'q4', text:'OSHA-Guard™ 파일럿 제안 준비', memo:'DeKalb 마이크로웨어하우스 안전 솔루션 재추진' },
+      10: { type:'q4', text:'HI-TEC 2027 사전 등록', memo:'내년 참가를 위한 사전 등록 및 Amatrol 배급사 연락 재개' },
+      12: { type:'q4', text:'2027 북미 진출 전략 확정' },
+    }
+  },
+  {
+    id: 'dk4', label: '🇩🇰 덴마크·유럽\n협력 심화', color: '#7f77dd',
+    weeks: {
+      1: { type:'q4', text:'Rybners MOU 서명 (목표)', memo:'3Q에서 준비한 MOU 최종 서명' },
+      4: { type:'q4', text:'EU Erasmus+ 공동 신청 검토', memo:'덴마크-한국 그린TVET 국제 프로젝트 공동 응모 검토' },
+      7: { type:'q4', text:'유럽 OKI 협력 심화', memo:'DX 라벨러 유럽 유통 확대' },
+      10: { type:'star', text:'★ 유럽 레퍼런스 완성' },
+    }
+  },
+  {
+    id: 'diy4', label: '🛒 DIY 쇼핑몰\n성장·해외확장', color: '#e3b341',
+    weeks: {
+      1: { type:'q4', text:'3Q 매출 분석·4Q 전략', memo:'SKU 성과 분석 및 신규 키트 라인업 결정' },
+      3: { type:'q4', text:'겨울방학 특수 프로모션', memo:'학교·직훈기관 단체 구매 프로모션' },
+      5: { type:'q4', text:'해외 직접 판매 채널 개설', memo:'말레이시아·필리핀 파트너 통한 현지 판매' },
+      7: { type:'star', text:'★ 월 매출 목표 달성', memo:'B2C + B2B 합산 월 500만원 이상' },
+      9: { type:'q4', text:'내년 신제품 기획' },
+      11: { type:'q4', text:'연간 매출 결산 및 2027 계획' },
+    }
+  },
+  {
+    id: 'consult', label: '🌐 TVET Bridge\nConsulting 준비', color: '#d4537e',
+    weeks: {
+      3: { type:'q4', text:'Sean Lim 첫 컨설팅 계약 협의', memo:'FCoEE 연계 커리큘럼 로컬라이제이션 서비스 계약 검토' },
+      5: { type:'q4', text:'서비스 패키지 재정비', memo:'4개 서비스 패키지 요율 업데이트 및 제안서 정비' },
+      7: { type:'q4', text:'GIZ/ILO-KORP 채널 등록', memo:'중앙아시아 그린TVET 전문가 등록' },
+      9: { type:'star', text:'★ 첫 독립 계약 목표', memo:'2027 독립 컨설턴트 전환을 위한 선행 계약' },
+      11: { type:'q4', text:'2027 사업계획서 초안 완성' },
+    }
+  },
+];
+
+function buildGantt(tracks, tbodyId, detailTitleId, detailListId, detailMemoId, detailBoxId, qPrefix) {
+  const tbody = document.getElementById(tbodyId);
+  tbody.innerHTML = '';
+  const totalWeeks = qPrefix === 'q3' ? 14 : 13;
+
+  tracks.forEach((track, ti) => {
+    const tr = document.createElement('tr');
+
+    const tdLabel = document.createElement('td');
+    tdLabel.className = 'track-label';
+    tdLabel.style.color = track.color;
+    tdLabel.innerHTML = track.label.replace('\n', '<br>');
+    tr.appendChild(tdLabel);
+
+    for (let w = 1; w <= totalWeeks; w++) {
+      const td = document.createElement('td');
+      const wdata = track.weeks[w];
+      const logItems = (typeof getLogEntriesForWeek === 'function') ? getLogEntriesForWeek(qPrefix, w) : [];
+
+      // W5(7/26) 하계휴가
+      if (qPrefix === 'q3' && w === 5) {
+        td.className = 'cell-empty';
+        td.style.background = '#f5edda';
+        td.style.color = '#9a7530';
+        td.style.textAlign = 'center';
+        td.style.fontSize = '13px';
+        td.innerHTML = '🏖️';
+        td.title = '하계휴가 (7/26주)';
+        tr.appendChild(td);
+        continue;
+      }
+
+      if (wdata) {
+        let cls = 'cell-q3';
+        if (qPrefix === 'q4') cls = 'cell-q4';
+        if (wdata.type === 'star') cls = 'cell-star';
+        if (wdata.type === 'urgent') cls = 'cell-urgent';
+        td.className = cls;
+        const dotColor = wdata.type === 'star' ? '#b07d10' : wdata.type === 'urgent' ? '#c0392b' : track.color;
+        let inner = `<span class="cell-dot" style="background:${dotColor}"></span>${wdata.text}`;
+        if (logItems.length > 0) inner += ` <span style="background:#1d9e75;color:#fff;font-size:9px;font-weight:700;padding:1px 5px;border-radius:8px;vertical-align:middle;">+${logItems.length}</span>`;
+        td.innerHTML = inner;
+      } else if (logItems.length > 0) {
+        td.className = qPrefix === 'q3' ? 'cell-q3' : 'cell-q4';
+        td.innerHTML = `<span class="cell-dot" style="background:#1d9e75"></span><span style="color:#1d9e75;font-weight:500;">신규 ${logItems.length}건</span>`;
+      } else {
+        td.className = 'cell-empty';
+      }
+
+      td.onclick = () => showDetail(track, w, wdata, detailTitleId, detailListId, detailMemoId, detailBoxId, qPrefix);
+      tr.appendChild(td);
+    }
+
+    tbody.appendChild(tr);
+  });
+
+  renderLogTrackRow(tbodyId, qPrefix, detailTitleId, detailListId, detailMemoId, detailBoxId);
+}
+
+function renderLogTrackRow(tbodyId, qPrefix, detailTitleId, detailListId, detailMemoId, detailBoxId) {
+  const tbody = document.getElementById(tbodyId);
+  const existing = tbody.querySelector('.log-track-row');
+  if (existing) existing.remove();
+
+  const allLogWeeks = logEntries.filter(e => e.quarter === qPrefix);
+  if (allLogWeeks.length === 0) return;
+
+  const tr = document.createElement('tr');
+  tr.className = 'log-track-row';
+
+  const tdLabel = document.createElement('td');
+  tdLabel.className = 'track-label';
+  tdLabel.style.color = '#1d9e75';
+  tdLabel.innerHTML = '📋 신규등록<br>항목';
+  tr.appendChild(tdLabel);
+
+  const totalWeeks = qPrefix === 'q3' ? 14 : 13;
+  for (let w = 1; w <= totalWeeks; w++) {
+    const td = document.createElement('td');
+    if (qPrefix === 'q3' && w === 5) {
+      td.className = 'cell-empty';
+      td.style.background = '#f5edda';
+      tr.appendChild(td);
+      continue;
+    }
+    const items = getLogEntriesForWeek(qPrefix, w);
+    if (items.length > 0) {
+      td.className = 'cell-star';
+      td.style.background = '#e8f5ec';
+      td.style.borderLeft = '2px solid #1d9e75';
+      td.innerHTML = `<span class="cell-dot" style="background:#1d9e75"></span>${items[0].title}${items.length > 1 ? ` 외 ${items.length-1}` : ''}`;
+      td.onclick = () => showLogDetail(qPrefix, w, detailTitleId, detailListId, detailMemoId, detailBoxId);
+    } else {
+      td.className = 'cell-empty';
+      td.onclick = () => {};
+    }
+    tr.appendChild(td);
+  }
+  tbody.appendChild(tr);
+}
+
+const actionState = {};
+
+function getActionKey(qPrefix, trackId, week) {
+  return `${qPrefix}_${trackId}_w${week}`;
+}
+
+function updateDetailProgress(listId, fillId, pctId) {
+  const items = document.querySelectorAll(`#${listId} .action-cb`);
+  if (items.length === 0) { document.getElementById(fillId).style.width='0%'; document.getElementById(pctId).textContent='0%'; return; }
+  const done = Array.from(items).filter(cb => cb.checked).length;
+  const pct = Math.round(done / items.length * 100);
+  document.getElementById(fillId).style.width = pct + '%';
+  document.getElementById(pctId).textContent = pct + '%';
+  document.getElementById(fillId).style.background = pct === 100 ? 'var(--q4)' : pct >= 50 ? 'var(--q3)' : 'var(--amber)';
+}
+
+function showDetail(track, week, wdata, titleId, listId, memoId, boxId, qPrefix) {
+  const box = document.getElementById(boxId);
+  box.style.display = 'block';
+
+  const wLabel = W3_LABELS[qPrefix][week - 1];
+  document.getElementById(titleId).textContent = `${track.label.replace('\n', ' ')} — ${wLabel}`;
+
+  const list = document.getElementById(listId);
+  list.innerHTML = '';
+
+  const fillId = boxId === 'detail-q3' ? 'detail-q3-prog-fill' : 'detail-q4-prog-fill';
+  const pctId  = boxId === 'detail-q3' ? 'detail-q3-prog-pct'  : 'detail-q4-prog-pct';
+
+  const renderItem = (key, text, badgeClass, badgeLabel, subItems) => {
+    const li = document.createElement('li');
+    li.className = 'action-item';
+    const saved = actionState[key] || {};
+    const isChecked = saved.done || false;
+    const noteVal = saved.note || '';
+    const noteOpen = saved.noteOpen || false;
+    li.innerHTML = `
+      <div class="action-item-row">
+        <input type="checkbox" class="action-cb" ${isChecked ? 'checked' : ''}>
+        <span class="a-icon ${badgeClass}">${badgeLabel}</span>
+        <span class="action-text${isChecked ? ' done' : ''}">${text}</span>
+        <button class="action-note-btn" title="메모 추가/보기">📝 메모</button>
+      </div>
+      <div class="action-note-wrap${noteOpen ? ' open' : ''}">
+        <textarea class="action-note" placeholder="이 액션 관련 메모를 입력하세요...">${noteVal}</textarea>
+      </div>
+    `;
+    const cb = li.querySelector('.action-cb');
+    const txt = li.querySelector('.action-text');
+    const noteBtn = li.querySelector('.action-note-btn');
+    const noteWrap = li.querySelector('.action-note-wrap');
+    const noteArea = li.querySelector('.action-note');
+
+    cb.onchange = () => {
+      actionState[key] = actionState[key] || {};
+      actionState[key].done = cb.checked;
+      txt.classList.toggle('done', cb.checked);
+      updateDetailProgress(listId, fillId, pctId);
+    };
+    noteBtn.onclick = () => {
+      const isOpen = noteWrap.classList.toggle('open');
+      actionState[key] = actionState[key] || {};
+      actionState[key].noteOpen = isOpen;
+      if (isOpen) noteArea.focus();
+    };
+    noteArea.oninput = () => {
+      actionState[key] = actionState[key] || {};
+      actionState[key].note = noteArea.value;
+    };
+    if (subItems) {
+      subItems.forEach((sub, si) => {
+        const subKey = key + '_sub' + si;
+        const subSaved = actionState[subKey] || {};
+        const subLi = document.createElement('li');
+        subLi.className = 'action-item';
+        subLi.style.paddingLeft = '20px';
+        const subChecked = subSaved.done || false;
+        const subNote = subSaved.note || '';
+        const subNoteOpen = subSaved.noteOpen || false;
+        subLi.innerHTML = `
+          <div class="action-item-row">
+            <input type="checkbox" class="action-cb" ${subChecked ? 'checked' : ''}>
+            <span class="a-icon ai-memo">+ 신규</span>
+            <span class="action-text${subChecked ? ' done' : ''}">${sub.title} <span style="font-size:11px;color:var(--text3);">· ${sub.market}</span></span>
+            <button class="action-note-btn" title="메모">📝</button>
+          </div>
+          <div class="action-note-wrap${subNoteOpen ? ' open' : ''}">
+            <textarea class="action-note" placeholder="메모...">${subNote}</textarea>
+          </div>
+        `;
+        const scb = subLi.querySelector('.action-cb');
+        const stxt = subLi.querySelector('.action-text');
+        const snBtn = subLi.querySelector('.action-note-btn');
+        const snWrap = subLi.querySelector('.action-note-wrap');
+        const snArea = subLi.querySelector('.action-note');
+        scb.onchange = () => { actionState[subKey] = actionState[subKey]||{}; actionState[subKey].done = scb.checked; stxt.classList.toggle('done', scb.checked); updateDetailProgress(listId, fillId, pctId); };
+        snBtn.onclick = () => { const o = snWrap.classList.toggle('open'); actionState[subKey]=actionState[subKey]||{}; actionState[subKey].noteOpen=o; if(o) snArea.focus(); };
+        snArea.oninput = () => { actionState[subKey]=actionState[subKey]||{}; actionState[subKey].note=snArea.value; };
+        list.appendChild(subLi);
+      });
+    }
+    list.appendChild(li);
+  };
+
+  if (wdata) {
+    const key = getActionKey(qPrefix, track.id, week);
+    const typeLabel = wdata.type === 'star' ? '★ 핵심' : wdata.type === 'urgent' ? '⚡ 긴급' : '액션';
+    const badgeClass = wdata.type === 'star' ? 'ai-star' : wdata.type === 'urgent' ? 'ai-urgent' : (qPrefix === 'q3' ? 'ai-q3' : 'ai-q4');
+    const logItems = getLogEntriesForWeek(qPrefix, week);
+    renderItem(key, wdata.text, badgeClass, typeLabel, logItems.length > 0 ? logItems : null);
+  } else {
+    const logItems = getLogEntriesForWeek(qPrefix, week);
+    if (logItems.length === 0) {
+      const li = document.createElement('li');
+      li.className = 'action-item';
+      li.innerHTML = `<div class="action-item-row" style="color:var(--text3)">이 주차에는 등록된 액션이 없습니다.</div>`;
+      list.appendChild(li);
+    } else {
+      logItems.forEach((e, i) => {
+        const key = `log_${qPrefix}_w${week}_${i}`;
+        renderItem(key, `${e.title} <span style="font-size:11px;color:var(--text3);">· ${e.market}</span>`, 'ai-memo', '+ 신규', null);
+      });
+    }
+  }
+
+  const memo = document.getElementById(memoId);
+  if (wdata && wdata.memo) {
+    memo.style.display = 'block';
+    memo.textContent = '📝 ' + wdata.memo;
+  } else {
+    memo.style.display = 'none';
+  }
+
+  updateDetailProgress(listId, fillId, pctId);
+  box.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+function showLogDetail(qPrefix, week, titleId, listId, memoId, boxId) {
+  const box = document.getElementById(boxId);
+  box.style.display = 'block';
+  const wLabel = W3_LABELS[qPrefix][week - 1];
+  document.getElementById(titleId).textContent = `📋 신규 등록 항목 — ${wLabel}`;
+  const list = document.getElementById(listId);
+  list.innerHTML = '';
+  const fillId = boxId === 'detail-q3' ? 'detail-q3-prog-fill' : 'detail-q4-prog-fill';
+  const pctId  = boxId === 'detail-q3' ? 'detail-q3-prog-pct'  : 'detail-q4-prog-pct';
+  const typeMap = { fair:'전시회', customer:'발굴 고객', project:'신규 프로젝트', mou:'MOU/LOI' };
+  const items = getLogEntriesForWeek(qPrefix, week);
+  items.forEach((e, i) => {
+    const key = `log_${qPrefix}_w${week}_${i}`;
+    const saved = actionState[key] || {};
+    const isChecked = saved.done || false;
+    const noteVal = saved.note || '';
+    const noteOpen = saved.noteOpen || false;
+    const imgHtml = e.imgUrl ? `<div style="padding-left:23px;margin-top:4px;"><a href="${e.imgUrl}" target="_blank"><img src="${e.imgUrl}" alt="" onerror="this.parentElement.innerHTML='<a href=\\'${e.imgUrl}\\' target=\\'_blank\\' style=\\'color:var(--q3);font-size:12px;\\'>이미지 링크</a>'" style="max-width:100%;max-height:130px;border-radius:6px;border:1px solid var(--border);display:block;object-fit:cover;"></a></div>` : '';
+    const li = document.createElement('li');
+    li.className = 'action-item';
+    li.innerHTML = `
+      <div class="action-item-row">
+        <input type="checkbox" class="action-cb" ${isChecked?'checked':''}>
+        <span class="a-icon ai-memo">+ 신규</span>
+        <span class="action-text${isChecked?' done':''}"><strong>${e.title}</strong> <span style="font-size:11px;color:var(--text3);">${typeMap[e.type]||e.type} · ${e.market}${e.date?' · '+e.date:''}</span></span>
+        <button class="action-note-btn">📝 메모</button>
+      </div>
+      ${e.desc?`<div style="font-size:12px;color:var(--text2);padding-left:23px;">${e.desc}</div>`:''}
+      ${imgHtml}
+      <div class="action-note-wrap${noteOpen?' open':''}">
+        <textarea class="action-note" placeholder="메모...">${noteVal}</textarea>
+      </div>
+    `;
+    const cb = li.querySelector('.action-cb');
+    const txt = li.querySelector('.action-text');
+    const nbtn = li.querySelector('.action-note-btn');
+    const nwrap = li.querySelector('.action-note-wrap');
+    const narea = li.querySelector('.action-note');
+    cb.onchange = () => { actionState[key]=actionState[key]||{}; actionState[key].done=cb.checked; txt.classList.toggle('done',cb.checked); updateDetailProgress(listId, fillId, pctId); };
+    nbtn.onclick = () => { const o=nwrap.classList.toggle('open'); actionState[key]=actionState[key]||{}; actionState[key].noteOpen=o; if(o) narea.focus(); };
+    narea.oninput = () => { actionState[key]=actionState[key]||{}; actionState[key].note=narea.value; };
+    list.appendChild(li);
+  });
+  document.getElementById(memoId).style.display = 'none';
+  updateDetailProgress(listId, fillId, pctId);
+  box.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+const milestoneState = {};
+
+function toggleMilestone(msKey, cb) {
+  milestoneState[msKey] = cb.checked;
+  const card = document.querySelector(`[data-ms="${msKey}"]`);
+  if (card) {
+    card.classList.toggle('ms-done', cb.checked);
+    const lbl = card.querySelector('.ms-check-label');
+    if (lbl) lbl.textContent = cb.checked ? '완료됨' : '완료로 표시';
+  }
+  const qPrefix = msKey.startsWith('q3') ? 'q3' : 'q4';
+  updateMilestoneAchieve(qPrefix);
+}
+
+function updateMilestoneAchieve(qPrefix) {
+  const cards = document.querySelectorAll(`[data-ms^="${qPrefix}-"]`);
+  const total = cards.length;
+  const done = Array.from(cards).filter(c => c.classList.contains('ms-done')).length;
+  const pct = total > 0 ? Math.round(done / total * 100) : 0;
+  const banner = document.getElementById(`${qPrefix}-achieve-banner`);
+  const circle = document.getElementById(`${qPrefix}-achieve-circle`);
+  const doneEl = document.getElementById(`${qPrefix}-achieve-done`);
+  if (done > 0) {
+    banner.style.display = 'flex';
+    circle.textContent = pct + '%';
+    doneEl.textContent = done;
+    banner.style.background = pct === 100 ? '#d4f0dc' : 'var(--q4bg)';
+    circle.style.borderColor = pct === 100 ? 'var(--q4)' : 'var(--q3)';
+    circle.style.color = pct === 100 ? 'var(--q4)' : 'var(--q3)';
+  } else {
+    banner.style.display = 'none';
+  }
+}
+
+let logEntries = [];
+
+const W3_LABELS = {
+  q3: ['W1 (7/1~4)','W2 (7/5일)','W3 (7/12일)','W4 (7/19일)','W5 (7/26일)','W6 (8/2일)','W7 (8/9일)','W8 (8/16일)','W9 (8/23일)','W10 (8/30일)','W11 (9/6일)','W12 (9/13일)','W13 (9/20일)','W14 (9/27일)'],
+  q4: ['W15 (10/4일)','W16 (10/11일)','W17 (10/18일)','W18 (10/25일)','W19 (11/1일)','W20 (11/8일)','W21 (11/15일)','W22 (11/22일)','W23 (11/29일)','W24 (12/6일)','W25 (12/13일)','W26 (12/20일)','W27 (12/27일)']
+};
+
+document.getElementById('log-quarter').addEventListener('change', function() {
+  const qval = this.value;
+  const wsel = document.getElementById('log-week');
+  wsel.innerHTML = '';
+  if (!qval) {
+    wsel.innerHTML = '<option value="">— 분기 먼저 선택 —</option>';
+    return;
+  }
+  W3_LABELS[qval].forEach((label, i) => {
+    const opt = document.createElement('option');
+    opt.value = i + 1;
+    opt.textContent = label;
+    wsel.appendChild(opt);
+  });
+});
+
+function addLogEntry() {
+  const type    = document.getElementById('log-type').value;
+  const date    = document.getElementById('log-date').value;
+  const title   = document.getElementById('log-title').value.trim();
+  const market  = document.getElementById('log-market').value;
+  const desc    = document.getElementById('log-desc').value.trim();
+  const quarter = document.getElementById('log-quarter').value;
+  const week    = document.getElementById('log-week').value;
+  const imgUrl  = document.getElementById('log-img').value.trim();
+
+  if (!title) { alert('제목/기관명을 입력해주세요.'); return; }
+
+  const entry = { id: Date.now(), type, date, title, market, desc, quarter, week: week ? parseInt(week) : null, imgUrl };
+  logEntries.unshift(entry);
+  renderLog();
+  rebuildGanttsWithLog();
+
+  document.getElementById('log-title').value = '';
+  document.getElementById('log-desc').value = '';
+  document.getElementById('log-date').value = new Date().toISOString().split('T')[0];
+  document.getElementById('log-img').value = '';
+  document.getElementById('log-quarter').value = '';
+  document.getElementById('log-week').innerHTML = '<option value="">— 분기 먼저 선택 —</option>';
+}
+
+function deleteEntry(id) {
+  logEntries = logEntries.filter(e => e.id !== id);
+  renderLog();
+  rebuildGanttsWithLog();
+}
+
+function renderLog() {
+  const container = document.getElementById('log-entries');
+  const empty = document.getElementById('log-empty');
+  if (logEntries.length === 0) {
+    if (empty) empty.style.display = 'block';
+    container.querySelectorAll('.log-card').forEach(c => c.remove());
+    return;
+  }
+  if (empty) empty.style.display = 'none';
+  container.querySelectorAll('.log-card').forEach(c => c.remove());
+
+  const typeMap = {
+    fair:     { label: '전시회',      cls: 'lt-fair' },
+    customer: { label: '발굴 고객',   cls: 'lt-customer' },
+    project:  { label: '신규 프로젝트', cls: 'lt-project' },
+    mou:      { label: 'MOU/LOI',    cls: 'lt-mou' },
+  };
+
+  logEntries.forEach(e => {
+    const tm = typeMap[e.type] || { label: e.type, cls: 'lt-customer' };
+    const ganttBadge = (e.quarter && e.week)
+      ? `<span style="font-size:10px;background:var(--bg3);border:1px solid var(--border);border-radius:20px;padding:2px 8px;color:var(--text2);">${e.quarter.toUpperCase()} ${W3_LABELS[e.quarter][e.week-1]}</span>`
+      : '';
+    const imgHtml = e.imgUrl
+      ? `<div style="margin-top:10px;"><a href="${e.imgUrl}" target="_blank" style="display:inline-block;"><img src="${e.imgUrl}" alt="첨부 이미지" onerror="this.parentElement.innerHTML='<span style=\\'font-size:12px;color:var(--text3)\\'>이미지 로드 실패 — <a href=\\'${e.imgUrl}\\' target=\\'_blank\\' style=\\'color:var(--q3)\\'>링크 열기</a></span>'" style="max-width:100%;max-height:180px;border-radius:8px;border:1px solid var(--border);object-fit:cover;display:block;"></a></div>`
+      : '';
+    const card = document.createElement('div');
+    card.className = 'log-card';
+    card.dataset.id = e.id;
+    card.innerHTML = `
+      <button class="btn-del" onclick="deleteEntry(${e.id})" title="삭제">×</button>
+      <div class="log-card-top">
+        <span class="log-type-badge ${tm.cls}">${tm.label}</span>
+        <span class="log-market">${e.market}</span>
+        ${e.date ? `<span class="log-date">${e.date}</span>` : ''}
+        ${ganttBadge}
+      </div>
+      <div class="log-title">${e.title}</div>
+      ${e.desc ? `<div class="log-desc">${e.desc}</div>` : ''}
+      ${imgHtml}
+    `;
+    container.appendChild(card);
+  });
+}
+
+function rebuildGanttsWithLog() {
+  buildGantt(Q3_TRACKS, 'gantt-q3-body', 'detail-q3-title', 'detail-q3-list', 'detail-q3-memo', 'detail-q3', 'q3');
+  buildGantt(Q4_TRACKS, 'gantt-q4-body', 'detail-q4-title', 'detail-q4-list', 'detail-q4-memo', 'detail-q4', 'q4');
+}
+
+function getLogEntriesForWeek(qPrefix, weekNum) {
+  return logEntries.filter(e => e.quarter === qPrefix && e.week === weekNum);
+}
+
+function switchTab(name, btn) {
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => {
+    b.classList.remove('active-q3', 'active-q4', 'active-log');
+  });
+  document.getElementById('panel-' + name).classList.add('active');
+  if (name === 'q3') btn.classList.add('active-q3');
+  else if (name === 'q4') btn.classList.add('active-q4');
+  else if (name === 'log') btn.classList.add('active-log');
+  else btn.style.borderBottomColor = 'var(--text2)';
+}
+
+buildGantt(Q3_TRACKS, 'gantt-q3-body', 'detail-q3-title', 'detail-q3-list', 'detail-q3-memo', 'detail-q3', 'q3');
+buildGantt(Q4_TRACKS, 'gantt-q4-body', 'detail-q4-title', 'detail-q4-list', 'detail-q4-memo', 'detail-q4', 'q4');
+
+document.getElementById('log-date').value = new Date().toISOString().split('T')[0];
+</script>
+</body>
+</html>
