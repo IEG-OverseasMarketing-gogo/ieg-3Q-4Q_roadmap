@@ -1,0 +1,1181 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Easy Korean 101 — 현장 실력 테스트 워크북 | IEG</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    /* Light ivory theme — pistachio + warm orange accents */
+    --navy-950:#faf6ec;
+    --navy-900:#fffdf6;
+    --navy-800:#f7f2e2;
+    --navy-700:#efe6cd;
+    --navy-600:#ddd0a7;
+    --line:#e5dabb;
+    --teal:#6fa25c;
+    --teal-dim:#4c7a3c;
+    --amber:#e08a2e;
+    --amber-dim:#b96f1d;
+    --red:#c2542f;
+    --red-dim:#8a3a20;
+    --text:#2b2a25;
+    --muted:#6b6558;
+    --muted-2:#928a73;
+    --card:#fbf7ea;
+    --on-accent:#fffaf0;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:
+      radial-gradient(1100px 600px at 85% -10%, rgba(111,162,92,0.14), transparent 60%),
+      radial-gradient(900px 500px at 5% 0%, rgba(224,138,46,0.12), transparent 55%),
+      var(--navy-950);
+    color:var(--text);
+    font-family:'Inter',sans-serif;
+    min-height:100vh;
+    padding-bottom:60px;
+  }
+  h1,h2,h3,.display{font-family:'Oswald',sans-serif; text-transform:uppercase; letter-spacing:0.03em;}
+  .mono{font-family:'JetBrains Mono',monospace;}
+  a{color:inherit;}
+
+  /* ===== Top bar ===== */
+  .topbar{
+    position:sticky; top:0; z-index:50;
+    display:flex; align-items:center; justify-content:space-between;
+    gap:16px; padding:14px 26px;
+    background:rgba(250,246,236,0.88);
+    backdrop-filter:blur(8px);
+    border-bottom:1px solid var(--line);
+  }
+  .brand{display:flex; align-items:center; gap:12px;}
+  .brand-badge{
+    width:40px;height:40px;border-radius:8px;
+    background:linear-gradient(145deg,var(--teal),var(--teal-dim));
+    display:flex;align-items:center;justify-content:center;
+    font-family:'Oswald',sans-serif; font-weight:700; color:var(--on-accent); font-size:15px;
+    box-shadow:0 0 0 3px rgba(111,162,92,0.22);
+  }
+  .brand-text .t1{font-size:11px; color:var(--muted); letter-spacing:0.16em;}
+  .brand-text .t2{font-size:16px; font-weight:700; font-family:'Oswald',sans-serif; letter-spacing:0.02em;}
+  .stat-strip{display:flex; gap:10px; align-items:center; flex-wrap:wrap;}
+  .stat-chip{
+    display:flex; align-items:center; gap:8px;
+    background:var(--navy-800); border:1px solid var(--line);
+    padding:7px 14px; border-radius:999px; font-size:13px;
+  }
+  .stat-chip .num{font-family:'JetBrains Mono',monospace; font-weight:700; color:var(--amber);}
+  .stat-chip.xp .num{color:var(--teal);}
+  .bolt-icon{width:14px;height:14px; flex:none;}
+
+  /* ===== Layout ===== */
+  .wrap{max-width:1180px; margin:0 auto; padding:0 26px;}
+  .hero{padding:44px 0 28px; border-bottom:1px dashed var(--line); margin-bottom:34px;}
+  .eyebrow{
+    display:inline-flex; align-items:center; gap:8px;
+    font-size:11px; letter-spacing:0.2em; color:var(--amber);
+    border:1px solid var(--amber-dim); padding:4px 10px; border-radius:4px;
+    background:rgba(224,138,46,0.10); margin-bottom:14px;
+  }
+  .hero h1{font-size:clamp(28px,4vw,42px); margin:0 0 10px; line-height:1.15;}
+  .hero p{color:var(--muted); max-width:680px; font-size:15px; line-height:1.7; margin:0;}
+  .hero-sub{color:var(--teal); font-family:'Oswald',sans-serif; letter-spacing:0.04em; font-size:15px; margin-top:4px; display:block;}
+
+  .progress-overview{display:flex; gap:14px; margin-top:26px; flex-wrap:wrap;}
+  .po-card{
+    flex:1; min-width:150px;
+    background:var(--card); border:1px solid var(--line); border-radius:10px;
+    padding:14px 16px;
+  }
+  .po-card .lbl{font-size:11px; color:var(--muted); letter-spacing:0.1em; text-transform:uppercase;}
+  .po-card .val{font-family:'JetBrains Mono',monospace; font-size:24px; font-weight:700; margin-top:4px;}
+  .po-card.teal .val{color:var(--teal);}
+  .po-card.amber .val{color:var(--amber);}
+  .track{height:6px; background:var(--navy-700); border-radius:99px; margin-top:10px; overflow:hidden;}
+  .track > div{height:100%; background:linear-gradient(90deg,var(--teal-dim),var(--teal)); border-radius:99px; transition:width .4s ease;}
+
+  /* ===== Lesson grid ===== */
+  .section-title{display:flex; align-items:baseline; gap:10px; margin:8px 0 18px;}
+  .section-title h2{font-size:20px; margin:0;}
+  .section-title .idx{font-family:'JetBrains Mono',monospace; color:var(--muted-2); font-size:13px;}
+
+  .lesson-grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(270px,1fr)); gap:16px; margin-bottom:44px;}
+  .ticket{
+    position:relative;
+    background:linear-gradient(180deg,var(--card),var(--navy-800));
+    border:1px solid var(--line); border-radius:12px; padding:18px 18px 16px;
+    cursor:pointer; transition:transform .15s ease, border-color .15s ease, box-shadow .15s ease;
+    overflow:hidden;
+  }
+  .ticket::before{
+    content:""; position:absolute; left:0; top:0; bottom:0; width:4px;
+    background:var(--muted-2);
+  }
+  .ticket.has-progress::before{background:var(--teal);}
+  .ticket.complete::before{background:var(--amber);}
+  .ticket:hover{transform:translateY(-3px); border-color:var(--teal-dim); box-shadow:0 10px 24px rgba(60,50,25,0.14);}
+  .ticket .num{
+    font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--muted-2);
+    letter-spacing:0.12em;
+  }
+  .ticket h3{font-size:16px; margin:6px 0 2px; letter-spacing:0.01em;}
+  .ticket .en{font-size:12px; color:var(--muted); margin-bottom:12px; font-style:italic;}
+  .ticket .kculture-tag{
+    display:inline-block; font-size:10px; color:var(--amber); border:1px solid var(--amber-dim);
+    padding:2px 7px; border-radius:4px; margin-bottom:10px; letter-spacing:0.05em;
+  }
+  .bolts-row{display:flex; gap:10px; align-items:center; margin-top:6px;}
+  .bolt-slot{display:flex; flex-direction:column; align-items:center; gap:4px; font-size:9px; color:var(--muted-2); letter-spacing:0.06em;}
+  .bolt{width:22px; height:22px;}
+
+  /* ===== Modal ===== */
+  .overlay{
+    position:fixed; inset:0; background:rgba(43,40,32,0.45); backdrop-filter:blur(3px);
+    display:none; align-items:flex-start; justify-content:center; z-index:100; padding:30px 16px; overflow-y:auto;
+  }
+  .overlay.active{display:flex;}
+  .modal{
+    background:var(--navy-900); border:1px solid var(--line); border-radius:16px;
+    max-width:840px; width:100%; padding:0; overflow:hidden;
+    animation:pop .18s ease;
+  }
+  @keyframes pop{from{opacity:0; transform:translateY(10px) scale(0.98);} to{opacity:1; transform:none;}}
+  .modal-head{
+    padding:20px 26px; border-bottom:1px solid var(--line);
+    display:flex; justify-content:space-between; align-items:flex-start; gap:14px;
+    background:linear-gradient(180deg,rgba(111,162,92,0.12),transparent);
+  }
+  .modal-head h2{font-size:20px; margin:0 0 4px;}
+  .modal-head .en{color:var(--muted); font-size:13px; font-style:italic;}
+  .close-btn{
+    background:var(--navy-800); border:1px solid var(--line); color:var(--muted);
+    width:32px; height:32px; border-radius:8px; cursor:pointer; font-size:16px; flex:none;
+    display:flex; align-items:center; justify-content:center;
+  }
+  .close-btn:hover{color:var(--text); border-color:var(--red-dim);}
+  .modal-body{padding:22px 26px 26px;}
+
+  .tabbar{display:flex; gap:8px; margin-bottom:20px; flex-wrap:wrap;}
+  .tabbtn{
+    background:var(--navy-800); border:1px solid var(--line); color:var(--muted);
+    padding:9px 16px; border-radius:9px; cursor:pointer; font-size:13px; font-weight:600;
+    display:flex; align-items:center; gap:8px; transition:all .15s;
+  }
+  .tabbtn.active{background:var(--teal); color:var(--on-accent); border-color:var(--teal);}
+  .tabbtn .bolt-mini{width:14px;height:14px;}
+
+  .panel{display:none;}
+  .panel.active{display:block;}
+
+  /* study lists */
+  .study-block{margin-bottom:22px;}
+  .study-block h4{font-size:12px; letter-spacing:0.14em; color:var(--teal); text-transform:uppercase; margin:0 0 10px;}
+  .word-grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(180px,1fr)); gap:8px;}
+  .word-chip{background:var(--navy-800); border:1px solid var(--line); border-radius:8px; padding:9px 12px; cursor:pointer; transition:background .15s ease, border-color .15s ease;}
+  .word-chip:hover{border-color:var(--teal-dim); background:rgba(111,162,92,0.10);}
+  .word-chip.is-speaking{border-color:var(--amber); background:rgba(224,138,46,0.16);}
+  .word-chip .kr{font-weight:700; font-size:14px;}
+  .word-chip .en{font-size:12px; color:var(--muted);}
+  .expr-row{
+    display:grid; grid-template-columns:26px 1fr 1fr; gap:10px; align-items:center;
+    padding:9px 10px; border-radius:8px; font-size:13.5px;
+    cursor:pointer; border:1px solid transparent; transition:background .15s ease, border-color .15s ease;
+  }
+  .expr-row:hover{border-color:var(--teal-dim); background:rgba(111,162,92,0.10);}
+  .expr-row.is-speaking{border-color:var(--amber); background:rgba(224,138,46,0.16);}
+  .expr-row:nth-child(odd){background:var(--navy-800);}
+  .expr-row.is-speaking:nth-child(odd){background:rgba(224,138,46,0.16);}
+  .expr-row .no{color:var(--muted-2); font-family:'JetBrains Mono',monospace; font-size:12px;}
+  .expr-row .kr{font-weight:600;}
+  .expr-row .en{color:var(--muted);}
+  .dialog-card{background:var(--navy-800); border:1px solid var(--line); border-radius:10px; padding:14px 16px; margin-bottom:12px;}
+  .dialog-card-head{display:flex; align-items:center; justify-content:space-between; margin-bottom:10px;}
+  .dialog-tag{font-size:10px; letter-spacing:0.12em; color:var(--muted-2); text-transform:uppercase;}
+  .btn-mini-play{
+    background:transparent; border:1px solid var(--teal-dim); color:var(--teal-dim);
+    font-size:11px; font-weight:700; padding:5px 11px; border-radius:99px; cursor:pointer;
+    transition:all .15s ease;
+  }
+  .btn-mini-play:hover{background:var(--teal); color:var(--on-accent); border-color:var(--teal);}
+  .dline{display:flex; gap:10px; margin-bottom:4px; padding:6px 8px; border-radius:8px; border:1px solid transparent; font-size:13.5px; cursor:pointer; transition:background .15s ease, border-color .15s ease;}
+  .dline:hover{border-color:var(--teal-dim); background:rgba(111,162,92,0.10);}
+  .dline.is-speaking{border-color:var(--amber); background:rgba(224,138,46,0.16);}
+  .dline:last-child{margin-bottom:0;}
+  .dline .spk{font-weight:700; color:var(--teal); min-width:70px; font-size:12px; text-transform:uppercase; letter-spacing:0.04em; padding-top:2px;}
+  .dline .txt .kr{font-weight:600;}
+  .dline .txt .en{color:var(--muted); font-size:12px;}
+  .speak-icon{margin-left:6px; font-size:11px; opacity:0.45; transition:opacity .15s ease;}
+  .word-chip:hover .speak-icon, .word-chip.is-speaking .speak-icon,
+  .expr-row:hover .speak-icon, .expr-row.is-speaking .speak-icon,
+  .dline:hover .speak-icon, .dline.is-speaking .speak-icon{opacity:1;}
+  .audio-hint{
+    display:flex; align-items:center; gap:8px; font-size:12px; color:var(--muted);
+    background:var(--navy-800); border:1px solid var(--line); border-radius:9px;
+    padding:9px 13px; margin-bottom:16px;
+  }
+  .audio-hint b{color:var(--teal-dim);}
+
+  .start-quiz-row{display:flex; gap:12px; margin-top:18px; flex-wrap:wrap;}
+  .btn{
+    border:none; cursor:pointer; font-family:'Inter',sans-serif; font-weight:700; font-size:13.5px;
+    padding:11px 20px; border-radius:9px; letter-spacing:0.02em; transition:transform .12s ease, filter .12s ease;
+  }
+  .btn:active{transform:scale(0.97);}
+  .btn-primary{background:linear-gradient(135deg,var(--teal),var(--teal-dim)); color:var(--on-accent);}
+  .btn-primary:hover{filter:brightness(1.08);}
+  .btn-ghost{background:var(--navy-800); border:1px solid var(--line); color:var(--text);}
+  .btn-ghost:hover{border-color:var(--teal-dim);}
+  .btn:disabled{opacity:0.4; cursor:not-allowed;}
+
+  /* quiz stage cards inside test tab */
+  .stage-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:14px;}
+  @media(max-width:640px){.stage-grid{grid-template-columns:1fr;}}
+  .stage-card{
+    background:var(--navy-800); border:1px solid var(--line); border-radius:12px; padding:16px;
+    display:flex; flex-direction:column; gap:10px;
+  }
+  .stage-card h4{margin:0; font-size:14px; display:flex; align-items:center; gap:8px;}
+  .stage-card .desc{font-size:12px; color:var(--muted); line-height:1.5; min-height:36px;}
+  .stage-bolt-status{display:flex; gap:6px;}
+  .stage-bolt-status .bolt{width:20px;height:20px;}
+
+  /* quiz runner */
+  .quiz-runner{}
+  .quiz-progress{display:flex; align-items:center; gap:10px; margin-bottom:18px;}
+  .quiz-progress .track{flex:1;}
+  .quiz-progress .qcount{font-family:'JetBrains Mono',monospace; font-size:12px; color:var(--muted); white-space:nowrap;}
+  .qscore{font-family:'JetBrains Mono',monospace; font-size:12px; color:var(--amber); white-space:nowrap;}
+  .question-box{
+    background:var(--navy-800); border:1px solid var(--line); border-radius:12px; padding:22px;
+    margin-bottom:16px;
+  }
+  .qtag{font-size:11px; letter-spacing:0.1em; color:var(--muted-2); text-transform:uppercase; margin-bottom:10px;}
+  .qtext{font-size:19px; font-weight:700; margin-bottom:6px; line-height:1.5;}
+  .qtext .kr-big{font-size:22px;}
+  .qsub{font-size:13px; color:var(--muted); margin-bottom:6px;}
+  .dialog-context{background:var(--navy-900); border:1px solid var(--line); border-radius:9px; padding:12px 14px; margin-top:10px; margin-bottom:4px;}
+
+  .options{display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:16px;}
+  @media(max-width:560px){.options{grid-template-columns:1fr;}}
+  .opt{
+    background:var(--navy-900); border:1px solid var(--line); border-radius:9px; padding:13px 15px;
+    cursor:pointer; text-align:left; font-size:14px; color:var(--text); transition:all .12s ease;
+    display:flex; align-items:center; gap:10px;
+  }
+  .opt:hover{border-color:var(--teal-dim); background:var(--navy-800);}
+  .opt.correct{border-color:var(--teal); background:rgba(111,162,92,0.16); color:var(--teal-dim);}
+  .opt.wrong{border-color:var(--red); background:rgba(194,84,47,0.14); color:var(--red-dim);}
+  .opt.disabled{cursor:default;}
+  .opt .letter{
+    font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--muted-2);
+    border:1px solid var(--line); border-radius:5px; width:20px; height:20px; flex:none;
+    display:flex; align-items:center; justify-content:center;
+  }
+  .opt.correct .letter{border-color:var(--teal); color:var(--teal);}
+  .opt.wrong .letter{border-color:var(--red); color:var(--red);}
+
+  .feedback-bar{
+    display:flex; justify-content:space-between; align-items:center; margin-top:14px; gap:12px; flex-wrap:wrap;
+  }
+  .feedback-msg{font-size:13px; font-weight:700;}
+  .feedback-msg.good{color:var(--teal);}
+  .feedback-msg.bad{color:var(--red);}
+
+  /* results */
+  .result-box{text-align:center; padding:20px 10px 6px;}
+  .result-bolts{display:flex; justify-content:center; gap:14px; margin:18px 0 10px;}
+  .result-bolts .bolt{width:44px; height:44px;}
+  .result-score{font-family:'JetBrains Mono',monospace; font-size:34px; font-weight:700; color:var(--teal);}
+  .result-label{color:var(--muted); font-size:13px; margin-top:2px;}
+  .result-msg{margin:14px 0 6px; font-size:14.5px; color:var(--text); line-height:1.6;}
+
+  footer{text-align:center; color:var(--muted-2); font-size:12px; margin-top:40px; line-height:1.8;}
+  footer b{color:var(--muted);}
+
+  ::-webkit-scrollbar{width:8px;}
+  ::-webkit-scrollbar-thumb{background:var(--navy-600); border-radius:8px;}
+  ::-webkit-scrollbar-track{background:transparent;}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="brand">
+    <div class="brand-badge">EK</div>
+    <div class="brand-text">
+      <div class="t1">IEG CO., LTD. · TVET LANGUAGE LAB</div>
+      <div class="t2">EASY KOREAN 101 WORKBOOK</div>
+    </div>
+  </div>
+  <div class="stat-strip">
+    <button class="stat-chip" id="slowToggle" style="cursor:pointer; border:1px solid var(--line);">
+      <svg class="bolt-icon" viewBox="0 0 24 24" fill="none"><path d="M11 5 6 9H3v6h3l5 4V5z" stroke="currentColor" style="color:var(--teal-dim)" stroke-width="2" stroke-linejoin="round"/><path d="M16 8.5c1 1 1.5 2.2 1.5 3.5s-.5 2.5-1.5 3.5" stroke="currentColor" style="color:var(--teal-dim)" stroke-width="2" stroke-linecap="round"/></svg>
+      천천히 듣기 <span class="num" id="slowState" style="color:var(--muted-2);">OFF</span>
+    </button>
+    <div class="stat-chip xp">
+      <svg class="bolt-icon" viewBox="0 0 24 24" fill="none"><path d="M13 2 4 14h6l-1 8 9-12h-6l1-8z" fill="currentColor" style="color:var(--teal)"/></svg>
+      XP <span class="num" id="xpTotal">0</span>
+    </div>
+    <div class="stat-chip">
+      <svg class="bolt-icon" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="8" stroke="currentColor" style="color:var(--amber)" stroke-width="2"/><path d="M12 4v2M12 18v2M4 12h2M18 12h2" stroke="currentColor" style="color:var(--amber)" stroke-width="2"/></svg>
+      완료 렛슨 <span class="num" id="lessonsDone">0</span>/12
+    </div>
+  </div>
+</div>
+
+<div class="wrap">
+  <div class="hero">
+    <span class="eyebrow">제조현장 실전 한국어 · SELF-TEST WORKBOOK</span>
+    <h1>Easy Korean for Manufacturing Workplaces<br><span class="hero-sub">제조현장에서 바로 써먹는 한국어 101 — 실력 테스트</span></h1>
+    <p>각 차시(Lesson)에서 <b style="color:var(--text)">단어 → 표현 → 대화</b> 순서로 배운 내용을 먼저 복습(학습 모드)한 뒤, 3단계 테스트로 실력을 확인하세요. 각 단계를 통과할 때마다 볼트(bolt) 배지를 획득합니다. 12개 차시를 모두 완료하면 워크북 마스터가 됩니다.</p>
+
+    <div class="progress-overview">
+      <div class="po-card teal">
+        <div class="lbl">Total XP</div>
+        <div class="val mono" id="poXp">0</div>
+      </div>
+      <div class="po-card amber">
+        <div class="lbl">획득 볼트 / 36</div>
+        <div class="val mono" id="poBolts">0</div>
+      </div>
+      <div class="po-card" style="flex:2; min-width:220px;">
+        <div class="lbl">전체 진행률</div>
+        <div class="val mono" id="poPercent">0%</div>
+        <div class="track"><div id="poTrack" style="width:0%;"></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-title"><h2>차시 선택 · Lesson Map</h2><span class="idx">01 – 12</span></div>
+  <div class="lesson-grid" id="lessonGrid"></div>
+
+  <footer>
+    이 워크북은 <b>Easy Korean for Manufacturing Workplaces 101 (Instructor's Guide, 12 Lessons)</b> 교재 내용을 기반으로 제작되었습니다.<br>
+    진행 상황은 브라우저를 새로고침하면 초기화됩니다 (세션 기반 학습 도구). · IEG Co., Ltd. · Overseas Marketing Team
+  </footer>
+</div>
+
+<div class="overlay" id="overlay">
+  <div class="modal">
+    <div class="modal-head">
+      <div>
+        <h2 id="modalTitleKr">-</h2>
+        <div class="en" id="modalTitleEn">-</div>
+      </div>
+      <button class="close-btn" id="closeModal">✕</button>
+    </div>
+    <div class="modal-body" id="modalBody"></div>
+  </div>
+</div>
+
+<script>
+/* ============================================================
+   BOLT ICON (thematic "star" replacement — factory bolt/rivet)
+============================================================ */
+function boltSVG(state){
+  // state: 'empty' | 'filled'
+  const fill = state==='filled' ? 'var(--amber)' : 'var(--navy-700)';
+  const stroke = state==='filled' ? 'var(--amber)' : 'var(--line)';
+  return `<svg class="bolt" viewBox="0 0 24 24" fill="none">
+    <polygon points="12,2 14.5,4.5 12,7 9.5,4.5" fill="${fill}" stroke="${stroke}" stroke-width="0.6"/>
+    <circle cx="12" cy="13" r="8" fill="${fill}" stroke="${stroke}" stroke-width="1.4"/>
+    <circle cx="12" cy="13" r="2.6" fill="${state==='filled' ? 'var(--navy-950)' : 'var(--navy-800)'}"/>
+    <rect x="10.6" y="8.4" width="2.8" height="1.6" fill="${state==='filled' ? 'var(--navy-950)' : 'var(--navy-800)'}"/>
+    <rect x="10.6" y="16" width="2.8" height="1.6" fill="${state==='filled' ? 'var(--navy-950)' : 'var(--navy-800)'}"/>
+  </svg>`;
+}
+function boltsRow(count, containerClass){
+  let html = '';
+  for(let i=1;i<=3;i++){ html += boltSVG(i<=count ? 'filled' : 'empty'); }
+  return html;
+}
+
+/* ============================================================
+   LESSON DATA (from Easy Korean for Manufacturing Workplaces 101)
+============================================================ */
+const LESSONS = [
+{
+  id:1, kculture:null,
+  title_kr:"첫 출근과 인사", title_en:"First Day at Work and Greetings",
+  words:[["이름","name"],["여권","passport"],["회사","company"],["공장","factory"],["계약서","contract"],
+    ["서명","signature"],["출근","go to work"],["첫날","first day"],["담당자","person in charge"],["서류","document"],
+    ["기숙사","dormitory"],["전화번호","phone number"],["주소","address"],["질문","question"],["메모","memo"]],
+  expressions:[
+    ["안녕하세요.","Hello.","greeting"],
+    ["반갑습니다.","Nice to meet you.","first meeting"],
+    ["제 이름은 ___입니다.","My name is ___.","self-introduction"],
+    ["오늘부터 일합니다.","I start work today.","first day"],
+    ["처음 왔어요.","It is my first day here.","first day"],
+    ["여권 여기 있어요.","My passport is here.","documents"],
+    ["계약서 보여주세요.","Please show me the contract.","contract"],
+    ["어디에서 서명해요?","Where do I sign?","signature"],
+    ["천천히 말해주세요.","Please speak slowly.","comprehension"],
+    ["다시 말해주세요.","Please say it again.","repeat request"]],
+  dialogues:[
+    {lines:[
+      {spk:"Worker",kr:"안녕하세요. 제 이름은 아흐메드입니다.",en:"Hello. My name is Ahmed."},
+      {spk:"Manager",kr:"반갑습니다. 오늘부터 같이 일해요.",en:"Nice to meet you. We work together from today."}]},
+    {lines:[
+      {spk:"Worker",kr:"어디에서 서명해요? 천천히 말해 주세요.",en:"Where do I sign? Please speak slowly."},
+      {spk:"Staff",kr:"여기예요. 모르겠으면 다시 물어보세요.",en:"Here. If you do not know, ask again."}]}]
+},
+{
+  id:2, kculture:"K-culture 1. Greetings and Respectful Speech",
+  title_kr:"이름, 개인정보, 질문하기", title_en:"My Name, My Information, Asking Questions",
+  words:[["나라","country"],["국적","nationality"],["주소","address"],["전화번호","phone number"],["휴대폰","mobile phone"],
+    ["질문","question"],["답","answer"],["통역","interpretation"],["영어","English"],["한국어","Korean"],
+    ["사진","picture"],["메모","note"],["도움","help"],["이해","understanding"],["설명","explanation"]],
+  expressions:[
+    ["저는 ___에서 왔어요.","I am from ___.","nationality"],
+    ["제 전화번호는 ___예요.","My phone number is ___.","contact"],
+    ["제 주소는 여기예요.","My address is here.","address"],
+    ["질문 있어요.","I have a question.","question"],
+    ["잘 모르겠어요.","I do not understand well.","comprehension"],
+    ["영어로 말해주세요.","Please speak in English.","language request"],
+    ["통역이 필요해요.","I need an interpreter.","interpretation"],
+    ["메모해주세요.","Please write it down.","memo request"],
+    ["사진으로 보여주세요.","Please show me with a picture.","visual help"],
+    ["도와주세요.","Please help me.","help request"]],
+  dialogues:[
+    {lines:[
+      {spk:"Worker",kr:"저는 이집트에서 왔어요. 제 전화번호는 여기 있어요.",en:"I am from Egypt. My phone number is here."},
+      {spk:"Staff",kr:"네, 주소도 같이 적어 주세요.",en:"Okay, please write your address too."}]},
+    {lines:[
+      {spk:"Worker",kr:"잘 모르겠어요. 사진으로 보여 주세요.",en:"I do not understand well. Please show me with a picture."},
+      {spk:"Manager",kr:"네, 메모도 해 줄게요.",en:"Yes, I will write it down too."}]}]
+},
+{
+  id:3, kculture:null,
+  title_kr:"작업 구역과 사물 이름", title_en:"Work Areas and Object Names",
+  words:[["작업장","work area"],["창고","warehouse"],["라인","line"],["기계","machine"],["박스","box"],
+    ["부품","part"],["도구","tool"],["라벨","label"],["테이프","tape"],["팔레트","pallet"],
+    ["카트","cart"],["위","top"],["아래","bottom"],["옆","side"],["앞","front"]],
+  expressions:[
+    ["작업장은 어디예요?","Where is the work area?","asking location"],
+    ["창고는 저쪽이에요?","Is the warehouse over there?","checking location"],
+    ["이 물건 이름이 뭐예요?","What is the name of this item?","item name"],
+    ["박스가 필요해요.","I need a box.","request"],
+    ["부품을 주세요.","Please give me the part.","request"],
+    ["도구가 어디 있어요?","Where is the tool?","finding tools"],
+    ["라벨을 찾고 있어요.","I am looking for the label.","finding labels"],
+    ["기계 옆에 있어요.","It is next to the machine.","location"],
+    ["위에 있어요.","It is on top.","location"],
+    ["아래에 있어요.","It is below.","location"]],
+  dialogues:[
+    {lines:[
+      {spk:"Worker",kr:"작업장은 어디예요?",en:"Where is the work area?"},
+      {spk:"Manager",kr:"저쪽 라인 옆이에요.",en:"It is next to that line."}]},
+    {lines:[
+      {spk:"Worker",kr:"박스가 필요해요. 어디 있어요?",en:"I need a box. Where is it?"},
+      {spk:"Colleague",kr:"창고 안에 있어요. 카트 옆에 있어요.",en:"It is in the warehouse. It is next to the cart."}]}]
+},
+{
+  id:4, kculture:"K-culture 2. Time, Reporting, and Responsibility",
+  title_kr:"작업 순서와 쉬운 지시어", title_en:"Work Order and Easy Instructions",
+  words:[["순서","order"],["먼저","first"],["다음","next"],["가져오다","bring"],["놓다","put"],
+    ["옮기다","move"],["포장","packing"],["정리","arrangement"],["시작","start"],["끝","end"],
+    ["속도","speed"],["실수","mistake"],["확인","check"],["재작업","rework"],["완료","finish"]],
+  expressions:[
+    ["먼저 이걸 하세요.","Do this first.","order"],
+    ["그다음 이걸 하세요.","Then do this.","order"],
+    ["이거 가져오세요.","Please bring this.","bring"],
+    ["여기에 놓으세요.","Please put it here.","put"],
+    ["이쪽으로 옮기세요.","Please move it this way.","move"],
+    ["한 개씩 하세요.","Do it one by one.","speed"],
+    ["천천히 하세요.","Please do it slowly.","speed"],
+    ["다시 보여주세요.","Please show me again.","repeat request"],
+    ["포장해주세요.","Please pack it.","packing"],
+    ["작업 끝났어요.","The work is finished.","report"]],
+  dialogues:[
+    {lines:[
+      {spk:"Manager",kr:"먼저 라벨을 붙이고, 그다음 박스에 넣으세요.",en:"First attach the label, then put it in the box."},
+      {spk:"Worker",kr:"네, 다시 보여주세요.",en:"Okay, please show me again."}]},
+    {lines:[
+      {spk:"Worker",kr:"작업 끝났어요. 확인해주세요.",en:"The work is finished. Please check it."},
+      {spk:"Manager",kr:"네, 수량을 먼저 볼게요.",en:"Okay, I will check the quantity first."}]}]
+},
+{
+  id:5, kculture:null,
+  title_kr:"보호장비와 안전 언어", title_en:"Protective Gear and Safety Language",
+  words:[["안전모","helmet"],["안전화","safety shoes"],["장갑","gloves"],["보호안경","safety goggles"],["귀마개","earplugs"],
+    ["마스크","mask"],["위험","danger"],["미끄럼","slip"],["화상","burn"],["비상구","emergency exit"],
+    ["소화기","fire extinguisher"],["환기","ventilation"],["냄새","smell"],["소리","sound"],["연기","smoke"]],
+  expressions:[
+    ["안전모를 쓰세요.","Please wear a helmet.","gear"],
+    ["안전화를 신으세요.","Please wear safety shoes.","gear"],
+    ["장갑을 끼세요.","Please wear gloves.","gear"],
+    ["여기 위험해요.","It is dangerous here.","danger"],
+    ["손 넣지 마세요.","Do not put your hand in.","machine danger"],
+    ["바닥이 미끄러워요.","The floor is slippery.","floor hazard"],
+    ["뜨거워요. 조심하세요.","It is hot. Be careful.","heat"],
+    ["냄새가 심해요.","The smell is strong.","environment"],
+    ["환기가 필요해요.","We need ventilation.","environment"],
+    ["비상구가 어디예요?","Where is the emergency exit?","evacuation"]],
+  dialogues:[
+    {lines:[
+      {spk:"Worker",kr:"여기 위험해요. 바닥이 미끄러워요.",en:"It is dangerous here. The floor is slippery."},
+      {spk:"Manager",kr:"알겠어요. 먼저 조심해서 뒤로 가세요.",en:"Okay. First, move back carefully."}]},
+    {lines:[
+      {spk:"Worker",kr:"냄새가 심해요. 환기가 필요해요.",en:"The smell is strong. We need ventilation."},
+      {spk:"Manager",kr:"네, 창문을 열고 확인하겠습니다.",en:"Yes, I will open the window and check."}]}]
+},
+{
+  id:6, kculture:"K-culture 3. Safety and Teamwork",
+  title_kr:"부상, 응급상황, 병원", title_en:"Injury, Emergency, Hospital",
+  words:[["병원","hospital"],["약국","pharmacy"],["약","medicine"],["응급","emergency"],["통증","pain"],
+    ["손","hand"],["허리","back"],["다리","leg"],["머리","head"],["피","blood"],
+    ["상처","wound"],["붕대","bandage"],["진단서","medical certificate"],["치료","treatment"],["휴식","rest"]],
+  expressions:[
+    ["다쳤어요.","I am hurt.","injury"],
+    ["손을 다쳤어요.","I hurt my hand.","body part"],
+    ["허리가 아파요.","My back hurts.","pain"],
+    ["숨쉬기 힘들어요.","I have trouble breathing.","urgent symptom"],
+    ["피가 나요.","I am bleeding.","bleeding"],
+    ["119를 불러주세요.","Please call 119.","emergency"],
+    ["응급상자 주세요.","Please give me the first-aid kit.","first aid"],
+    ["병원에 가야 해요.","I need to go to the hospital.","hospital"],
+    ["일하다가 다쳤어요.","I got hurt while working.","work accident"],
+    ["약이 필요해요.","I need medicine.","medicine"]],
+  dialogues:[
+    {lines:[
+      {spk:"Worker",kr:"손을 다쳤어요. 피가 나요.",en:"I hurt my hand. I am bleeding."},
+      {spk:"Manager",kr:"응급상자 가져오고, 필요하면 119를 부를게요.",en:"I will bring the first-aid kit, and if needed I will call 119."}]},
+    {lines:[
+      {spk:"Worker",kr:"허리가 아파요. 병원에 가야 해요.",en:"My back hurts. I need to go to the hospital."},
+      {spk:"Staff",kr:"네, 먼저 상태를 보고 같이 가요.",en:"Okay, we will check your condition first and go together."}]}]
+},
+{
+  id:7, kculture:"K-culture 4. Checking Pay and Keeping Records",
+  title_kr:"출근 시간, 휴게시간, 교대근무", title_en:"Start Time, Break Time, Shift Work",
+  words:[["시간","time"],["시작","start"],["끝","end"],["휴게 시간","break time"],["점심시간","lunch time"],
+    ["잔업","overtime"],["교대","shift"],["출근","start work"],["퇴근","leave work"],["지각","late arrival"],
+    ["조퇴","leave early"],["야간","night work"],["출석","attendance"],["쉬다","rest"],["식사","meal"]],
+  expressions:[
+    ["몇 시에 시작해요?","What time do we start?","start time"],
+    ["오늘 몇 시에 끝나요?","What time do we finish today?","end time"],
+    ["휴게시간은 언제예요?","When is break time?","break time"],
+    ["점심시간이에요?","Is it lunch time?","lunch time"],
+    ["오늘 잔업 있어요?","Is there overtime today?","overtime"],
+    ["교대근무예요?","Is it shift work?","shift"],
+    ["조금 늦을 것 같아요.","I think I will be a little late.","late notice"],
+    ["먼저 연락드릴게요.","I will contact you first.","advance notice"],
+    ["조퇴해도 돼요?","Can I leave early?","leaving early"],
+    ["내일도 같은 시간이에요?","Is it the same time tomorrow?","schedule check"]],
+  dialogues:[
+    {lines:[
+      {spk:"Worker",kr:"휴게 시간은 언제예요?",en:"When is break time?"},
+      {spk:"Manager",kr:"열 시에 쉬어요.",en:"We take a break at ten."}]},
+    {lines:[
+      {spk:"Worker",kr:"조금 늦을 것 같아요.",en:"I think I will be a little late."},
+      {spk:"Manager",kr:"네, 먼저 연락해 주세요.",en:"Okay, please contact me first."}]}]
+},
+{
+  id:8, kculture:null,
+  title_kr:"계약, 급여, 휴가, 금전 문제", title_en:"Contract, Salary, Leave, Money Problems",
+  words:[["계약서","contract"],["서명","signature"],["월급","salary"],["급여명세서","payslip"],["월급날","payday"],
+    ["수당","allowance"],["잔업","overtime"],["휴가","leave"],["연차","annual leave"],["통장","bank account"],
+    ["입금","deposit"],["돈","money"],["설명","explanation"],["확인","check"],["문제","problem"]],
+  expressions:[
+    ["계약서 다시 보여주세요.","Please show me the contract again.","contract check"],
+    ["월급날이 언제예요?","When is payday?","payday"],
+    ["급여명세서 주세요.","Please give me the payslip.","payslip"],
+    ["월급이 아직 안 들어왔어요.","My salary has not come in yet.","missing salary"],
+    ["돈이 조금 달라요.","The amount is a little different.","amount check"],
+    ["연차를 쓰고 싶어요.","I want to use annual leave.","leave request"],
+    ["오늘 휴가예요?","Is today a leave day?","leave check"],
+    ["잔업수당이 있어요?","Is there overtime pay?","allowance"],
+    ["설명이 필요해요.","I need an explanation.","pay question"],
+    ["확인 후 알려주세요.","Please check and tell me.","follow-up"]],
+  dialogues:[
+    {lines:[
+      {spk:"Worker",kr:"월급날이 언제예요?",en:"When is payday?"},
+      {spk:"Manager",kr:"매달 십오일이에요.",en:"It is on the fifteenth of every month."}]},
+    {lines:[
+      {spk:"Worker",kr:"월급이 아직 안 들어왔어요.",en:"My salary has not come in yet."},
+      {spk:"Staff",kr:"네, 확인 후 알려 드릴게요.",en:"Okay, I will check and let you know."}]}]
+},
+{
+  id:9, kculture:null,
+  title_kr:"기숙사, 방, 청소, 생활 규칙", title_en:"Dormitory, Room, Cleaning, Living Rules",
+  words:[["기숙사","dormitory"],["방","room"],["침대","bed"],["이불","blanket"],["청소","cleaning"],
+    ["쓰레기","trash"],["화장실","toilet"],["샤워실","shower room"],["세탁기","washing machine"],["전기","electricity"],
+    ["물","water"],["규칙","rule"],["조용히","quietly"],["춥다","be cold"],["덥다","be hot"]],
+  expressions:[
+    ["제 방은 어디예요?","Where is my room?","room check"],
+    ["여기서 자요?","Do I sleep here?","bed space"],
+    ["청소는 언제해요?","When do we clean?","cleaning schedule"],
+    ["쓰레기는 어디에 버려요?","Where do I throw away trash?","trash"],
+    ["조용히 해주세요.","Please be quiet.","shared room"],
+    ["방이 너무 추워요.","The room is too cold.","temperature"],
+    ["방이 너무 더워요.","The room is too hot.","temperature"],
+    ["물이 안 나와요.","The water is not coming out.","room problem"],
+    ["전기가 안 돼요.","The electricity is not working.","power problem"],
+    ["도와주세요.","Please help me.","help request"]],
+  dialogues:[
+    {lines:[
+      {spk:"Worker",kr:"쓰레기는 어디에 버려요?",en:"Where do I throw away trash?"},
+      {spk:"Colleague",kr:"밖에 있는 통에 버려요.",en:"Throw it away in the bin outside."}]},
+    {lines:[
+      {spk:"Worker",kr:"전기가 안 돼요.",en:"The electricity is not working."},
+      {spk:"Manager",kr:"네, 바로 확인할게요.",en:"Okay, I will check right away."}]}]
+},
+{
+  id:10, kculture:"K-culture 5. Daily Rules and Waste Sorting",
+  title_kr:"마트, 식당, 버스, 은행, 전화", title_en:"Mart, Restaurant, Bus, Bank, Phone",
+  words:[["마트","mart"],["식당","restaurant"],["메뉴","menu"],["가격","price"],["카드","card"],
+    ["현금","cash"],["봉투","bag"],["버스","bus"],["정류장","bus stop"],["은행","bank"],
+    ["통장","bankbook/account"],["휴대폰","mobile phone"],["충전기","charger"],["영수증","receipt"],["맵다","spicy"]],
+  expressions:[
+    ["이거 얼마예요?","How much is this?","price"],
+    ["카드 돼요?","Can I pay by card?","payment"],
+    ["봉투 주세요.","Please give me a bag.","shopping"],
+    ["안 매운 음식 있어요?","Do you have food that is not spicy?","restaurant"],
+    ["버스정류장이 어디예요?","Where is the bus stop?","transport"],
+    ["이 버스 맞아요?","Is this the right bus?","bus check"],
+    ["통장을 만들고 싶어요.","I want to open a bank account.","bank"],
+    ["휴대폰이 안돼요.","My phone is not working.","phone problem"],
+    ["충전기 있어요?","Do you have a charger?","phone"],
+    ["다시 한번 말해주세요.","Please say it one more time.","daily help"]],
+  dialogues:[
+    {lines:[
+      {spk:"Worker",kr:"이거 얼마예요?",en:"How much is this?"},
+      {spk:"Clerk",kr:"오천 원이에요.",en:"It is five thousand won."}]},
+    {lines:[
+      {spk:"Worker",kr:"버스 정류장이 어디예요?",en:"Where is the bus stop?"},
+      {spk:"Passerby",kr:"저기 앞에 있어요.",en:"It is over there in front."}]}]
+},
+{
+  id:11, kculture:null,
+  title_kr:"문제 말하기, 도움 요청, 통역 요청", title_en:"Saying a Problem, Asking for Help, Asking for Interpretation",
+  words:[["문제","problem"],["도움","help"],["질문","question"],["설명","explanation"],["통역","interpretation"],
+    ["영어","English"],["아랍어","Arabic"],["담당자","person in charge"],["사무실","office"],["전화","phone call"],
+    ["메시지","message"],["같이","together"],["이해","understanding"],["천천히","slowly"],["확인","check"]],
+  expressions:[
+    ["문제가 있어요.","There is a problem.","problem report"],
+    ["도와주세요.","Please help me.","help request"],
+    ["잘 모르겠어요.","I do not understand well.","comprehension"],
+    ["다시 설명해주세요.","Please explain again.","re-explanation request"],
+    ["천천히 말해주세요.","Please speak slowly.","speed request"],
+    ["영어로 가능해요?","Is English possible?","language support"],
+    ["통역이 필요해요.","I need interpretation.","interpretation"],
+    ["지금 가도 돼요?","Can I go now?","permission request"],
+    ["같이 가주세요.","Please go with me.","support request"],
+    ["어디에 물어봐요?","Where do I ask?","guidance request"]],
+  dialogues:[
+    {lines:[
+      {spk:"Worker",kr:"잘 모르겠어요. 다시 설명해 주세요.",en:"I do not understand well. Please explain again."},
+      {spk:"Manager",kr:"네, 천천히 다시 말할게요.",en:"Okay, I will say it again slowly."}]},
+    {lines:[
+      {spk:"Worker",kr:"통역이 필요해요.",en:"I need interpretation."},
+      {spk:"Staff",kr:"네, 같이 알아볼게요.",en:"Okay, we will check it together."}]}]
+},
+{
+  id:12, kculture:"K-culture 6. Studying Korean and Growing Step by Step",
+  title_kr:"관리자와 대화하기, 목표, 한국생활 이어가기", title_en:"Talking Well with the Manager, Goals, Continuing Life in Korea",
+  words:[["목표","goal"],["계획","plan"],["배우다","learn"],["연습","practice"],["관리자","manager"],
+    ["회사","company"],["비자","visa"],["체류","stay"],["도움","help"],["기관","service office"],
+    ["공부","study"],["감사","thanks"],["약속","promise"],["문제","problem"],["미래","future"]],
+  expressions:[
+    ["열심히 하겠습니다.","I will do my best.","work attitude"],
+    ["배우고 싶어요.","I want to learn.","learning goal"],
+    ["더 잘하고 싶어요.","I want to do better.","improvement"],
+    ["오늘 목표가 뭐예요?","What is today's goal?","daily goal"],
+    ["비자 확인이 필요해요.","I need to check my visa.","visa check"],
+    ["도움받을 곳이 있어요?","Is there a place where I can get help?","support service"],
+    ["문제가 생기면 말할게요.","If a problem comes up, I will say it.","reporting"],
+    ["계속 공부할게요.","I will keep studying.","language learning"],
+    ["감사합니다.","Thank you.","closing"],
+    ["잘 부탁드립니다.","Please take good care of me.","polite closing"]],
+  dialogues:[
+    {lines:[
+      {spk:"Worker",kr:"오늘 목표가 뭐예요?",en:"What is today's goal?"},
+      {spk:"Manager",kr:"오늘은 수량과 안전을 같이 봐요.",en:"Today we check both quantity and safety together."}]},
+    {lines:[
+      {spk:"Worker",kr:"비자 확인이 필요해요.",en:"I need to check my visa."},
+      {spk:"Staff",kr:"네, 도움받을 곳을 같이 찾아볼게요.",en:"Okay, we will find a place where you can get help together."}]}]
+}
+];
+
+/* ============================================================
+   STATE
+============================================================ */
+const progress = {}; // {lessonId: {words:0-3, expr:0-3, dialog:0-3}}
+LESSONS.forEach(l => progress[l.id] = {words:0, expr:0, dialog:0});
+
+let activeLessonId = null;
+let quizState = null; // {stage, questions, idx, score, lessonId}
+
+/* ============================================================
+   UTIL
+============================================================ */
+function shuffle(arr){
+  const a = arr.slice();
+  for(let i=a.length-1;i>0;i--){
+    const j = Math.floor(Math.random()*(i+1));
+    [a[i],a[j]]=[a[j],a[i]];
+  }
+  return a;
+}
+function pickN(arr, n, excludeIdx){
+  const pool = arr.map((v,i)=>i).filter(i=>i!==excludeIdx);
+  return shuffle(pool).slice(0,n).map(i=>arr[i]);
+}
+function starsFromPct(pct){
+  if(pct>=90) return 3;
+  if(pct>=70) return 2;
+  if(pct>=50) return 1;
+  return 0;
+}
+
+/* ============================================================
+   QUIZ GENERATORS
+============================================================ */
+function genWordQuiz(lesson){
+  const words = lesson.words;
+  const n = Math.min(8, words.length);
+  const idxs = shuffle(words.map((_,i)=>i)).slice(0,n);
+  return idxs.map(i=>{
+    const correct = words[i];
+    const distractors = pickN(words, 3, i);
+    const options = shuffle([correct, ...distractors]);
+    return {
+      type:"word",
+      qtext: correct[0],
+      qsub: "다음 단어의 뜻은 무엇일까요? (What does this word mean?)",
+      options: options.map(o=>o[1]),
+      correctAnswer: correct[1]
+    };
+  });
+}
+
+function genExprQuiz(lesson){
+  const exprs = lesson.expressions;
+  const n = Math.min(8, exprs.length);
+  const idxs = shuffle(exprs.map((_,i)=>i)).slice(0,n);
+  return idxs.map(i=>{
+    const correct = exprs[i];
+    const distractors = pickN(exprs, 3, i);
+    const options = shuffle([correct, ...distractors]);
+    return {
+      type:"expr",
+      qtext: correct[1],
+      qsub: "이 뜻에 맞는 한국어 표현을 고르세요. (Choose the correct Korean expression.)",
+      options: options.map(o=>o[0]),
+      correctAnswer: correct[0]
+    };
+  });
+}
+
+function genDialogQuiz(lesson){
+  // For each dialogue, blank out the 2nd line; answer = correct kr line
+  // distractors pulled from this lesson's expressions + other dialogue lines
+  const pool = lesson.expressions.map(e=>e[0]);
+  const qs = [];
+  lesson.dialogues.forEach((d, di)=>{
+    const blankIdx = 1; // second line
+    const correctLine = d.lines[blankIdx];
+    const contextLines = d.lines.filter((_,i)=>i!==blankIdx);
+    const distractorPool = shuffle(pool.filter(p=>p!==correctLine.kr)).slice(0,3);
+    const options = shuffle([correctLine.kr, ...distractorPool]);
+    qs.push({
+      type:"dialog",
+      qtext: `${correctLine.spk}의 대답으로 알맞은 것은? (Choose ${correctLine.spk}'s correct line.)`,
+      qsub: "",
+      context: contextLines,
+      options: options,
+      correctAnswer: correctLine.kr,
+      hintEn: correctLine.en
+    });
+  });
+  // duplicate/shuffle to make 4 questions total if only 2 dialogues (ask blank on line1 too)
+  lesson.dialogues.forEach((d)=>{
+    const blankIdx = 0;
+    const correctLine = d.lines[blankIdx];
+    const contextLines = d.lines.filter((_,i)=>i!==blankIdx);
+    const distractorPool = shuffle(pool.filter(p=>p!==correctLine.kr)).slice(0,3);
+    const options = shuffle([correctLine.kr, ...distractorPool]);
+    qs.push({
+      type:"dialog",
+      qtext: `${correctLine.spk}의 첫 대사로 알맞은 것은? (Choose ${correctLine.spk}'s opening line.)`,
+      qsub: "",
+      context: contextLines,
+      options: options,
+      correctAnswer: correctLine.kr,
+      hintEn: correctLine.en
+    });
+  });
+  return shuffle(qs);
+}
+
+/* ============================================================
+   RENDER: LESSON GRID
+============================================================ */
+function renderLessonGrid(){
+  const grid = document.getElementById('lessonGrid');
+  grid.innerHTML = '';
+  LESSONS.forEach(l=>{
+    const p = progress[l.id];
+    const total = p.words + p.expr + p.dialog;
+    const cls = total===9 ? 'complete' : (total>0 ? 'has-progress' : '');
+    const div = document.createElement('div');
+    div.className = `ticket ${cls}`;
+    div.onclick = () => openLesson(l.id);
+    div.innerHTML = `
+      <div class="num">LESSON ${String(l.id).padStart(2,'0')}</div>
+      <h3>${l.title_kr}</h3>
+      <div class="en">${l.title_en}</div>
+      ${l.kculture ? `<div class="kculture-tag">${l.kculture.split('.')[0]}</div>` : ''}
+      <div class="bolts-row">
+        <div class="bolt-slot">${boltsRow(p.words)}<span>단어</span></div>
+        <div class="bolt-slot">${boltsRow(p.expr)}<span>표현</span></div>
+        <div class="bolt-slot">${boltsRow(p.dialog)}<span>대화</span></div>
+      </div>
+    `;
+    grid.appendChild(div);
+  });
+  updateOverview();
+}
+
+function updateOverview(){
+  let totalBolts = 0;
+  let lessonsDone = 0;
+  LESSONS.forEach(l=>{
+    const p = progress[l.id];
+    const sum = p.words + p.expr + p.dialog;
+    totalBolts += sum;
+    if(sum === 9) lessonsDone++;
+  });
+  const xp = totalBolts * 40;
+  document.getElementById('xpTotal').textContent = xp;
+  document.getElementById('lessonsDone').textContent = lessonsDone;
+  document.getElementById('poXp').textContent = xp;
+  document.getElementById('poBolts').textContent = totalBolts + ' / 36';
+  const pct = Math.round((totalBolts/36)*100);
+  document.getElementById('poPercent').textContent = pct + '%';
+  document.getElementById('poTrack').style.width = pct + '%';
+}
+
+/* ============================================================
+   RENDER: LESSON MODAL
+============================================================ */
+function openLesson(id){
+  activeLessonId = id;
+  const lesson = LESSONS.find(l=>l.id===id);
+  document.getElementById('modalTitleKr').textContent = `Lesson ${id} · ${lesson.title_kr}`;
+  document.getElementById('modalTitleEn').textContent = lesson.title_en + (lesson.kculture ? '  ·  ' + lesson.kculture : '');
+  document.getElementById('modalBody').innerHTML = renderLessonBody(lesson);
+  document.getElementById('overlay').classList.add('active');
+  bindLessonTabs();
+  bindStageButtons(lesson);
+}
+
+function renderLessonBody(lesson){
+  const p = progress[lesson.id];
+  return `
+    <div class="tabbar">
+      <button class="tabbtn active" data-tab="study">📖 학습 (Study)</button>
+      <button class="tabbtn" data-tab="test">🎯 테스트 (Test)</button>
+    </div>
+
+    <div class="panel active" id="panel-study">
+      <div class="audio-hint">🔊 <b>단어·표현·대화를 클릭</b>하면 한국어 발음을 들을 수 있어요. Click any Korean text to hear it spoken aloud.</div>
+      <div class="study-block">
+        <h4>Key Words (${lesson.words.length})</h4>
+        <div class="word-grid">
+          ${lesson.words.map(w=>`<div class="word-chip" data-speak="${escAttr(w[0])}"><div class="kr">${w[0]}<span class="speak-icon">🔊</span></div><div class="en">${w[1]}</div></div>`).join('')}
+        </div>
+      </div>
+      <div class="study-block">
+        <h4>10 Core Expressions</h4>
+        ${lesson.expressions.map((e,i)=>`<div class="expr-row" data-speak="${escAttr(e[0])}"><div class="no">${i+1}</div><div class="kr">${e[0]}<span class="speak-icon">🔊</span></div><div class="en">${e[1]}</div></div>`).join('')}
+      </div>
+      <div class="study-block">
+        <h4>Dialogue Practice</h4>
+        ${lesson.dialogues.map(d=>`
+          <div class="dialog-card">
+            ${d.lines.map(ln=>`
+              <div class="dline" data-speak="${escAttr(ln.kr)}">
+                <div class="spk">${ln.spk}</div>
+                <div class="txt"><div class="kr">${ln.kr}<span class="speak-icon">🔊</span></div><div class="en">${ln.en}</div></div>
+              </div>`).join('')}
+          </div>`).join('')}
+      </div>
+    </div>
+
+    <div class="panel" id="panel-test">
+      <p style="color:var(--muted); font-size:13px; margin-top:0;">단어 → 표현 → 대화 순서로 진행하는 것을 권장합니다. 각 단계 정답률에 따라 볼트(bolt) 배지를 획득합니다 (90%↑ = 볼트 3개).</p>
+      <div class="stage-grid">
+        <div class="stage-card">
+          <h4>🔤 단어 테스트</h4>
+          <div class="desc">핵심 단어 8문제 · 객관식</div>
+          <div class="stage-bolt-status" id="status-words">${boltsRow(p.words)}</div>
+          <button class="btn btn-primary" data-stage="words">테스트 시작</button>
+        </div>
+        <div class="stage-card">
+          <h4>💬 표현 테스트</h4>
+          <div class="desc">핵심 표현 8문제 · 영→한 매칭</div>
+          <div class="stage-bolt-status" id="status-expr">${boltsRow(p.expr)}</div>
+          <button class="btn btn-primary" data-stage="expr">테스트 시작</button>
+        </div>
+        <div class="stage-card">
+          <h4>🗣️ 대화 테스트</h4>
+          <div class="desc">대화 완성 4문제 · 빈칸 채우기</div>
+          <div class="stage-bolt-status" id="status-dialog">${boltsRow(p.dialog)}</div>
+          <button class="btn btn-primary" data-stage="dialog">테스트 시작</button>
+        </div>
+      </div>
+      <div id="quizArea" style="margin-top:22px;"></div>
+    </div>
+  `;
+}
+
+function bindLessonTabs(){
+  document.querySelectorAll('.tabbtn').forEach(btn=>{
+    btn.onclick = () => {
+      document.querySelectorAll('.tabbtn').forEach(b=>b.classList.remove('active'));
+      document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById('panel-' + btn.dataset.tab).classList.add('active');
+    };
+  });
+}
+
+function bindStageButtons(lesson){
+  document.querySelectorAll('[data-stage]').forEach(btn=>{
+    btn.onclick = () => startQuiz(lesson, btn.dataset.stage);
+  });
+}
+
+/* ============================================================
+   QUIZ RUNNER
+============================================================ */
+function startQuiz(lesson, stage){
+  let questions;
+  if(stage==='words') questions = genWordQuiz(lesson);
+  else if(stage==='expr') questions = genExprQuiz(lesson);
+  else questions = genDialogQuiz(lesson);
+
+  quizState = { lessonId: lesson.id, stage, questions, idx:0, score:0, answered:false };
+  renderQuestion();
+}
+
+function renderQuestion(){
+  const area = document.getElementById('quizArea');
+  const qs = quizState.questions;
+  const q = qs[quizState.idx];
+  const pct = Math.round((quizState.idx / qs.length) * 100);
+
+  const stageLabel = quizState.stage==='words' ? '단어 (Words)' : quizState.stage==='expr' ? '표현 (Expressions)' : '대화 (Dialogue)';
+
+  let contextHtml = '';
+  if(q.context){
+    contextHtml = `<div class="dialog-context">${q.context.map(c=>`<div class="dline" data-speak="${escAttr(c.kr)}"><div class="spk">${c.spk}</div><div class="txt"><div class="kr">${c.kr}<span class="speak-icon">🔊</span></div><div class="en">${c.en}</div></div></div>`).join('')}</div>`;
+  }
+
+  area.innerHTML = `
+    <div class="quiz-runner">
+      <div class="quiz-progress">
+        <span class="qcount">${stageLabel} · ${quizState.idx+1} / ${qs.length}</span>
+        <div class="track"><div style="width:${pct}%"></div></div>
+        <span class="qscore">점수 ${quizState.score}</span>
+      </div>
+      <div class="question-box">
+        <div class="qtag">${q.type==='word' ? 'WORD MATCH' : q.type==='expr' ? 'EXPRESSION MATCH' : 'DIALOGUE COMPLETION'}</div>
+        ${contextHtml}
+        <div class="qtext ${q.type!=='dialog' ? 'kr-big' : ''}">${q.qtext}</div>
+        ${q.qsub ? `<div class="qsub">${q.qsub}</div>` : ''}
+        <div class="options" id="optionsWrap"></div>
+        <div class="feedback-bar" id="feedbackBar" style="display:none;">
+          <div class="feedback-msg" id="feedbackMsg"></div>
+          <button class="btn btn-primary" id="nextBtn">다음 →</button>
+        </div>
+      </div>
+    </div>
+  `;
+
+  const optWrap = document.getElementById('optionsWrap');
+  const letters = ['A','B','C','D'];
+  q.options.forEach((opt, i)=>{
+    const b = document.createElement('button');
+    b.className = 'opt';
+    b.innerHTML = `<span class="letter">${letters[i]}</span><span>${opt}</span>`;
+    b.onclick = () => selectAnswer(opt, b);
+    optWrap.appendChild(b);
+  });
+}
+
+function selectAnswer(chosen, btnEl){
+  if(quizState.answered) return;
+  quizState.answered = true;
+  const q = quizState.questions[quizState.idx];
+  const correct = chosen === q.correctAnswer;
+  if(correct) quizState.score++;
+
+  document.querySelectorAll('#optionsWrap .opt').forEach(b=>{
+    b.classList.add('disabled');
+    const label = b.querySelector('span:last-child').textContent;
+    if(label === q.correctAnswer) b.classList.add('correct');
+    else if(b === btnEl) b.classList.add('wrong');
+  });
+
+  const fb = document.getElementById('feedbackBar');
+  const msg = document.getElementById('feedbackMsg');
+  fb.style.display = 'flex';
+  if(correct){
+    msg.textContent = '정답입니다! Correct!';
+    msg.className = 'feedback-msg good';
+  } else {
+    msg.textContent = `오답입니다. 정답: ${q.correctAnswer}${q.hintEn ? ' (' + q.hintEn + ')' : ''}`;
+    msg.className = 'feedback-msg bad';
+  }
+
+  document.getElementById('nextBtn').onclick = () => {
+    quizState.idx++;
+    quizState.answered = false;
+    if(quizState.idx >= quizState.questions.length){
+      finishQuiz();
+    } else {
+      renderQuestion();
+    }
+  };
+}
+
+function finishQuiz(){
+  const total = quizState.questions.length;
+  const pct = Math.round((quizState.score/total)*100);
+  const stars = starsFromPct(pct);
+  const stage = quizState.stage;
+  const lessonId = quizState.lessonId;
+
+  if(stars > progress[lessonId][stage]){
+    progress[lessonId][stage] = stars;
+  }
+
+  let msg;
+  if(stars===3) msg = '완벽합니다! 볼트 3개를 모두 획득했습니다. Excellent — full marks!';
+  else if(stars===2) msg = '잘했어요! 조금만 더 복습하면 볼트 3개를 채울 수 있어요.';
+  else if(stars===1) msg = '통과했습니다. 학습 탭에서 다시 한 번 복습해 보세요.';
+  else msg = '아쉽지만 재도전이 필요해요. 학습 탭을 다시 확인한 후 재시험 보세요.';
+
+  const area = document.getElementById('quizArea');
+  area.innerHTML = `
+    <div class="question-box result-box">
+      <div class="qtag">TEST RESULT</div>
+      <div class="result-score">${quizState.score} / ${total}</div>
+      <div class="result-label">정답률 ${pct}%</div>
+      <div class="result-bolts">${boltsRow(stars)}</div>
+      <div class="result-msg">${msg}</div>
+      <div class="start-quiz-row" style="justify-content:center;">
+        <button class="btn btn-ghost" id="retryBtn">다시 도전</button>
+        <button class="btn btn-primary" id="backBtn">차시 목록으로</button>
+      </div>
+    </div>
+  `;
+  document.getElementById('retryBtn').onclick = () => startQuiz(LESSONS.find(l=>l.id===lessonId), stage);
+  document.getElementById('backBtn').onclick = () => closeModal();
+
+  // refresh stage bolt indicator + grid
+  const statusEl = document.getElementById('status-' + stage);
+  if(statusEl) statusEl.innerHTML = boltsRow(progress[lessonId][stage]);
+  updateOverview();
+}
+
+/* ============================================================
+   MODAL CONTROL
+============================================================ */
+function closeModal(){
+  document.getElementById('overlay').classList.remove('active');
+  activeLessonId = null;
+  quizState = null;
+  renderLessonGrid();
+}
+document.getElementById('closeModal').onclick = closeModal;
+document.getElementById('overlay').addEventListener('click', (e)=>{
+  if(e.target.id === 'overlay') closeModal();
+});
+document.addEventListener('keydown', (e)=>{
+  if(e.key === 'Escape') closeModal();
+});
+
+/* ============================================================
+   TEXT-TO-SPEECH (Web Speech API)
+============================================================ */
+let slowMode = false;
+let currentSpeakEl = null;
+
+function escAttr(str){
+  return String(str).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+function getKoreanVoice(){
+  const voices = window.speechSynthesis.getVoices();
+  return voices.find(v => v.lang === 'ko-KR') || voices.find(v => v.lang && v.lang.toLowerCase().startsWith('ko')) || null;
+}
+
+function speakKorean(text, el){
+  if(!('speechSynthesis' in window)){
+    alert('이 브라우저는 음성 재생을 지원하지 않습니다. (Speech playback is not supported in this browser — try Chrome or Edge.)');
+    return;
+  }
+  window.speechSynthesis.cancel();
+  if(currentSpeakEl) currentSpeakEl.classList.remove('is-speaking');
+
+  const utter = new SpeechSynthesisUtterance(text);
+  utter.lang = 'ko-KR';
+  utter.rate = slowMode ? 0.6 : 0.95;
+  utter.pitch = 1;
+  const voice = getKoreanVoice();
+  if(voice) utter.voice = voice;
+
+  if(el){
+    el.classList.add('is-speaking');
+    currentSpeakEl = el;
+  }
+  const clear = () => {
+    if(el) el.classList.remove('is-speaking');
+    if(currentSpeakEl === el) currentSpeakEl = null;
+  };
+  utter.onend = clear;
+  utter.onerror = clear;
+
+  window.speechSynthesis.speak(utter);
+}
+
+// Chrome/Edge load the voice list asynchronously — warm it up early.
+if('speechSynthesis' in window){
+  window.speechSynthesis.getVoices();
+  window.speechSynthesis.onvoiceschanged = () => window.speechSynthesis.getVoices();
+}
+
+// Event delegation: any word chip / expression row / dialogue line is clickable.
+document.addEventListener('click', (e) => {
+  const target = e.target.closest('.word-chip, .expr-row, .dline');
+  if(!target) return;
+  const text = target.dataset.speak || (target.querySelector('.kr') ? target.querySelector('.kr').textContent.trim() : target.textContent.trim());
+  if(text) speakKorean(text, target);
+});
+
+// Global "slow speech" toggle in the top bar
+const slowToggleBtn = document.getElementById('slowToggle');
+if(slowToggleBtn){
+  slowToggleBtn.onclick = () => {
+    slowMode = !slowMode;
+    const stateEl = document.getElementById('slowState');
+    stateEl.textContent = slowMode ? 'ON' : 'OFF';
+    stateEl.style.color = slowMode ? 'var(--amber)' : 'var(--muted-2)';
+    slowToggleBtn.style.borderColor = slowMode ? 'var(--amber-dim)' : 'var(--line)';
+    slowToggleBtn.style.background = slowMode ? 'rgba(224,138,46,0.14)' : '';
+  };
+}
+
+/* ============================================================
+   INIT
+============================================================ */
+renderLessonGrid();
+</script>
+</body>
+</html>
