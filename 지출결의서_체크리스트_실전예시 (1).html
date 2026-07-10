@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<title>지출결의서 작성 체크리스트 — 실전 예시 첨부</title>
+<style>
+  :root{
+    --bg:#f6f7f5;
+    --panel:#ffffff;
+    --ink:#1f2a24;
+    --muted:#5b6960;
+    --line:#dfe4de;
+    --navy:#1e3a34;
+    --ok:#2f7a4f;
+    --ok-bg:#eaf5ee;
+    --bad:#b3372c;
+    --bad-bg:#fbeae8;
+    --warn:#9a6a10;
+    --warn-bg:#fbf1de;
+    --stamp:#c23b2e;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:var(--bg);
+    color:var(--ink);
+    font-family:"Pretendard","Apple SD Gothic Neo","Malgun Gothic",sans-serif;
+    line-height:1.55;
+  }
+  .wrap{max-width:960px;margin:0 auto;padding:48px 24px 80px;}
+
+  header.top{margin-bottom:36px;}
+  .eyebrow{
+    font-size:12px;letter-spacing:.14em;color:var(--muted);
+    text-transform:uppercase;margin-bottom:10px;font-weight:600;
+  }
+  h1{
+    font-size:30px;margin:0 0 8px;color:var(--navy);letter-spacing:-0.01em;
+  }
+  .sub{color:var(--muted);font-size:15px;max-width:640px;}
+
+  .banner{
+    display:flex;gap:14px;align-items:flex-start;
+    background:var(--bad-bg);border:1px solid #f0c6c0;border-radius:10px;
+    padding:18px 20px;margin:28px 0 40px;
+  }
+  .banner .dot{
+    flex:0 0 auto;width:26px;height:26px;border-radius:50%;
+    background:var(--bad);color:#fff;display:flex;align-items:center;justify-content:center;
+    font-size:15px;font-weight:700;
+  }
+  .banner .txt b{color:var(--bad);}
+  .banner .txt{font-size:14.5px;color:#5a2c26;}
+
+  section{margin-bottom:44px;}
+  h2{
+    font-size:20px;color:var(--navy);margin:0 0 4px;
+    display:flex;align-items:center;gap:10px;
+  }
+  h2 .num{
+    font-size:12px;background:var(--navy);color:#fff;border-radius:6px;
+    padding:3px 8px;font-weight:700;
+  }
+  .section-note{color:var(--muted);font-size:13.5px;margin:6px 0 18px;}
+
+  /* Document mock */
+  .doc{
+    background:var(--panel);border:1px solid var(--line);border-radius:10px;
+    padding:0;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,0.04);
+  }
+  .doc-title{
+    text-align:center;font-size:20px;font-weight:700;padding:20px 0 16px;
+    color:var(--navy);border-bottom:2px solid var(--navy);
+  }
+  table.field-table{width:100%;border-collapse:collapse;font-size:13.5px;}
+  table.field-table td{
+    border:1px solid var(--line);padding:9px 12px;vertical-align:top;
+  }
+  td.label{
+    background:#f2f4f1;color:var(--muted);font-weight:600;width:130px;white-space:nowrap;
+  }
+  td.val{position:relative;}
+  .flag{
+    display:inline-flex;align-items:center;gap:6px;margin-top:6px;
+    font-size:12px;font-weight:700;padding:2px 8px;border-radius:20px;
+  }
+  .flag.ok{background:var(--ok-bg);color:var(--ok);}
+  .flag.bad{background:var(--bad-bg);color:var(--bad);}
+  .flag.warn{background:var(--warn-bg);color:var(--warn);}
+  .highlight-bad{
+    background:var(--bad-bg);outline:2px solid var(--bad);outline-offset:-2px;
+  }
+  .highlight-ok{
+    background:var(--ok-bg);
+  }
+
+  /* Checklist summary cards */
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+  @media(max-width:640px){.grid{grid-template-columns:1fr;}}
+  .card{
+    border-radius:10px;padding:16px 18px;border:1px solid var(--line);background:var(--panel);
+  }
+  .card.bad{border-color:#f0c6c0;background:var(--bad-bg);}
+  .card.ok{border-color:#c9e3d2;background:var(--ok-bg);}
+  .card .head{display:flex;align-items:center;gap:8px;font-weight:700;font-size:14.5px;margin-bottom:6px;}
+  .card.bad .head{color:var(--bad);}
+  .card.ok .head{color:var(--ok);}
+  .card p{margin:0;font-size:13.5px;color:var(--ink);}
+  .badge{
+    font-size:11px;border-radius:5px;padding:2px 6px;font-weight:800;color:#fff;
+  }
+  .badge.x{background:var(--bad);}
+  .badge.o{background:var(--ok);}
+
+  /* Quick checklist */
+  .checklist{list-style:none;margin:0;padding:0;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:var(--panel);}
+  .checklist li{
+    display:flex;gap:12px;align-items:flex-start;padding:14px 18px;
+    border-bottom:1px solid var(--line);font-size:14px;
+  }
+  .checklist li:last-child{border-bottom:none;}
+  .checklist .box{
+    flex:0 0 auto;width:18px;height:18px;border:2px solid var(--navy);border-radius:4px;margin-top:2px;
+  }
+  .checklist b{color:var(--navy);}
+  .checklist .why{display:block;color:var(--muted);font-size:12.5px;margin-top:2px;}
+
+  footer{
+    margin-top:56px;padding-top:20px;border-top:1px solid var(--line);
+    color:var(--muted);font-size:12.5px;
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="top">
+    <div class="eyebrow">해외팀 · 지출결의서 실무 가이드</div>
+    <h1>지출결의서 작성 체크리스트</h1>
+    <div class="sub">7월 9일 상신된 [해외팀] 말레이시아 출장 대여비 건(해외팀-2607-013)을 실제 예시로 놓고, 어디서 틀리기 쉬운지 바로 확인할 수 있도록 표시했습니다.</div>
+  </header>
+
+  <div class="banner" style="background:var(--ok-bg);border-color:#c9e3d2;">
+    <div class="dot" style="background:var(--ok);">✓</div>
+    <div class="txt" style="color:#1c4a30;"><b>정정합니다</b>: 첨부된 "비차량 대여.pdf" 옆의 체인(🔗) 아이콘은 해당 파일의 공유 링크를 생성하는 기능이며, 이 회사 시스템에서는 이 링크가 참조문서(원인보고서) 연동과 동일하게 인정됩니다. 화면상 참조문서란 문구는 "선택된 문서가 없습니다"로 보이지만, 실제로는 첨부파일의 링크 기능으로 연동이 되어 있는 상태입니다 — 이 항목은 오류가 아닙니다. 아래 표와 판정을 수정했습니다.</div>
+  </div>
+
+  <section>
+    <h2><span class="num">1</span> 실전 예시 — 필드별 점검</h2>
+    <p class="section-note">아래는 제출된 결의서의 각 항목을 체크리스트 기준으로 대조한 결과입니다. 빨간 칸이 실제로 자주 틀리는 지점입니다.</p>
+
+    <div class="doc">
+      <div class="doc-title">지출결의서</div>
+      <table class="field-table">
+        <tr>
+          <td class="label">상단 댓글</td>
+          <td class="val highlight-warn" style="background:var(--warn-bg);">
+            조경형 팀장 · "[기안서] 말레이시아 대표단 방한 초청 및 환대 계획_마케팅본부(해외팀)_조경형_260609"
+            <div class="flag warn">! 댓글 자체는 연동 아님 — 그 옆 첨부파일의 링크로 실제 연동됨</div>
+          </td>
+        </tr>
+        <tr>
+          <td class="label">문서번호</td>
+          <td class="val">해외팀-2607-013</td>
+        </tr>
+        <tr>
+          <td class="label">작성일자</td>
+          <td class="val">2026-07-09 14:42</td>
+        </tr>
+        <tr>
+          <td class="label">회계일자 <span style="font-weight:400;color:var(--muted);">(문서 단위)</span></td>
+          <td class="val highlight-ok">
+            2026.06.30
+            <div class="flag ok">✓ 지출내역 증빙일 기준 회계기간과 일치</div>
+          </td>
+        </tr>
+        <tr>
+          <td class="label">거래일자 <span style="font-weight:400;color:var(--muted);">(줄 단위)</span></td>
+          <td class="val highlight-ok">
+            2026.06.30 (1건)
+            <div class="flag ok">✓ 해당 줄 증빙(세금계산서) 작성일과 일치</div>
+          </td>
+        </tr>
+        <tr>
+          <td class="label">수신참조</td>
+          <td class="val highlight-ok">
+            경영지원팀, 팀장 임옥선, 프로 강지우, 프로 우지훈
+            <div class="flag ok">✓ 경영지원팀 포함 — 열람 권한 확보</div>
+          </td>
+        </tr>
+        <tr>
+          <td class="label">협조(집행)</td>
+          <td class="val highlight-ok">
+            임옥선 팀장
+            <div class="flag ok">✓ 보통예금(계좌이체) 집행 건 — 담당자 일치</div>
+          </td>
+        </tr>
+        <tr>
+          <td class="label">지급방법</td>
+          <td class="val">은행 이체 · (주)케이엔트카 · 세금계산서</td>
+        </tr>
+        <tr>
+          <td class="label">프로젝트</td>
+          <td class="val highlight-warn" style="background:var(--warn-bg);">
+            해외팀
+            <div class="flag warn">! 팀 공통경비 여부 확인 필요</div>
+          </td>
+        </tr>
+        <tr>
+          <td class="label">참조문서</td>
+          <td class="val highlight-warn" style="background:var(--warn-bg);">
+            "선택된 문서가 없습니다." (화면 표기)
+            <div class="flag warn">! 필드 표기는 비어 있으나, 실제 연동은 첨부파일 링크로 이루어짐</div>
+          </td>
+        </tr>
+        <tr>
+          <td class="label">첨부파일</td>
+          <td class="val highlight-ok">
+            비차량 대여.pdf (264.77 KB) — 1개 · 🔗 링크 아이콘 포함
+            <div class="flag ok">✓ 링크 생성됨 — 원인보고서 연동 유효</div>
+          </td>
+        </tr>
+      </table>
+    </div>
+    <p class="section-note" style="margin-top:14px;">정정: 첨부파일의 체인(🔗) 아이콘은 공유 링크를 생성하며, 이 회사에서는 이 링크가 참조문서 연동과 동일하게 인정됩니다. 다만 참조문서란 자체의 화면 문구는 "선택된 문서가 없습니다"로 그대로 남아 있어 오해하기 쉬우니, 실제 연동 여부는 첨부파일의 링크 아이콘 생성 여부로 판단해야 합니다.</p>
+  </section>
+
+
+  <section>
+    <h2><span class="num">2</span> 이번 건의 판정 요약</h2>
+    <div class="grid">
+      <div class="card ok">
+        <div class="head"><span class="badge o">PASS</span> 원인보고서 연동</div>
+        <p>"비차량 대여.pdf" 첨부파일에 🔗 링크가 생성되어 있어 참조문서 연동과 동일하게 인정됩니다. 참조문서란 화면 문구는 "선택된 문서가 없습니다"로 남아 있지만, 실제 연동은 첨부파일 링크로 이루어진 상태입니다.</p>
+      </div>
+      <div class="card warn" style="background:var(--warn-bg);border-color:#eddba0;">
+        <div class="head" style="color:var(--warn);"><span class="badge" style="background:var(--warn);">확인</span> 프로젝트 코드</div>
+        <p>"해외팀"으로 지정되어 있습니다. 이 출장이 팀장 워크샵처럼 전사 공통 성격이라면 <b>'아이지 전사 공통'</b> 코드로 정정이 필요할 수 있습니다. 팀 고유 출장이면 그대로 두어도 무방합니다.</p>
+      </div>
+      <div class="card ok">
+        <div class="head"><span class="badge o">PASS</span> 날짜 기준</div>
+        <p>회계일자·거래일자가 증빙(세금계산서) 작성일인 6월 30일에 맞춰져 있습니다. 실제 결제·상신이 7월이어도 증빙일 기준으로 정확히 처리된 사례입니다.</p>
+      </div>
+      <div class="card ok">
+        <div class="head"><span class="badge o">PASS</span> 협조·열람 라인</div>
+        <p>계좌이체 집행 건에 임옥선 팀장이 협조로 걸려 있고, 수신참조에 경영지원팀이 포함되어 있습니다. 협조 라인과 열람 권한 모두 규정대로 처리되었습니다.</p>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2><span class="num">3</span> 상신 전 30초 체크리스트</h2>
+    <ul class="checklist">
+      <li>
+        <div class="box"></div>
+        <div><b>회계일자(문서 단위)와 거래일자(줄 단위)는 각각 확인</b>
+          <span class="why">거래일자는 각 지출내역 줄이 그 줄 증빙의 작성일과 일치하는지 확인. 회계일자는 문서 전체가 속한 회계기간이 그 증빙일들과 맞는지 확인. 지출내역이 여러 줄이면 둘은 같은 값이 아닐 수 있음.</span>
+        </div>
+      </li>
+      <li>
+        <div class="box"></div>
+        <div><b>협조 라인 담당자 확인</b>
+          <span class="why">법인카드·개인경비 → 우지훈 프로(차후 강지우 과장) / 보통예금 집행 → 임옥선 팀장. 혼용 시 반려.</span>
+        </div>
+      </li>
+      <li>
+        <div class="box"></div>
+        <div><b>원인보고서 연동 확인</b>
+          <span class="why">참조문서란에 직접 링크를 걸거나, 첨부파일의 🔗 링크 아이콘으로 공유 링크를 생성해도 연동으로 인정됨. 단, 파일만 올리고 링크 생성 없이 두거나 댓글로 제목만 언급하는 것은 인정되지 않음.</span>
+        </div>
+      </li>
+      <li>
+        <div class="box"></div>
+        <div><b>수신참조에 경영지원팀 포함</b>
+          <span class="why">권한이 없으면 원인보고서 검색·열람 자체가 불가능함.</span>
+        </div>
+      </li>
+      <li>
+        <div class="box"></div>
+        <div><b>프로젝트 코드 확인</b>
+          <span class="why">팀장 워크샵 등 공통 경비는 '아이지 전사 공통' 코드 사용.</span>
+        </div>
+      </li>
+      <li>
+        <div class="box"></div>
+        <div><b>지결 금액·코드·일자 ↔ 전표 데이터 재대조</b>
+          <span class="why">지결과 전표 불일치는 회계팀이 가장 자주 지적하는 항목. 상신 전 본인이 한 번 더 대조.</span>
+        </div>
+      </li>
+    </ul>
+  </section>
+
+  <section>
+    <h2><span class="num">4</span> 증빙 처리 시 자주 걸리는 문제 Q&amp;A (확장판)</h2>
+    <p class="section-note">앞서 다룬 4가지(날짜·협조라인·참조문서·열람권한) 외에, 증빙 자체에서 반복적으로 발생하는 유형입니다. 해외 출장·구매가 많은 해외팀 특성을 반영했습니다.</p>
+
+    <ul class="checklist">
+      <li>
+        <div class="box" style="border-radius:50%;"></div>
+        <div><b>Q5. 세금계산서 금액과 실제 카드 청구액이 1~2백 원 차이나면?</b>
+          <span class="why">공급가액·부가세를 증빙 그대로 분리 입력하고, 원 단위 절사 차이는 지출내역 비고에 사유를 남기세요. 임의로 반올림해 맞추면 전표 대사에서 걸립니다.</span>
+        </div>
+      </li>
+      <li>
+        <div class="box" style="border-radius:50%;"></div>
+        <div><b>Q6. 해외 출장비를 법인카드/계좌이체로 결제했는데 환율은 어떤 기준인가요?</b>
+          <span class="why">법인카드는 카드사가 실제로 청구한 원화 금액을 그대로 사용, 계좌이체·현금은 지급일 매매기준율을 적용합니다. 임의 추정 환율 사용 시 반려됩니다.</span>
+        </div>
+      </li>
+      <li>
+        <div class="box" style="border-radius:50%;"></div>
+        <div><b>Q7. 3만 원 초과 건인데 간이영수증만 받았어요.</b>
+          <span class="why">세금계산서·계산서·신용카드매출전표·현금영수증 중 하나가 원칙적으로 필요합니다. 불가피한 경우 사유서를 첨부하고 상신 전에 회계팀과 먼저 협의하세요.</span>
+        </div>
+      </li>
+      <li>
+        <div class="box" style="border-radius:50%;"></div>
+        <div><b>Q8. 출장 사전기안서 금액과 실제 지출액이 다른 채로 올려도 되나요?</b>
+          <span class="why">차액이 있으면 참조문서로 건 원인보고서에 변경 사유를 함께 명시하세요. 소명 없이 초과분만 상신하면 반려됩니다.</span>
+        </div>
+      </li>
+      <li>
+        <div class="box" style="border-radius:50%;"></div>
+        <div><b>Q9. 숙박비·식비·교통비를 한 건으로 합쳐서 올려도 되나요?</b>
+          <span class="why">용도별합계 항목을 각각 나눠 입력해야 전표와 매칭됩니다. 뭉쳐서 올리면 회계팀에서 항목을 쪼개 재작업을 요청하게 됩니다.</span>
+        </div>
+      </li>
+      <li>
+        <div class="box" style="border-radius:50%;"></div>
+        <div><b>Q10. 담당 → 협조 → 결재 → 시행 순서를 건너뛰고 결재만 먼저 받으면?</b>
+          <span class="why">시스템이 순서를 강제하지 않는 경우가 있어 실수가 잦습니다. 상신 전 결재선 미리보기에서 순서를 한 번 확인하는 습관이 필요합니다.</span>
+        </div>
+      </li>
+      <li>
+        <div class="box" style="border-radius:50%;"></div>
+        <div><b>Q11. 댓글에 원인보고서 제목을 적어뒀는데, 그것도 연동으로 인정되나요?</b>
+          <span class="why">댓글 자체는 인정되지 않습니다. 다만 이번 건처럼 첨부파일에 🔗 링크 아이콘으로 공유 링크가 생성되어 있다면, 그 링크가 참조문서 연동과 동일하게 인정됩니다. 즉 "댓글로 제목만 언급"과 "첨부파일에 링크를 생성"은 다르게 취급됩니다 — 후자만 유효합니다.</span>
+        </div>
+      </li>
+    </ul>
+  </section>
+
+  <section>
+    <h2><span class="num">5</span> 반복 오류를 줄이는 시스템화 제안</h2>
+    <p class="section-note">"다시 하세요"라는 반려가 반복되는 이유는 개인의 부주의보다 <b>구조가 오류를 막아주지 못하기 때문</b>인 경우가 많습니다. 아래는 입력 부서와 회계팀 양쪽의 반복 작업을 줄이기 위한 구조적 제안입니다.</p>
+
+    <div class="grid">
+      <div class="card ok">
+        <div class="head"><span class="badge o">제안 1</span> 증빙 유형 필수값 강제</div>
+        <p>3만 원 초과 건에 세금계산서류가 첨부되지 않으면 상신 버튼 자체가 비활성화되도록 결의서 양식에 조건을 건다. 사람이 매번 기억하지 않아도 시스템이 걸러준다.</p>
+      </div>
+      <div class="card ok">
+        <div class="head"><span class="badge o">제안 2</span> 참조문서 표기 개선</div>
+        <p>실제로는 첨부파일 링크로 연동되어 있어도 참조문서란에는 "선택된 문서가 없습니다"라고 표시되어 혼동을 준다. 연동이 완료되면 참조문서란 문구도 함께 갱신되도록 경영지원팀에 화면 개선을 요청하면, 작성자와 회계팀 모두 헷갈리지 않는다.</p>
+      </div>
+      <div class="card ok">
+        <div class="head"><span class="badge o">제안 3</span> 반려 사유 코드화</div>
+        <p>회계팀이 반려할 때 "R-01 날짜불일치 / R-02 참조문서누락 / R-03 협조라인오류" 같은 표준 코드를 선택하게 한다. 사유가 명확해지고, 코드별 통계를 내면 어느 부서가 어떤 유형에서 반복되는지 데이터로 드러난다.</p>
+      </div>
+      <div class="card ok">
+        <div class="head"><span class="badge o">제안 4</span> 최신본 가이드 고정 배치</div>
+        <p>회계팀에 "자주 반려되는 사례를 정리한 최종 최신본 가이드"를 공지해달라고 역제안하고, 그 문서를 결의서 상신 화면에 링크로 고정한다. 공지가 흩어지지 않고 상신하는 순간 바로 보인다.</p>
+      </div>
+      <div class="card ok">
+        <div class="head"><span class="badge o">제안 5</span> 상신 전 셀프 체크 도구</div>
+        <p>이 페이지 같은 체크리스트를 팀 공용 북마크로 두고, 결의서 작성 담당자가 상신 전 30초만 대조하도록 습관화한다. 회계팀 반려 전에 1차로 걸러지는 효과가 있다.</p>
+      </div>
+      <div class="card ok">
+        <div class="head"><span class="badge o">제안 6</span> 월 1회 반려 유형 리뷰</div>
+        <p>회계팀-현업 부서가 15분씩 반려 코드 통계를 같이 보는 짧은 리뷰를 정례화한다. 특정 부서·특정 유형이 반복되면 그 지점만 집중적으로 손본다.</p>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    출처: 해외팀 지출결의서 작성 가이드(사내 공지) · 예시 문서: 해외팀-2607-013 (2026-07-09 작성)
+  </footer>
+
+</div>
+</body>
+</html>
