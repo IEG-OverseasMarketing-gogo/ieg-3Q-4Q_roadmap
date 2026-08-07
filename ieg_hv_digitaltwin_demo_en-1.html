@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IEG Smart-Mesh · HV Digital Twin Live Prototype</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&family=IBM+Plex+Mono:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<style>
+  :root{
+    --bg:#0c0f12; --panel:#141a1f; --panel-2:#1a2128; --line:#293138;
+    --text:#e7ecef; --dim:#8a96a1; --orange:#ff6a1a; --ok:#3ddc84; --warn:#f5a623; --fault:#ff4d4f; --info:#4fb2ff;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html,body{width:100%; height:100%; overflow:hidden; background:var(--bg); font-family:'Inter',sans-serif; color:var(--text);}
+  .mono{font-family:'IBM Plex Mono',monospace;}
+  #stage{position:fixed; inset:0;}
+  canvas{display:block;}
+
+  /* top badge */
+  .topbar{position:fixed; top:0; left:0; right:0; z-index:20; display:flex; justify-content:space-between; align-items:center;
+    padding:18px 26px; background:linear-gradient(180deg, rgba(12,15,18,.92), rgba(12,15,18,0)); pointer-events:none;}
+  .brand{display:flex; flex-direction:column; gap:2px;}
+  .brand .eyebrow{font-family:'IBM Plex Mono',monospace; font-size:10.5px; letter-spacing:.16em; color:var(--orange); text-transform:uppercase;}
+  .brand h1{font-family:'Space Grotesk',sans-serif; font-size:16px; font-weight:700;}
+  .badge{font-family:'IBM Plex Mono',monospace; font-size:10.5px; letter-spacing:.05em; color:var(--ok);
+    border:1px solid rgba(61,220,132,.4); background:rgba(61,220,132,.08); padding:6px 12px; border-radius:20px; pointer-events:auto;}
+  .badge b{color:var(--ok);}
+
+  /* mini line map */
+  .linemap{position:fixed; top:76px; left:26px; z-index:20; display:flex; gap:6px; align-items:center;
+    background:var(--panel); border:1px solid var(--line); border-radius:10px; padding:10px 14px;}
+  .linemap .st{display:flex; flex-direction:column; align-items:center; gap:4px; width:44px; position:relative;}
+  .linemap .st .dot{width:9px; height:9px; border-radius:50%; background:#3a444d; transition:all .4s;}
+  .linemap .st .lb{font-family:'IBM Plex Mono',monospace; font-size:9px; color:var(--dim);}
+  .linemap .st.active .dot{background:var(--orange); box-shadow:0 0 10px rgba(255,106,26,.7);}
+  .linemap .st.warn .dot{background:var(--warn); box-shadow:0 0 10px rgba(245,166,35,.7);}
+  .linemap .st.fault .dot{background:var(--fault); box-shadow:0 0 10px rgba(255,77,79,.8); animation:pulse 1s infinite;}
+  .linemap .seg{width:16px; height:1px; background:var(--line); position:relative; overflow:hidden;}
+  .linemap .seg .flow{position:absolute; top:0; left:-100%; width:100%; height:100%; background:var(--orange); transition:left 1.4s ease;}
+  .linemap .seg.on .flow{left:100%;}
+  @keyframes pulse{0%,100%{opacity:1;}50%{opacity:.35;}}
+
+  /* data panel */
+  .datapanel{position:fixed; top:76px; right:26px; z-index:20; width:280px;
+    background:var(--panel); border:1px solid var(--line); border-radius:12px; padding:16px 18px;}
+  .datapanel .lab{font-family:'IBM Plex Mono',monospace; font-size:10.5px; color:var(--orange); letter-spacing:.08em; text-transform:uppercase; margin-bottom:6px;}
+  .datapanel .num{font-family:'Space Grotesk',sans-serif; font-size:30px; font-weight:700; display:flex; align-items:baseline; gap:6px;}
+  .datapanel .unit{font-family:'IBM Plex Mono',monospace; font-size:12px; color:var(--dim);}
+  .datapanel .spec{font-family:'IBM Plex Mono',monospace; font-size:11px; color:var(--dim); margin-top:2px;}
+  .datapanel canvas.chart{width:100%; height:64px; margin-top:10px; border-radius:6px; background:#0f1418; border:1px solid var(--line);}
+  .status-row{display:flex; align-items:center; gap:8px; margin-top:12px; font-family:'IBM Plex Mono',monospace; font-size:11px;}
+  .status-dot{width:8px; height:8px; border-radius:50%; background:var(--ok); transition:background .4s;}
+  .status-dot.warn{background:var(--warn);}
+  .status-dot.fault{background:var(--fault); animation:pulse 1s infinite;}
+
+  /* diagnose prompt */
+  .prompt{position:fixed; bottom:120px; left:50%; transform:translateX(-50%) translateY(20px); z-index:25;
+    opacity:0; pointer-events:none; transition:all .4s;
+    background:var(--panel-2); border:1px solid rgba(255,106,26,.5); border-radius:30px; padding:12px 22px;
+    display:flex; align-items:center; gap:12px; box-shadow:0 8px 30px rgba(0,0,0,.5);}
+  .prompt.show{opacity:1; transform:translateX(-50%) translateY(0); pointer-events:auto;}
+  .prompt span{font-size:13.5px;}
+  .prompt button{font-family:'IBM Plex Mono',monospace; font-size:11.5px; background:var(--orange); color:#12161a;
+    border:none; padding:8px 16px; border-radius:20px; font-weight:700; cursor:pointer; letter-spacing:.02em;}
+  .prompt button:hover{filter:brightness(1.1);}
+
+  /* decision modal */
+  .modal-wrap{position:fixed; inset:0; z-index:40; display:none; align-items:center; justify-content:center;
+    background:rgba(8,10,12,.72); backdrop-filter:blur(3px);}
+  .modal-wrap.show{display:flex;}
+  .modal{width:min(520px,88vw); background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:26px 28px; box-shadow:0 20px 60px rgba(0,0,0,.6);}
+  .modal .mlab{font-family:'IBM Plex Mono',monospace; font-size:11px; color:var(--orange); letter-spacing:.08em; text-transform:uppercase; margin-bottom:8px;}
+  .modal h2{font-family:'Space Grotesk',sans-serif; font-size:19px; margin-bottom:14px;}
+  .modal .readout{font-family:'IBM Plex Mono',monospace; font-size:12px; color:var(--info); background:#0f1418; border:1px solid var(--line); border-radius:6px; padding:8px 12px; margin-bottom:16px; display:inline-block;}
+  .modal .riskline{font-size:13px; line-height:1.6; color:var(--text); background:rgba(255,106,26,.07); border:1px solid rgba(255,106,26,.35); border-radius:8px; padding:11px 14px; margin-bottom:16px;}
+  .modal .riskline b{color:var(--orange);}
+  .opt{display:block; width:100%; text-align:left; background:var(--panel-2); border:1px solid var(--line); color:var(--text);
+    padding:12px 14px; border-radius:8px; margin-bottom:8px; font-size:13.5px; cursor:pointer; transition:all .2s; font-family:'Inter',sans-serif;}
+  .opt:hover{border-color:var(--orange);}
+  .feedback{display:none; margin-top:6px; padding:14px 16px; border-radius:10px; font-size:13.5px; line-height:1.6;}
+  .feedback.correct{display:block; background:rgba(61,220,132,.08); border:1px solid rgba(61,220,132,.4); color:var(--text);}
+  .feedback.wrong{display:block; background:rgba(255,77,79,.08); border:1px solid rgba(255,77,79,.4); color:var(--text);}
+  .feedback b{color:var(--ok);}
+  .feedback.wrong b{color:var(--fault);}
+  .modal .close{margin-top:16px; width:100%; background:var(--orange); color:#12161a; border:none; padding:11px; border-radius:8px; font-family:'IBM Plex Mono',monospace; font-weight:700; font-size:12.5px; cursor:pointer; display:none;}
+
+  /* footer value prop */
+  .footer{position:fixed; bottom:0; left:0; right:0; z-index:20; background:linear-gradient(0deg, rgba(12,15,18,.95), rgba(12,15,18,0));
+    padding:20px 26px 18px; display:flex; justify-content:space-between; align-items:flex-end; gap:20px; flex-wrap:wrap;}
+  .footer .props{display:flex; gap:22px; flex-wrap:wrap;}
+  .footer .prop{display:flex; flex-direction:column; gap:2px;}
+  .footer .prop .k{font-family:'IBM Plex Mono',monospace; font-size:9.5px; color:var(--orange); letter-spacing:.08em; text-transform:uppercase;}
+  .footer .prop .v{font-size:12.5px; color:var(--dim);}
+  .footer .tag{font-family:'IBM Plex Mono',monospace; font-size:10px; color:var(--dim);}
+
+  @media (max-width:760px){
+    .datapanel{width:220px; right:16px;}
+    .linemap{left:16px; padding:8px 10px;}
+    .linemap .st{width:34px;}
+    .footer .props{display:none;}
+  }
+
+  /* landing overlay */
+  .landing{position:fixed; inset:0; z-index:60; display:flex; align-items:center; justify-content:center;
+    background:radial-gradient(1200px 700px at 50% 20%, rgba(255,106,26,.10), transparent 60%), rgba(8,10,12,.88); backdrop-filter:blur(4px);}
+  .landing.hide{display:none;}
+  .lcard{width:min(560px,90vw); background:var(--panel); border:1px solid var(--line); border-radius:16px; padding:34px 36px; box-shadow:0 24px 70px rgba(0,0,0,.6);}
+  .lcard .eyebrow{font-family:'IBM Plex Mono',monospace; font-size:11px; letter-spacing:.14em; color:var(--orange); text-transform:uppercase; margin-bottom:10px; display:block;}
+  .lcard h2{font-family:'Space Grotesk',sans-serif; font-size:23px; margin-bottom:6px; line-height:1.35;}
+  .lcard p.desc{color:var(--dim); font-size:13.5px; margin-bottom:20px;}
+  .lcard .steps{list-style:none; margin:0 0 24px; padding:0;}
+  .lcard .steps li{display:flex; gap:12px; font-size:13.5px; margin-bottom:11px; align-items:flex-start;}
+  .lcard .steps li .n{font-family:'IBM Plex Mono',monospace; font-size:11px; color:var(--orange); border:1px solid rgba(255,106,26,.4); border-radius:5px; padding:1px 7px; flex:none; margin-top:1px;}
+  .lcard button.start{width:100%; background:var(--orange); color:#12161a; border:none; padding:14px; border-radius:10px; font-family:'IBM Plex Mono',monospace; font-weight:700; font-size:13.5px; cursor:pointer; letter-spacing:.02em;}
+  .lcard button.start:hover{filter:brightness(1.08);}
+  .lcard .meta{margin-top:14px; text-align:center; font-family:'IBM Plex Mono',monospace; font-size:10.5px; color:var(--dim);}
+
+  /* guided captions */
+  .caption{position:fixed; z-index:22; background:var(--panel-2); border:1px solid var(--orange); border-radius:10px;
+    padding:10px 14px; font-size:13px; max-width:260px; opacity:0; transition:opacity .4s; pointer-events:none;}
+  .caption.show{opacity:1;}
+  .caption .n{font-family:'IBM Plex Mono',monospace; font-size:10px; color:var(--orange); margin-right:6px;}
+  #cap1{top:170px; right:26px; width:280px;}
+  #cap2{bottom:170px; left:50%; transform:translateX(-50%); width:280px;}
+  #cap3{top:170px; left:26px; width:220px;}
+
+  /* closing impact card */
+  .closing{position:fixed; inset:0; z-index:55; display:none; align-items:center; justify-content:center;
+    background:rgba(8,10,12,.85); backdrop-filter:blur(4px);}
+  .closing.show{display:flex;}
+  .ccard{width:min(500px,88vw); background:var(--panel); border:1px solid rgba(61,220,132,.4); border-radius:16px; padding:30px 32px; text-align:left;}
+  .ccard .eyebrow{font-family:'IBM Plex Mono',monospace; font-size:10.5px; letter-spacing:.12em; color:var(--ok); text-transform:uppercase; margin-bottom:10px; display:block;}
+  .ccard h2{font-family:'Space Grotesk',sans-serif; font-size:20px; margin-bottom:14px;}
+  .ccard .impact{display:flex; gap:14px; margin-bottom:18px;}
+  .ccard .impact div{flex:1; background:var(--panel-2); border:1px solid var(--line); border-radius:10px; padding:14px;}
+  .ccard .impact .k{font-family:'Space Grotesk',sans-serif; font-size:20px; color:var(--orange); font-weight:700;}
+  .ccard .impact .v{font-size:11.5px; color:var(--dim); margin-top:2px;}
+  .ccard p{font-size:13.5px; color:var(--text); line-height:1.65; margin-bottom:18px;}
+  .ccard button{width:100%; background:var(--orange); color:#12161a; border:none; padding:13px; border-radius:9px; font-family:'IBM Plex Mono',monospace; font-weight:700; font-size:13px; cursor:pointer;}
+
+  /* ===== MOBILE OVERRIDES — placed last for cascade priority ===== */
+  @media (max-width:700px){
+    .topbar{padding:14px 16px;}
+    .brand h1{font-size:13px; line-height:1.3;}
+    .brand .eyebrow{font-size:9px;}
+    .badge{font-size:8.5px; padding:5px 9px; letter-spacing:.02em;}
+
+    .hudTop{
+      position:fixed; top:58px; left:10px; right:10px; z-index:20;
+      display:flex; flex-direction:column; gap:8px;
+      background:rgba(20,26,31,0.78); backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px);
+      border:1px solid var(--line); border-radius:12px;
+      padding:10px 14px;
+    }
+    .linemap{
+      position:static; width:auto; background:none; border:none; padding:0; margin:0;
+      display:flex; justify-content:space-between; align-items:center;
+    }
+    .linemap .st{width:auto; flex:1;}
+    .linemap .seg{width:5px; flex:none;}
+    .linemap .st .lb{font-size:6.5px; line-height:1.2;}
+
+    .datapanel{
+      position:static; width:auto; background:none; border:none; padding:0; margin:0;
+      display:flex; flex-wrap:wrap; align-items:center; gap:4px 12px;
+      border-top:1px solid var(--line); padding-top:8px;
+    }
+    .datapanel .lab{flex:0 0 100%; font-size:9px; margin:0;}
+    .datapanel .num{font-size:19px; gap:4px;}
+    .datapanel .spec{display:none;}
+    .datapanel canvas.chart{width:120px; height:28px; margin:0; flex:none; background:rgba(15,20,24,.6);}
+    .status-row{margin:0; flex:none;}
+
+    .caption{
+      left:10px; right:10px; top:auto !important; bottom:148px;
+      transform:none; width:auto; max-width:none;
+      text-align:center; font-size:11.5px; padding:9px 12px;
+    }
+
+    .prompt{bottom:92px; padding:10px 16px; max-width:calc(100% - 24px); white-space:normal; text-align:center;}
+    .prompt span{font-size:11.5px;}
+    .prompt button{font-size:10.5px; padding:7px 13px; flex:none;}
+
+    .lcard{padding:24px 20px; width:calc(100vw - 32px);}
+    .lcard h2{font-size:17.5px;}
+    .lcard .desc{font-size:12.5px;}
+    .lcard .steps li{font-size:12.5px;}
+    .lcard .eyebrow{font-size:9.5px;}
+
+    .ccard{padding:22px 20px; width:calc(100vw - 32px);}
+    .ccard h2{font-size:17px;}
+    .ccard .impact{flex-direction:column; gap:8px;}
+    .ccard p{font-size:12.5px;}
+
+    .modal{padding:20px 20px; width:calc(100vw - 32px);}
+    .modal h2{font-size:16px;}
+    .opt{font-size:12.5px; padding:11px 13px;}
+    .riskline{font-size:12px; padding:10px 12px;}
+    .feedback{font-size:12.5px;}
+
+    .footer{padding:14px 16px 16px;}
+    .footer .tag{font-size:8px; line-height:1.5;}
+  }
+</style>
+</head>
+<body>
+
+<div id="stage"></div>
+
+<div class="landing" id="landing">
+  <div class="lcard">
+    <span class="eyebrow">45-second demo · sound not required · a few clicks and you're done</span>
+    <h2>What this demo shows in one line: the defect people miss is exactly what trained judgment catches</h2>
+    <p class="desc">This reproduces a situation that repeats constantly on HV battery-pack assembly lines — a defect that "quietly gets worse." It's over in three steps, 45 seconds total.</p>
+    <ul class="steps">
+      <li><span class="n">1</span><span>The torque value drops in real time — the kind of drift a technician can't catch by eye on the actual line.</span></li>
+      <li><span class="n">2</span><span>Once it's out of spec, a "Diagnose" button appears — whether a trainee notices this moment is the whole point.</span></li>
+      <li><span class="n">3</span><span>Get the call wrong, and you'll watch the problem propagate to Station 04 — the safety gate — in real time.</span></li>
+    </ul>
+    <button class="start" id="startBtn">▶ Start demo — 45 seconds</button>
+    <div class="meta">IEG Smart-Mesh · No VR headset needed — runs right in the browser you're using now</div>
+  </div>
+</div>
+
+<div class="caption" id="cap1"><span class="n">01</span>Torque is dropping in real time — caused by a declining impact-wrench battery charge</div>
+<div class="caption" id="cap2"><span class="n">02</span>Out of spec — miss this, and it becomes an interlock fault 3 stations from now</div>
+<div class="caption" id="cap3"><span class="n">03</span>Pick the right answer → watch the chain reaction reach Station 04 here</div>
+
+<div class="closing" id="closing">
+  <div class="ccard">
+    <span class="eyebrow">What this demo proves</span>
+    <h2>What one round of judgment training changes</h2>
+    <div class="impact">
+      <div><div class="k">4</div><div class="v">chronic cross-station bottlenecks — you just saw 1 of them</div></div>
+      <div><div class="k">Stage 1</div><div class="v">the starting point of the Total Training Pathway (before OJT)</div></div>
+    </div>
+    <p>What you just saw is 1 of 5 stations, 1 of 3 scenarios. Scale this judgment training across the full line and it translates into <b style="color:var(--ok)">shorter OJT time</b> and <b style="color:var(--ok)">fewer early-stage defects</b> — no VR headset, no plant visit, just like this link.</p>
+    <button id="replayBtn">🔁 Replay</button>
+  </div>
+</div>
+
+<div class="topbar">
+  <div class="brand">
+    <span class="eyebrow">IEG · Smart-Mesh EV Technician Training</span>
+    <h1>HV Battery Pack Digital Twin — Live Prototype</h1>
+  </div>
+  <div class="badge">● <b>LIVE IN BROWSER</b> · No VR headset · Runs from a single link</div>
+</div>
+
+<div class="hudTop" id="hudTop">
+<div class="linemap">
+  <div class="st active" id="st1"><div class="dot"></div><div class="lb">ST.01<br>TORQUE</div></div>
+  <div class="seg" id="seg12"><div class="flow"></div></div>
+  <div class="st" id="st2"><div class="dot"></div><div class="lb">ST.02<br>IR</div></div>
+  <div class="seg" id="seg23"><div class="flow"></div></div>
+  <div class="st" id="st3"><div class="dot"></div><div class="lb">ST.03<br>BMS</div></div>
+  <div class="seg" id="seg34"><div class="flow"></div></div>
+  <div class="st" id="st4"><div class="dot"></div><div class="lb">ST.04<br>HVIL</div></div>
+</div>
+
+<div class="datapanel">
+  <div class="lab">Station 01 · Busbar Torque</div>
+  <div class="num"><span id="torqueVal">18.4</span><span class="unit">N·m</span></div>
+  <div class="spec">SPEC LOW: 17.5 N·m</div>
+  <canvas class="chart" id="chart" width="280" height="64"></canvas>
+  <div class="status-row"><div class="status-dot" id="statusDot"></div><span id="statusText">NOMINAL — within range</span></div>
+</div>
+</div>
+
+<div class="prompt" id="prompt">
+  <span>⚠ Torque curve is approaching the spec lower limit</span>
+  <button id="diagBtn">Diagnose</button>
+</div>
+
+<div class="modal-wrap" id="modalWrap">
+  <div class="modal">
+    <div class="mlab">Scenario A · Station 01 → 04</div>
+    <h2>Choose your response to the torque drift</h2>
+    <div class="readout" id="modalReadout">TORQUE 16.9 N·m (SPEC LOW: 17.5) — 3 consecutive readings below spec</div>
+    <div class="riskline" id="riskLine">⚠ Left uncorrected, this typically doesn't fail here — it resurfaces 3–4 stations later as an intermittent <b>HVIL interlock-open fault at Station 04</b>, the final safety gate before shipment.</div>
+    <button class="opt" data-r="wrong1">Continue as normal — process the next unit</button>
+    <button class="opt" data-r="correct">Check impact-tool calibration log + trace-back inspect recent units</button>
+    <button class="opt" data-r="wrong2">Stop the entire line immediately</button>
+    <div class="feedback" id="fbCorrect">
+      <b>✓ Correct.</b> The calibration log shows a declining impact-wrench battery charge as the root cause. Had this call come too late, the under-torqued units would have flowed downstream and surfaced as an <b>intermittent HVIL interlock-open fault at Station 04</b> — check the chain reaction in the mini-map on the left now.
+    </div>
+    <div class="feedback" id="fbWrong1">
+      <b>✕ A risky choice.</b> A defect that worsens gradually can't be caught by eye or by feel. Continue as-is and the faulty units flow downstream, resurfacing at Station 04 at a much higher cost.
+    </div>
+    <div class="feedback" id="fbWrong2">
+      <b>△ Overreaction.</b> Stopping the line before confirming the root cause creates unnecessary downtime. The right first move is checking the log and narrowing the scope.
+    </div>
+    <button class="close" id="closeBtn">Watch again</button>
+  </div>
+</div>
+
+<div class="footer">
+  <div class="props">
+    <div class="prop"><span class="k">Gap 1</span><span class="v">Built for HV battery packs — not generic material-handling training</span></div>
+    <div class="prop"><span class="k">Gap 2</span><span class="v">Runs instantly in browser — no VR headset, no plant visit</span></div>
+    <div class="prop"><span class="k">Gap 3</span><span class="v">4D data-driven judgment training — root-cause tracing, not motion drills</span></div>
+  </div>
+  <div class="tag">PROTOTYPE BUILD · IEG GLOBAL BUSINESS DIVISION · SCENARIO A OF 5-STATION LINE</div>
+</div>
+
+<script>
+// ===== THREE.JS SCENE =====
+const stage = document.getElementById('stage');
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0x0c0f12);
+scene.fog = new THREE.FogExp2(0x0c0f12, 0.045);
+
+const camera = new THREE.PerspectiveCamera(42, window.innerWidth/window.innerHeight, 0.1, 100);
+const renderer = new THREE.WebGLRenderer({antialias:true});
+renderer.setSize(window.innerWidth, window.innerHeight);
+renderer.setPixelRatio(Math.min(window.devicePixelRatio,2));
+stage.appendChild(renderer.domElement);
+
+// lights
+scene.add(new THREE.AmbientLight(0x33404a, 1.1));
+const key = new THREE.DirectionalLight(0xffffff, 0.9);
+key.position.set(6,10,6);
+scene.add(key);
+const rim = new THREE.PointLight(0xff6a1a, 2.2, 20);
+rim.position.set(-2, 3, 2);
+scene.add(rim);
+const info = new THREE.PointLight(0x4fb2ff, 1.2, 15);
+info.position.set(3,2,-2);
+scene.add(info);
+
+// ground grid
+const grid = new THREE.GridHelper(30, 30, 0x2a333b, 0x1a2128);
+grid.position.y = -1.5;
+scene.add(grid);
+
+// battery pack base
+const packMat = new THREE.MeshStandardMaterial({color:0x232c33, metalness:0.6, roughness:0.35});
+const pack = new THREE.Mesh(new THREE.BoxGeometry(4.2, 0.35, 2.4), packMat);
+pack.position.set(0,-1.1,0);
+scene.add(pack);
+
+// modules grid on top
+const modGroup = new THREE.Group();
+const modMat = new THREE.MeshStandardMaterial({color:0x2f3a42, metalness:0.4, roughness:0.4});
+for(let i=0;i<4;i++){
+  for(let j=0;j<2;j++){
+    const m = new THREE.Mesh(new THREE.BoxGeometry(0.85,0.5,0.95), modMat.clone());
+    m.position.set(-1.5 + i*1.0, -0.65, -0.55 + j*1.1);
+    modGroup.add(m);
+  }
+}
+scene.add(modGroup);
+
+// busbar (copper/orange highlight) - the focal point
+const busMat = new THREE.MeshStandardMaterial({color:0xff6a1a, metalness:0.7, roughness:0.25, emissive:0x381a08, emissiveIntensity:0.4});
+const busbar = new THREE.Mesh(new THREE.BoxGeometry(3.6,0.06,0.12), busMat);
+busbar.position.set(0,-0.38,0.05);
+scene.add(busbar);
+
+// robot arm group
+const robot = new THREE.Group();
+robot.position.set(2.6,-1.5,1.6);
+scene.add(robot);
+
+const baseMat = new THREE.MeshStandardMaterial({color:0x3a444d, metalness:0.6, roughness:0.3});
+const base = new THREE.Mesh(new THREE.CylinderGeometry(0.35,0.4,0.4,16), baseMat);
+base.position.y = 0.2;
+robot.add(base);
+
+const shoulder = new THREE.Group();
+shoulder.position.y = 0.4;
+robot.add(shoulder);
+const upperArm = new THREE.Mesh(new THREE.BoxGeometry(0.22,1.6,0.22), baseMat);
+upperArm.position.y = 0.8;
+shoulder.add(upperArm);
+
+const elbow = new THREE.Group();
+elbow.position.y = 1.6;
+shoulder.add(elbow);
+const foreArm = new THREE.Mesh(new THREE.BoxGeometry(0.18,1.2,0.18), new THREE.MeshStandardMaterial({color:0x4a555f, metalness:0.5, roughness:0.35}));
+foreArm.position.y = 0.6;
+elbow.add(foreArm);
+
+const wrist = new THREE.Group();
+wrist.position.y = 1.2;
+elbow.add(wrist);
+const tip = new THREE.Mesh(new THREE.CylinderGeometry(0.08,0.08,0.35,10), new THREE.MeshStandardMaterial({color:0xff6a1a, emissive:0xff6a1a, emissiveIntensity:0.5}));
+tip.rotation.x = Math.PI/2;
+tip.position.z = 0.2;
+wrist.add(tip);
+
+shoulder.rotation.z = -0.5;
+elbow.rotation.z = 0.9;
+wrist.rotation.x = -0.3;
+
+camera.position.set(6, 3.4, 7);
+camera.lookAt(0,-0.7,0);
+
+function onResize(){
+  camera.aspect = window.innerWidth/window.innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(window.innerWidth, window.innerHeight);
+}
+window.addEventListener('resize', onResize);
+
+let t = 0;
+let tighteningPulse = 0;
+function animate(){
+  requestAnimationFrame(animate);
+  t += 0.006;
+  // orbit camera slowly
+  camera.position.x = Math.sin(t)*7.2;
+  camera.position.z = Math.cos(t)*7.2;
+  camera.position.y = 3.2 + Math.sin(t*0.6)*0.4;
+  camera.lookAt(0,-0.7,0);
+
+  // gentle robot idle sway
+  shoulder.rotation.z = -0.5 + Math.sin(t*1.4)*0.05;
+  elbow.rotation.z = 0.9 + Math.sin(t*1.7)*0.06;
+
+  // tightening pulse spin on tip
+  if(tighteningPulse > 0){
+    tip.rotation.z += 0.9;
+    tighteningPulse -= 1;
+  }
+
+  busbar.material.emissiveIntensity = 0.35 + Math.sin(t*3)*0.15;
+
+  renderer.render(scene, camera);
+}
+animate();
+setInterval(()=>{ tighteningPulse = 40; }, 2600);
+
+// ===== DATA SIMULATION =====
+const chartEl = document.getElementById('chart');
+const ctx = chartEl.getContext('2d');
+const torqueValEl = document.getElementById('torqueVal');
+const statusDot = document.getElementById('statusDot');
+const statusText = document.getElementById('statusText');
+const promptEl = document.getElementById('prompt');
+const SPEC_LOW = 17.5;
+
+let history = [18.4];
+let torque = 18.4;
+let anomalyTriggered = false;
+let tickCount = 0;
+
+function pushTorque(){
+  tickCount++;
+  if(torque > 16.6){
+    torque = Math.max(16.6, torque - (0.12 + Math.random()*0.22));
+  }
+  history.push(torque);
+  if(history.length > 40) history.shift();
+  torqueValEl.textContent = torque.toFixed(1);
+
+  if(torque < SPEC_LOW && !anomalyTriggered && tickCount > 6){
+    statusDot.className = 'status-dot fault';
+    statusText.textContent = 'OUT OF SPEC — below lower limit';
+    promptEl.classList.add('show');
+    anomalyTriggered = true;
+    document.getElementById('modalReadout').textContent =
+      `TORQUE ${torque.toFixed(1)} N·m (SPEC LOW: ${SPEC_LOW}) — 3 consecutive readings below spec`;
+    const c2 = document.getElementById('cap2');
+    c2.classList.add('show');
+    setTimeout(()=>c2.classList.remove('show'), 5000);
+  } else if(torque < SPEC_LOW + 0.6 && !anomalyTriggered){
+    statusDot.className = 'status-dot warn';
+    statusText.textContent = 'CAUTION — approaching lower limit';
+  }
+  drawChart();
+}
+
+function drawChart(){
+  const w = chartEl.width, h = chartEl.height;
+  ctx.clearRect(0,0,w,h);
+  ctx.strokeStyle = 'rgba(255,255,255,0.06)';
+  ctx.beginPath();
+  const specY = h - ((SPEC_LOW-16.0)/(19.0-16.0))*h;
+  ctx.moveTo(0,specY); ctx.lineTo(w,specY); ctx.stroke();
+  ctx.fillStyle = 'rgba(255,106,26,0.55)';
+  ctx.font = '9px monospace';
+  ctx.fillText('SPEC', 4, specY-3);
+
+  ctx.beginPath();
+  ctx.strokeStyle = anomalyTriggered ? '#ff4d4f' : '#4fb2ff';
+  ctx.lineWidth = 1.6;
+  history.forEach((v,i)=>{
+    const x = (i/(39))*w;
+    const y = h - ((v-16.0)/(19.0-16.0))*h;
+    if(i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+  });
+  ctx.stroke();
+}
+drawChart();
+
+// ===== ONBOARDING GATE =====
+let pushInterval = null;
+document.getElementById('startBtn').addEventListener('click', ()=>{
+  document.getElementById('landing').classList.add('hide');
+  // caption 1: explain what's happening now
+  const c1 = document.getElementById('cap1');
+  c1.classList.add('show');
+  setTimeout(()=>c1.classList.remove('show'), 4200);
+  pushInterval = setInterval(pushTorque, 850);
+});
+
+// ===== INTERACTION =====
+const modalWrap = document.getElementById('modalWrap');
+document.getElementById('diagBtn').addEventListener('click', ()=>{
+  modalWrap.classList.add('show');
+  promptEl.classList.remove('show');
+  const c3 = document.getElementById('cap3');
+  c3.classList.add('show');
+  setTimeout(()=>c3.classList.remove('show'), 5000);
+});
+
+document.querySelectorAll('.opt').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    document.querySelectorAll('.opt').forEach(b=>b.style.display='none');
+    const r = btn.getAttribute('data-r');
+    if(r==='correct'){
+      document.getElementById('fbCorrect').style.display='block';
+      chainReaction();
+    } else if(r==='wrong1'){
+      document.getElementById('fbWrong1').style.display='block';
+    } else {
+      document.getElementById('fbWrong2').style.display='block';
+    }
+    document.getElementById('closeBtn').style.display='block';
+  });
+});
+document.getElementById('closeBtn').addEventListener('click', ()=>{
+  modalWrap.classList.remove('show');
+  setTimeout(()=>{ document.getElementById('closing').classList.add('show'); }, 400);
+});
+document.getElementById('replayBtn').addEventListener('click', ()=>{
+  location.reload();
+});
+
+function setStation(id, cls){
+  const el = document.getElementById(id);
+  el.className = 'st ' + cls;
+}
+function flowSeg(id){
+  document.getElementById(id).classList.add('on');
+}
+function chainReaction(){
+  setStation('st1','active');
+  setTimeout(()=>{ flowSeg('seg12'); setStation('st2','warn'); },300);
+  setTimeout(()=>{ flowSeg('seg23'); setStation('st3','warn'); },1700);
+  setTimeout(()=>{ flowSeg('seg34'); setStation('st4','fault'); },3100);
+}
+</script>
+</body>
+</html>
