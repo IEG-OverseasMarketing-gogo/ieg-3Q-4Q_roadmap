@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IEG × 2026 산업AI EXPO(킨텍스) 참가 기획안</title>
+<style>
+  :root{
+    --navy:#0B1F3A;
+    --navy-2:#12294D;
+    --blue:#2C5FE8;
+    --cyan:#00C2D1;
+    --paper:#F5F7FB;
+    --card:#FFFFFF;
+    --line:#E3E7F0;
+    --text:#1B2333;
+    --sub:#5B6478;
+    --amber:#F4A340;
+    --good:#1FA97C;
+    --bad:#E2574C;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0; background:var(--paper); color:var(--text);
+    font-family:'Pretendard','Noto Sans KR','Malgun Gothic',sans-serif;
+    line-height:1.6;
+  }
+  .wrap{max-width:1040px;margin:0 auto;padding:0 24px 80px;}
+
+  /* HERO */
+  .hero{
+    background:radial-gradient(1100px 420px at 15% -10%, #1A3B78 0%, var(--navy) 55%, #081428 100%);
+    color:#fff; padding:64px 24px 56px; position:relative; overflow:hidden;
+  }
+  .hero::after{
+    content:""; position:absolute; right:-120px; top:-80px; width:420px; height:420px;
+    background:radial-gradient(circle, rgba(0,194,209,.35), transparent 65%); filter:blur(10px);
+  }
+  .hero-inner{max-width:1040px;margin:0 auto;position:relative;z-index:2;}
+  .eyebrow{
+    display:inline-flex; align-items:center; gap:8px; font-size:12.5px; letter-spacing:.08em;
+    color:var(--cyan); border:1px solid rgba(0,194,209,.4); padding:6px 14px; border-radius:999px;
+    text-transform:uppercase; font-weight:600;
+  }
+  .hero h1{font-size:34px; margin:20px 0 8px; font-weight:800; letter-spacing:-0.02em;}
+  .hero h1 span{color:var(--cyan);}
+  .hero p.lead{color:#C7D2EA; font-size:15.5px; max-width:640px; margin:0 0 26px;}
+  .hero-meta{display:flex; flex-wrap:wrap; gap:12px;}
+  .meta-chip{
+    background:rgba(255,255,255,.07); border:1px solid rgba(255,255,255,.14);
+    border-radius:12px; padding:12px 16px; min-width:150px;
+  }
+  .meta-chip .k{font-size:11.5px; color:#94A3C4; text-transform:uppercase; letter-spacing:.06em;}
+  .meta-chip .v{font-size:14.5px; font-weight:700; margin-top:4px; color:#fff;}
+
+  /* SECTIONS */
+  section{margin-top:52px;}
+  .sec-head{display:flex; align-items:baseline; gap:12px; margin-bottom:18px;}
+  .sec-num{
+    font-size:13px; font-weight:800; color:var(--blue); background:#E7EDFF;
+    border-radius:8px; padding:4px 10px; letter-spacing:.03em;
+  }
+  .sec-head h2{font-size:21px; margin:0; font-weight:800; letter-spacing:-0.01em;}
+  .sec-sub{color:var(--sub); font-size:13.5px; margin:-10px 0 20px 0;}
+
+  .card{
+    background:var(--card); border:1px solid var(--line); border-radius:16px;
+    padding:22px 24px; box-shadow:0 1px 2px rgba(20,30,60,.04);
+  }
+  .grid2{display:grid; grid-template-columns:1fr 1fr; gap:16px;}
+  .grid3{display:grid; grid-template-columns:repeat(3,1fr); gap:16px;}
+  @media(max-width:760px){.grid2,.grid3{grid-template-columns:1fr;}}
+
+  table{width:100%; border-collapse:collapse; font-size:13.6px;}
+  th,td{padding:10px 12px; border-bottom:1px solid var(--line); text-align:left; vertical-align:top;}
+  th{background:var(--navy); color:#fff; font-weight:700; font-size:12.8px;}
+  tr:last-child td{border-bottom:none;}
+  td.num, th.num{text-align:right; white-space:nowrap; font-variant-numeric:tabular-nums;}
+  tr.total td{font-weight:800; background:#EEF2FF; border-top:2px solid var(--blue);}
+  .tag{
+    display:inline-block; font-size:11px; font-weight:700; padding:2px 9px; border-radius:999px;
+  }
+  .tag.blue{background:#E7EDFF;color:var(--blue);}
+  .tag.cyan{background:#E1FAFB;color:#087C88;}
+  .tag.amber{background:#FFF1DE;color:#A9660C;}
+
+  /* Equipment cards */
+  .eq-card{border:1px solid var(--line); border-radius:14px; overflow:hidden; background:#fff;}
+  .eq-top{background:linear-gradient(135deg,var(--navy),#1A3560); color:#fff; padding:16px 18px;}
+  .eq-top .zone{font-size:11px; letter-spacing:.08em; color:var(--cyan); font-weight:700;}
+  .eq-top h3{margin:6px 0 0; font-size:16.5px;}
+  .eq-body{padding:16px 18px;}
+  .eq-body p{margin:0 0 10px; font-size:13.4px; color:var(--sub);}
+  .eq-body ul{margin:0; padding-left:18px; font-size:13.4px;}
+  .eq-body li{margin-bottom:5px;}
+
+  /* Floor plan */
+  .floorplan{background:#0F2545; border-radius:16px; padding:26px; display:flex; gap:26px; align-items:center; flex-wrap:wrap;}
+  .floorplan svg{background:#0B1E3D; border-radius:10px;}
+  .fp-legend{flex:1; min-width:220px; color:#DCE4F7; font-size:13px;}
+  .fp-legend .li{display:flex; gap:10px; align-items:flex-start; margin-bottom:12px;}
+  .fp-legend .dot{width:12px;height:12px;border-radius:3px; margin-top:3px; flex:none;}
+
+  /* Timeline */
+  .timeline{position:relative; margin-left:10px; padding-left:26px; border-left:2px solid var(--line);}
+  .t-item{position:relative; padding-bottom:26px;}
+  .t-item:last-child{padding-bottom:0;}
+  .t-item::before{
+    content:""; position:absolute; left:-33px; top:2px; width:14px; height:14px; border-radius:50%;
+    background:var(--blue); border:3px solid #fff; box-shadow:0 0 0 2px var(--blue);
+  }
+  .t-item.done::before{background:var(--good); box-shadow:0 0 0 2px var(--good);}
+  .t-item .dday{font-size:12px; font-weight:800; color:var(--blue); letter-spacing:.02em;}
+  .t-item .date{font-size:12px; color:var(--sub); margin-left:6px;}
+  .t-item h4{margin:4px 0 6px; font-size:15px;}
+  .t-item ul{margin:0; padding-left:18px; font-size:13.3px; color:var(--text);}
+  .t-item li{margin-bottom:3px;}
+
+  /* Checklist */
+  .checklist{display:grid; grid-template-columns:1fr 1fr; gap:0 28px;}
+  @media(max-width:760px){.checklist{grid-template-columns:1fr;}}
+  .cl-group{margin-bottom:18px;}
+  .cl-group h4{
+    font-size:13px; margin:0 0 10px; color:var(--blue); text-transform:uppercase; letter-spacing:.04em;
+    border-bottom:1px solid var(--line); padding-bottom:6px;
+  }
+  .cl-item{display:flex; gap:10px; align-items:flex-start; font-size:13.4px; margin-bottom:9px;}
+  .box{width:16px;height:16px;border:1.6px solid #B7C0D4; border-radius:4px; flex:none; margin-top:2px;}
+
+  .callout{
+    border-left:3px solid var(--amber); background:#FFF8EC; padding:12px 16px; border-radius:0 10px 10px 0;
+    font-size:13.3px; color:#7A5209; margin-top:14px;
+  }
+  .callout.blue{border-color:var(--blue); background:#EEF2FF; color:#213A8C;}
+
+  .people-card{border:1px solid var(--line); border-radius:14px; padding:16px 18px; background:#fff;}
+  .people-card .role{font-size:11px; font-weight:800; color:#fff; background:var(--blue); display:inline-block; padding:3px 10px; border-radius:999px; margin-bottom:8px;}
+  .people-card h4{margin:0 0 4px; font-size:15px;}
+  .people-card p{margin:0; font-size:13px; color:var(--sub);}
+
+  footer{margin-top:60px; padding-top:20px; border-top:1px solid var(--line); font-size:12px; color:var(--sub); text-align:center;}
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="hero-inner">
+    <span class="eyebrow">● IEG Global Business Division · 참가 기획안</span>
+    <h1>2026 산업AI EXPO <span>@KINTEX</span> 부스 출품 계획</h1>
+    <p class="lead">‘Embodied AI : Beyond Physical AI’를 주제로 열리는 국내 최대 산업AI 전시회에서, 아이지의 AI 기반 스마트 훈련 시뮬레이터 3종을 3×3m 부스 3개(ㄴ자형)로 선보이는 참가 실행안입니다.</p>
+    <div class="hero-meta">
+      <div class="meta-chip"><div class="k">전시회</div><div class="v">2026 산업AI EXPO</div></div>
+      <div class="meta-chip"><div class="k">일정</div><div class="v">2026.10.21(수)~23(금)</div></div>
+      <div class="meta-chip"><div class="k">장소</div><div class="v">KINTEX, 일산</div></div>
+      <div class="meta-chip"><div class="k">부스 규모</div><div class="v">3m×3m × 3부스 (ㄴ자형)</div></div>
+      <div class="meta-chip"><div class="k">D-Day</div><div class="v">오늘 기준 D-72</div></div>
+    </div>
+  </div>
+</div>
+
+<div class="wrap">
+
+  <!-- 1. 전시회 개요 & 참가 논리 -->
+  <section>
+    <div class="sec-head"><span class="sec-num">01</span><h2>전시회 개요 및 참가 포지셔닝</h2></div>
+    <div class="card">
+      <table>
+        <tr><th style="width:130px;">항목</th><th>내용</th></tr>
+        <tr><td>주최</td><td>한국산업지능화협회 (산업통상자원부 국가대표 산업AI 플랫폼 ‘K Connect AI’ 연계)</td></tr>
+        <tr><td>주제</td><td><span class="tag cyan">Embodied AI</span> ‘Embodied AI : Beyond Physical AI’ — AI가 제조·산업 현장의 물리적 실행까지 담당하는 흐름</td></tr>
+        <tr><td>전시 구성</td><td>산업정책관 / 공공부문관 / <b>민간부문관</b>(AI 인프라·플랫폼, Embodied AI, Agentic AI, AI Orchestration + 제조·반도체·에너지·물류·모빌리티·방산 활용사례) / 지역 AX 허브존</td></tr>
+        <tr><td>공동/연계 개최</td><td>아시아 기계·제조산업전(AMXPO) 동시 개최, 한국전자전(KES)·반도체대전(SEDEX)·로보월드 연계 → 국내외 2,000여 개사, 해외바이어 500개사, 참관객 15만 명 이상 예상</td></tr>
+        <tr><td>부대 프로그램</td><td>개막일 글로벌 산업AI 컨퍼런스, KOTRA 수출상담회, AI-Tech 세미나, 스타트업 IR 피칭, 로봇 시연·도슨트 투어·비즈니스 밋업</td></tr>
+      </table>
+      <div class="callout blue">
+        <b>참가 포지셔닝 제안 — “AI 인재양성 인프라” 니치 공략</b><br>
+        대다수 참가사는 AI 솔루션·플랫폼 공급사입니다. 아이지는 “AI를 실제로 다룰 수 있는 인력을 어떻게 길러내는가”를 보여주는 몇 안 되는 TVET/교육장비 기업으로, 민간부문관 내에서 <b>제조 AI 인재양성(Skills for AX) 카테고리</b>로 차별화된 포지션을 가져갈 수 있습니다. 정책관·공공부문관 방문객(지자체, 폴리텍, 마이스터고, 훈련기관 담당자)과의 접점도 기대할 수 있습니다.
+      </div>
+    </div>
+  </section>
+
+  <!-- 2. 출품 장비 -->
+  <section>
+    <div class="sec-head"><span class="sec-num">02</span><h2>출품 장비 — AI 훈련 시뮬레이터 3종</h2></div>
+    <p class="sec-sub">부스 1개당 1개 장비군을 배치하여 “모빌리티 · 스마트팩토리 · 디지털트윈” 3개 산업 접점에서 AI 활용 교육 사례를 보여줍니다.</p>
+    <div class="grid3">
+      <div class="eq-card">
+        <div class="eq-top"><div class="zone">ZONE A · 3×3m</div><h3>AI EV 진단훈련 시뮬레이터</h3></div>
+        <div class="eq-body">
+          <p>HV Bridge 기반 게임형 EV 정비교육 콘텐츠. AI 아바타 튜터가 진단 시나리오를 실시간으로 코칭.</p>
+          <ul>
+            <li>Blue/Orange/Red 역량단계 체험 데모</li>
+            <li>퀘스트형 고장진단 미니게임 (관람객 직접 체험)</li>
+            <li>모빌리티 산업 AI 활용사례로 포지셔닝</li>
+          </ul>
+        </div>
+      </div>
+      <div class="eq-card">
+        <div class="eq-top"><div class="zone">ZONE B · 3×3m</div><h3>스마트팩토리 AI Vision 테스트베드</h3></div>
+        <div class="eq-body">
+          <p>실물 스마트팩토리 트레이너 + AI 비전 결함검사·예지보전 데모를 결합한 Physical AI 전시.</p>
+          <ul>
+            <li>카메라 기반 실시간 불량 판정 시연</li>
+            <li>“기기가 스스로 보고 판단”하는 Embodied AI 주제 부합</li>
+            <li>제조 AX 담당자·정책관 방문객 타깃</li>
+          </ul>
+        </div>
+      </div>
+      <div class="eq-card">
+        <div class="eq-top"><div class="zone">ZONE C · 3×3m</div><h3>DX Labeler AI 디지털트윈</h3></div>
+        <div class="eq-body">
+          <p>3D(Three.js) 생산라인 디지털트윈 + 실시간 대시보드. 원격 모니터링·이상 감지 개념 시연.</p>
+          <ul>
+            <li>55인치 모니터 연동 라이브 시뮬레이션</li>
+            <li>스타트업 IR·오픈이노베이션 세션 연계 소재로 활용</li>
+            <li>디지털트윈 교육 커리큘럼 소개 자료 비치</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="callout">이 3종은 이미 Kelly님이 개발/고도화 중인 콘텐츠(HV Bridge, DX Labeler, 스마트팩토리 테스트베드)를 재활용하는 구성이라 신규 개발비 부담 없이 “AI 훈련 콘텐츠” 프레임으로 재포장하는 접근입니다.</div>
+  </section>
+
+  <!-- 3. 부스 레이아웃 -->
+  <section>
+    <div class="sec-head"><span class="sec-num">03</span><h2>부스 레이아웃 — ㄴ자형 3부스</h2></div>
+    <p class="sec-sub">3×3m 3개를 붙여 6m×6m ㄴ자(L)형으로 배치, 개방면을 2~3면 확보해 동선 유입을 극대화합니다.</p>
+    <div class="floorplan">
+      <svg viewBox="0 0 460 420" width="440" height="400" xmlns="http://www.w3.org/2000/svg">
+        <!-- grid -->
+        <defs>
+          <pattern id="grid" width="20" height="20" patternUnits="userSpaceOnUse">
+            <path d="M20 0 L0 0 0 20" fill="none" stroke="#16305C" stroke-width="1"/>
+          </pattern>
+        </defs>
+        <rect width="460" height="420" fill="url(#grid)"/>
+
+        <!-- Zone C (top, 3x3) -->
+        <rect x="40" y="30" width="180" height="180" rx="6" fill="#123467" stroke="#00C2D1" stroke-width="2"/>
+        <text x="130" y="115" fill="#fff" font-size="14" font-weight="700" text-anchor="middle">ZONE C</text>
+        <text x="130" y="134" fill="#9FD8DE" font-size="11" text-anchor="middle">DX Labeler 디지털트윈</text>
+        <text x="130" y="150" fill="#7A8CB0" font-size="10" text-anchor="middle">3m × 3m</text>
+
+        <!-- Zone B (bottom-left, 3x3) -->
+        <rect x="40" y="210" width="180" height="180" rx="6" fill="#123467" stroke="#00C2D1" stroke-width="2"/>
+        <text x="130" y="295" fill="#fff" font-size="14" font-weight="700" text-anchor="middle">ZONE B</text>
+        <text x="130" y="314" fill="#9FD8DE" font-size="11" text-anchor="middle">스마트팩토리 AI Vision</text>
+        <text x="130" y="330" fill="#7A8CB0" font-size="10" text-anchor="middle">3m × 3m</text>
+
+        <!-- Zone A (bottom-right, 3x3) -->
+        <rect x="220" y="210" width="180" height="180" rx="6" fill="#123467" stroke="#00C2D1" stroke-width="2"/>
+        <text x="310" y="295" fill="#fff" font-size="14" font-weight="700" text-anchor="middle">ZONE A</text>
+        <text x="310" y="314" fill="#9FD8DE" font-size="11" text-anchor="middle">AI EV 진단 시뮬레이터</text>
+        <text x="310" y="330" fill="#7A8CB0" font-size="10" text-anchor="middle">3m × 3m</text>
+
+        <!-- Consultation lounge at inner corner -->
+        <rect x="230" y="40" width="150" height="140" rx="8" fill="#0E2A50" stroke="#F4A340" stroke-width="1.6" stroke-dasharray="5 4"/>
+        <text x="305" y="100" fill="#F4A340" font-size="12.5" font-weight="700" text-anchor="middle">상담 라운지</text>
+        <text x="305" y="118" fill="#E5CDA0" font-size="10" text-anchor="middle">원형테이블 1 + 의자 4</text>
+        <text x="305" y="134" fill="#E5CDA0" font-size="10" text-anchor="middle">리셉션 데스크</text>
+
+        <!-- open side arrows (traffic) -->
+        <text x="130" y="20" fill="#00C2D1" font-size="10" text-anchor="middle">▲ 개방면 (통로)</text>
+        <text x="10" y="300" fill="#00C2D1" font-size="10" text-anchor="middle" transform="rotate(-90 10 300)">개방면 ▶</text>
+        <text x="440" y="300" fill="#00C2D1" font-size="10" text-anchor="middle" transform="rotate(90 440 300)">◀ 개방면</text>
+      </svg>
+      <div class="fp-legend">
+        <div class="li"><span class="dot" style="background:#123467;border:1px solid #00C2D1;"></span><div><b>전시존 A·B·C</b><br>각 3×3m, 체험형 시연대 배치. 뒷면은 창고(1×1m)로 활용.</div></div>
+        <div class="li"><span class="dot" style="background:#0E2A50;border:1px dashed #F4A340;"></span><div><b>상담 라운지 (ㄴ 안쪽 코너)</b><br>3개 부스 시선이 모이는 안쪽 코너에 배치해 자연스러운 상담 동선 형성.</div></div>
+        <div class="li"><span class="dot" style="background:#00C2D1;"></span><div><b>개방면 3면</b><br>블록형(밀폐 사각) 대비 관람객 유입 동선을 3면으로 확보. 백월은 바깥쪽 2변에만 설치.</div></div>
+      </div>
+    </div>
+    <div class="callout">ㄱ자형으로 뒤집어도 무방 — 실제 KINTEX 배치도에서 통로가 넓은 방향으로 개방면을 맞추는 것이 핵심입니다. 위치 확정 시 통로 폭·인접 부스를 확인 후 좌우 반전 여부를 결정하세요.</div>
+  </section>
+
+  <!-- 4. 인테리어/집기 -->
+  <section>
+    <div class="sec-head"><span class="sec-num">04</span><h2>인테리어 · 집기 · 이벤트 구성</h2></div>
+    <div class="grid2">
+      <div class="card">
+        <h3 style="margin-top:0;font-size:15.5px;">인테리어</h3>
+        <table>
+          <tr><td>백월 그래픽</td><td>ㄴ자 바깥쪽 2변, AI 테마 그래픽 + IEG 로고/슬로건</td></tr>
+          <tr><td>바닥재</td><td>존별 컬러 파티션(A: 모빌리티 블루 / B: 팩토리 네이비 / C: 디지털트윈 시안) 카펫</td></tr>
+          <tr><td>조명</td><td>스팟조명 존당 3EA + 상담 라운지 펜던트 조명</td></tr>
+          <tr><td>상단 사인</td><td>ㄴ자 코너 상단에 IEG 로고 타워사인 (원거리 시인성 확보)</td></tr>
+        </table>
+      </div>
+      <div class="card">
+        <h3 style="margin-top:0;font-size:15.5px;">가구/집기</h3>
+        <table>
+          <tr><td>상담 라운지</td><td>원형테이블 1, 의자 4, 리셉션 하이체어 1</td></tr>
+          <tr><td>존별 데모대</td><td>장비 거치용 1800×800mm 테이블 3</td></tr>
+          <tr><td>디스플레이</td><td>55인치 스탠드형 모니터 3대 (존별 1대)</td></tr>
+          <tr><td>기타</td><td>카탈로그 스탠드 1, 보관 캐비닛(잠금) 1, 쓰레기통 3</td></tr>
+        </table>
+      </div>
+    </div>
+    <div class="grid2" style="margin-top:16px;">
+      <div class="card">
+        <h3 style="margin-top:0;font-size:15.5px;">체험 이벤트 기획</h3>
+        <ul style="font-size:13.4px; padding-left:18px; margin:0;">
+          <li><b>AI 미니 퀴즈</b> — 태블릿 3대(존별)로 “AI가 진단하면?” 5문항 퀴즈, 정답자 스탬프 적립</li>
+          <li><b>스탬프 럭키드로우</b> — 3존 모두 체험 시 스탬프 3개 → 매일 종료 30분 전 즉석 추첨</li>
+          <li><b>경품</b> — 1등 무선이어폰(일 1명), 2등 보조배터리, 3등 AI 테마 굿즈(전원)</li>
+          <li><b>SNS 인증 이벤트</b> — 부스 포토존 태그 시 판촉물 즉시 증정</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3 style="margin-top:0;font-size:15.5px;">판촉물 (AI 테마)</h3>
+        <ul style="font-size:13.4px; padding-left:18px; margin:0;">
+          <li>OTG USB (IEG 로고 각인)</li>
+          <li>AI 캐릭터(GILBERT) 키링/스티커</li>
+          <li>노트/멀티펜 세트</li>
+          <li>에코백 (한정 수량, 스탬프 3개 완주자 대상)</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- 5. 예산 -->
+  <section>
+    <div class="sec-head"><span class="sec-num">05</span><h2>예산안 (초안 · 3부스 / 3일 기준)</h2></div>
+    <div class="card">
+      <table>
+        <tr><th style="width:36px;">No</th><th>항목</th><th>세부내용</th><th class="num" style="width:110px;">예상금액(₩)</th></tr>
+        <tr><td>1</td><td>부스 임차료</td><td>3×3m ×3, 27㎡ (기본 조립부스 기준)</td><td class="num">8,500,000</td></tr>
+        <tr><td>2</td><td>인테리어/그래픽시공</td><td>백월, 바닥재, 조명, 사인물</td><td class="num">9,000,000</td></tr>
+        <tr><td>3</td><td>집기 임차</td><td>테이블, 의자, 리셉션데스크, 카탈로그대, 보관장</td><td class="num">1,500,000</td></tr>
+        <tr><td>4</td><td>전기/공압/인터넷</td><td>존별 전력, Wi-Fi 신청</td><td class="num">600,000</td></tr>
+        <tr><td>5</td><td>AV 장비</td><td>55인치 모니터 3, 태블릿 5, 스피커</td><td class="num">2,500,000</td></tr>
+        <tr><td>6</td><td>인쇄물</td><td>백월배너, X배너, 카탈로그, 리플렛, 명함</td><td class="num">2,800,000</td></tr>
+        <tr><td>7</td><td>이벤트 운영</td><td>퀴즈 콘텐츠 제작, 럭키드로우 경품, 포토존</td><td class="num">3,500,000</td></tr>
+        <tr><td>8</td><td>판촉물</td><td>AI 테마 굿즈 일체</td><td class="num">2,000,000</td></tr>
+        <tr><td>9</td><td>리드 제너레이션</td><td>명함스캐너/QR 등록 시스템</td><td class="num">600,000</td></tr>
+        <tr><td>10</td><td>운영 인력</td><td>도우미/진행요원 3일 파견</td><td class="num">1,800,000</td></tr>
+        <tr><td>11</td><td>운송/설치철거</td><td>장비 운송, 설치·철거 인건비</td><td class="num">1,200,000</td></tr>
+        <tr><td>12</td><td>TF 식비/일비</td><td>TF팀 3~4인 × 3일</td><td class="num">900,000</td></tr>
+        <tr><td>13</td><td>예비비 (10%)</td><td>변동 비용 대비</td><td class="num">3,490,000</td></tr>
+        <tr class="total"><td colspan="3">합계 (VAT 별도, 추정치)</td><td class="num">38,390,000</td></tr>
+      </table>
+      <div class="callout blue">
+        BernExpo 사례처럼 <b>코트라/중기부 내수·수출 마케팅 바우처</b> 또는 <b>KINTEX 중소기업 참가지원 사업</b> 활용 시 자부담을 30~40% 수준으로 낮출 수 있습니다. 부스 신청 전 지원사업 공고 확인을 우선 진행하세요.
+      </div>
+    </div>
+  </section>
+
+  <!-- 6. TF 인력 -->
+  <section>
+    <div class="sec-head"><span class="sec-num">06</span><h2>TF팀 구성 — 필수 인력</h2></div>
+    <div class="grid3">
+      <div class="people-card">
+        <span class="role">총괄 PM</span>
+        <h4>참가 총괄 / 상담·리드 관리</h4>
+        <p>부스 컨셉, 예산, 바이어/기관 상담 총괄. 3일 상주 필수.</p>
+      </div>
+      <div class="people-card">
+        <span class="role">기술 담당</span>
+        <h4>장비 세팅·시연·AS</h4>
+        <p>3종 시뮬레이터 설치, 현장 트러블슈팅, 시연 진행.</p>
+      </div>
+      <div class="people-card">
+        <span class="role">마케팅/디자인</span>
+        <h4>인테리어·인쇄물·이벤트 기획</h4>
+        <p>배너/카탈로그 디자인 감수, 퀴즈·럭키드로우 콘텐츠 제작 (외부 협업 가능).</p>
+      </div>
+      <div class="people-card">
+        <span class="role">운영 도우미</span>
+        <h4>파견 스태프 1~2인</h4>
+        <p>퀴즈/스탬프 응대, 리드 수집, 판촉물 배포 — 3일 파견.</p>
+      </div>
+      <div class="people-card">
+        <span class="role">경영진</span>
+        <h4>VIP 응대 (개막일)</h4>
+        <p>정책관·해외바이어 매칭 시 임원급 응대가 신뢰도에 유리 (개막일 반나절 권장).</p>
+      </div>
+      <div class="people-card">
+        <span class="role">사후관리</span>
+        <h4>리드 팔로우업 담당</h4>
+        <p>전시 종료 후 CRM 입력, 이메일 발송, 웨비나 초청 (Kelly님 겸임 가능).</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 7. 타임라인 -->
+  <section>
+    <div class="sec-head"><span class="sec-num">07</span><h2>실행 타임라인 (D-72 ~ D-Day)</h2></div>
+    <div class="card">
+      <div class="timeline">
+        <div class="t-item done">
+          <span class="dday">D-72</span><span class="date">~ 8/10 (오늘)</span>
+          <h4>참가 확정 &amp; 방향 설정</h4>
+          <ul>
+            <li>참가 여부/예산 내부 승인 요청</li>
+            <li>출품 장비 3종 확정 (본 기획안 기준)</li>
+            <li>코트라/중기부 지원사업 공고 확인</li>
+          </ul>
+        </div>
+        <div class="t-item">
+          <span class="dday">D-60</span><span class="date">~ 8/22</span>
+          <h4>부스 신청 &amp; TF 구성</h4>
+          <ul>
+            <li>부스 3개(ㄴ자형) 신청 및 위치 협의</li>
+            <li>TF팀 인력 배정, 역할 분담표 작성</li>
+            <li>인테리어/이벤트 협력업체 견적 요청 (2~3곳)</li>
+          </ul>
+        </div>
+        <div class="t-item">
+          <span class="dday">D-45</span><span class="date">~ 9/6</span>
+          <h4>디자인 &amp; 콘텐츠 확정</h4>
+          <ul>
+            <li>부스 디자인 시안 확정, 인테리어 업체 계약</li>
+            <li>AI 퀴즈/럭키드로우 콘텐츠 기획 확정</li>
+            <li>사전 바이어·타깃 리스트 추출 (트레이드잇 등)</li>
+          </ul>
+        </div>
+        <div class="t-item">
+          <span class="dday">D-30</span><span class="date">~ 9/21</span>
+          <h4>제작 발주 &amp; 사전 홍보 시작</h4>
+          <ul>
+            <li>인쇄물(배너·카탈로그·리플렛) 최종 디자인 발주</li>
+            <li>판촉물·경품 발주 (알리바바 등 리드타임 고려)</li>
+            <li>사전 초청 이메일/SNS 홍보 1차 발송</li>
+            <li>▶ 하단 <b>D-30 최종 체크리스트</b> 점검</li>
+          </ul>
+        </div>
+        <div class="t-item">
+          <span class="dday">D-20</span><span class="date">~ 10/1</span>
+          <h4>미팅 세팅</h4>
+          <ul>
+            <li>타깃 바이어/기관 개별 미팅 제안 발송</li>
+            <li>KOTRA 수출상담회 사전 매칭 신청</li>
+            <li>VIP 초청장/쿠폰 발송</li>
+          </ul>
+        </div>
+        <div class="t-item">
+          <span class="dday">D-14</span><span class="date">~ 10/7</span>
+          <h4>물류 &amp; 리허설 준비</h4>
+          <ul>
+            <li>장비 운송 스케줄 확정</li>
+            <li>도우미/스태프 최종 컨펌 및 교육 자료 배포</li>
+            <li>시연 스크립트·퀴즈 리허설</li>
+          </ul>
+        </div>
+        <div class="t-item">
+          <span class="dday">D-7</span><span class="date">~ 10/14</span>
+          <h4>최종 점검</h4>
+          <ul>
+            <li>인쇄물/판촉물 수령 확인, 수량 검수</li>
+            <li>장비 전원/네트워크 테스트</li>
+            <li>부스 운영 매뉴얼 최종본 배포</li>
+          </ul>
+        </div>
+        <div class="t-item">
+          <span class="dday">D-3~D-1</span><span class="date">10/18~20</span>
+          <h4>현장 설치</h4>
+          <ul>
+            <li>부스 인테리어 시공, 인프라(전기·네트워크) 점검</li>
+            <li>장비 반입·세팅, 55인치 모니터 연동 테스트</li>
+            <li>전체 리허설 및 사진 촬영</li>
+          </ul>
+        </div>
+        <div class="t-item">
+          <span class="dday">D-Day</span><span class="date">10/21~23</span>
+          <h4>전시 운영</h4>
+          <ul>
+            <li>일 1~2회 존별 집중 시연 타임 운영</li>
+            <li>매일 종료 30분 전 럭키드로우 추첨</li>
+            <li>리드 실시간 집계 (스캐너/QR)</li>
+          </ul>
+        </div>
+        <div class="t-item">
+          <span class="dday">D+7</span><span class="date">10/30</span>
+          <h4>Follow-up</h4>
+          <ul>
+            <li>감사 이메일 + 전시 리뷰 자료 발송</li>
+            <li>CRM 리드 정리, 성과(KPI) 1차 보고</li>
+            <li>유효 리드 대상 웨비나/미팅 제안</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 8. D-30 체크리스트 -->
+  <section>
+    <div class="sec-head"><span class="sec-num">08</span><h2>D-30 최종 확인 To-do List</h2></div>
+    <p class="sec-sub">9/21 전후, 발주 마감 전 반드시 확인해야 하는 항목 (BernExpo 체크업 리스트 형식 준용)</p>
+    <div class="card">
+      <div class="checklist">
+        <div>
+          <div class="cl-group">
+            <h4>부스 구조 · 공간</h4>
+            <div class="cl-item"><span class="box"></span>3부스 정확한 위치·치수(ㄴ자 방향) 최종 확인</div>
+            <div class="cl-item"><span class="box"></span>벽면/바닥재 기본 제공 범위 vs 추가 시공 범위 구분</div>
+            <div class="cl-item"><span class="box"></span>창고(보관공간) 잠금장치 여부 확인</div>
+          </div>
+          <div class="cl-group">
+            <h4>가구 · 집기</h4>
+            <div class="cl-item"><span class="box"></span>상담 라운지 테이블·의자 수량 최종 확정</div>
+            <div class="cl-item"><span class="box"></span>존별 데모 테이블(1800×800) 3개 예약 확인</div>
+            <div class="cl-item"><span class="box"></span>카탈로그 스탠드·보관 캐비닛 예약</div>
+          </div>
+          <div class="cl-group">
+            <h4>전력 · 네트워크</h4>
+            <div class="cl-item"><span class="box"></span>존별 콘센트 수량·위치 확인 (모니터 3대 + 태블릿 5대 기준 전력 총량 산출)</div>
+            <div class="cl-item"><span class="box"></span>유/무선 인터넷 신청 여부</div>
+            <div class="cl-item"><span class="box"></span>멀티탭/연장선 예비 수량 확보</div>
+          </div>
+          <div class="cl-group">
+            <h4>조명 · AV</h4>
+            <div class="cl-item"><span class="box"></span>존별 스팟조명 3EA 배치 확인</div>
+            <div class="cl-item"><span class="box"></span>55인치 모니터 3대 + 스탠드(높이조절) 확정</div>
+            <div class="cl-item"><span class="box"></span>HDMI/USB 등 입력단자 호환 확인</div>
+          </div>
+        </div>
+        <div>
+          <div class="cl-group">
+            <h4>홍보물 · 디스플레이</h4>
+            <div class="cl-item"><span class="box"></span>백월/배너 그래픽 최종 시안 컨펌 및 발주</div>
+            <div class="cl-item"><span class="box"></span>카탈로그/리플렛 수량 여유있게 발주 (예비 20%)</div>
+            <div class="cl-item"><span class="box"></span>명함 충분 수량 준비</div>
+          </div>
+          <div class="cl-group">
+            <h4>이벤트 · 판촉물</h4>
+            <div class="cl-item"><span class="box"></span>퀴즈 콘텐츠(태블릿용) 최종 QA</div>
+            <div class="cl-item"><span class="box"></span>럭키드로우 경품 발주 및 리드타임 확인</div>
+            <div class="cl-item"><span class="box"></span>AI 테마 판촉물 발주 (알리바바 등 리드타임 4주 이상 고려)</div>
+          </div>
+          <div class="cl-group">
+            <h4>운영 · 편의</h4>
+            <div class="cl-item"><span class="box"></span>명함 수거함/리드 스캐너 시스템 테스트</div>
+            <div class="cl-item"><span class="box"></span>개인물품 보관함(잠금) 준비</div>
+            <div class="cl-item"><span class="box"></span>구급약품, 청소용품 체크</div>
+          </div>
+          <div class="cl-group">
+            <h4>인력 · 사전 미팅</h4>
+            <div class="cl-item"><span class="box"></span>TF팀·도우미 3일 스케줄 최종 컨펌</div>
+            <div class="cl-item"><span class="box"></span>사전 미팅 제안 이메일 발송 리스트업 완료</div>
+            <div class="cl-item"><span class="box"></span>KOTRA 수출상담회 매칭 신청 여부 확인</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer>IEG Co., Ltd. · Global Business Division · 2026 산업AI EXPO(KINTEX) 참가 기획 초안 — 실제 견적/부스 규정은 주최측 확인 후 확정 필요</footer>
+</div>
+</body>
+</html>
