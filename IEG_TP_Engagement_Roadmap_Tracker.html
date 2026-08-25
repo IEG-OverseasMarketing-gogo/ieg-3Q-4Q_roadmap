@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IEG × Temasek Polytechnic — Engagement Line</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=IBM+Plex+Mono:wght@500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --orange:#D9622B;
+    --orange-dim:#f0dcce;
+    --blue:#2E6DA4;
+    --blue-dim:#dde8f0;
+    --ink:#1F2933;
+    --ink-soft:#5b6570;
+    --line:#E4E1DC;
+    --bg:#FAF9F7;
+    --panel:#FFFFFF;
+    --green:#3F9142;
+    --green-dim:#dcecdc;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--bg);
+    color:var(--ink);
+    font-family:'Inter',sans-serif;
+    -webkit-font-smoothing:antialiased;
+    padding:36px 20px 80px;
+  }
+  .wrap{max-width:1080px;margin:0 auto;}
+
+  /* header */
+  header{margin-bottom:34px;}
+  .eyebrow{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:12px;
+    letter-spacing:.14em;
+    text-transform:uppercase;
+    color:var(--orange);
+    font-weight:600;
+    margin-bottom:10px;
+  }
+  h1{
+    font-family:'Barlow Condensed',sans-serif;
+    font-weight:700;
+    font-size:clamp(30px,4.2vw,46px);
+    line-height:1.02;
+    margin:0 0 8px;
+    letter-spacing:.2px;
+  }
+  h1 span{color:var(--orange);}
+  .sub{color:var(--ink-soft);font-size:15px;max-width:640px;line-height:1.55;}
+
+  /* overall progress */
+  .overall{
+    display:flex;align-items:center;gap:18px;
+    margin-top:22px;padding:16px 20px;
+    background:var(--panel);border:1px solid var(--line);border-radius:10px;
+  }
+  .overall .ring{flex:0 0 auto;}
+  .overall .txt{flex:1;}
+  .overall .label{font-size:12px;text-transform:uppercase;letter-spacing:.08em;color:var(--ink-soft);font-family:'IBM Plex Mono',monospace;}
+  .overall .count{font-family:'Barlow Condensed',sans-serif;font-size:26px;font-weight:700;margin-top:2px;}
+  .overall .bar-track{height:7px;border-radius:5px;background:#EFECE7;margin-top:8px;overflow:hidden;}
+  .overall .bar-fill{height:100%;background:linear-gradient(90deg,var(--orange),#e78552);border-radius:5px;transition:width .35s ease;}
+
+  /* process line */
+  .line-rail{
+    position:relative;
+    display:flex;
+    justify-content:space-between;
+    margin:44px 0 8px;
+    padding:0 6px;
+  }
+  .line-rail::before{
+    content:"";
+    position:absolute;top:20px;left:26px;right:26px;height:3px;
+    background:repeating-linear-gradient(90deg,var(--line) 0 10px, transparent 10px 16px);
+  }
+  .station{
+    position:relative;z-index:1;
+    display:flex;flex-direction:column;align-items:center;
+    width:19%;
+    cursor:pointer;
+    background:transparent;border:none;
+  }
+  .station .dot{
+    width:42px;height:42px;border-radius:50%;
+    background:var(--panel);border:2.5px solid var(--line);
+    display:flex;align-items:center;justify-content:center;
+    font-family:'IBM Plex Mono',monospace;font-weight:600;font-size:15px;color:var(--ink-soft);
+    transition:all .25s ease;
+  }
+  .station.done .dot{background:var(--green);border-color:var(--green);color:#fff;}
+  .station.active .dot{border-color:var(--orange);color:var(--orange);box-shadow:0 0 0 5px var(--orange-dim);}
+  .station .st-label{
+    margin-top:9px;font-size:12px;text-align:center;color:var(--ink-soft);
+    font-weight:600;line-height:1.25;max-width:110px;
+  }
+  .station.active .st-label{color:var(--ink);}
+  .station .st-pct{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--ink-soft);margin-top:3px;}
+
+  /* phase cards */
+  .phases{margin-top:40px;display:flex;flex-direction:column;gap:16px;}
+  .phase{
+    background:var(--panel);border:1px solid var(--line);border-radius:12px;
+    overflow:hidden;
+    scroll-margin-top:20px;
+  }
+  .phase-head{
+    display:flex;align-items:center;gap:16px;
+    padding:18px 22px;cursor:pointer;
+    user-select:none;
+  }
+  .phase-num{
+    font-family:'IBM Plex Mono',monospace;font-weight:600;font-size:13px;
+    color:#fff;background:var(--ink);width:34px;height:34px;border-radius:8px;
+    display:flex;align-items:center;justify-content:center;flex:0 0 auto;
+  }
+  .phase.done .phase-num{background:var(--green);}
+  .phase.current .phase-num{background:var(--orange);}
+  .phase-titles{flex:1;min-width:0;}
+  .phase-titles .t{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:21px;line-height:1.15;}
+  .phase-titles .w{font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--ink-soft);margin-top:2px;}
+  .phase-progress{flex:0 0 150px;}
+  .phase-progress .bar-track{height:6px;border-radius:5px;background:#EFECE7;overflow:hidden;}
+  .phase-progress .bar-fill{height:100%;background:var(--orange);border-radius:5px;transition:width .3s ease;}
+  .phase.done .phase-progress .bar-fill{background:var(--green);}
+  .phase-progress .pct{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--ink-soft);margin-top:5px;text-align:right;}
+  .chev{flex:0 0 auto;color:var(--ink-soft);transition:transform .25s ease;font-size:13px;}
+  .phase.open .chev{transform:rotate(180deg);}
+
+  .phase-body{
+    max-height:0;overflow:hidden;transition:max-height .3s ease;
+    border-top:1px solid transparent;
+  }
+  .phase.open .phase-body{border-top:1px solid var(--line);}
+  .phase-focus{
+    padding:16px 22px 4px;font-size:13.5px;color:var(--ink-soft);line-height:1.55;
+  }
+  .items{list-style:none;margin:0;padding:6px 14px 18px;}
+  .item{
+    display:flex;align-items:flex-start;gap:12px;
+    padding:10px 8px;border-radius:8px;
+  }
+  .item:hover{background:#FAF7F3;}
+  .item input[type=checkbox]{
+    appearance:none;-webkit-appearance:none;
+    width:19px;height:19px;border-radius:5px;border:2px solid var(--line);
+    flex:0 0 auto;margin-top:1px;cursor:pointer;position:relative;
+    transition:all .15s ease;
+  }
+  .item input[type=checkbox]:checked{background:var(--green);border-color:var(--green);}
+  .item input[type=checkbox]:checked::after{
+    content:"";position:absolute;left:5px;top:1px;width:5px;height:9px;
+    border:solid #fff;border-width:0 2px 2px 0;transform:rotate(40deg);
+  }
+  .item-txt{flex:1;font-size:14.5px;line-height:1.5;}
+  .item.checked .item-txt{color:var(--ink-soft);text-decoration:line-through;text-decoration-color:var(--line);}
+  .owner{
+    font-family:'IBM Plex Mono',monospace;font-size:10.5px;font-weight:600;
+    padding:2px 7px;border-radius:5px;letter-spacing:.03em;flex:0 0 auto;margin-top:1px;
+  }
+  .owner.ieg{background:var(--orange-dim);color:#a8451a;}
+  .owner.tp{background:var(--blue-dim);color:var(--blue);}
+  .owner.both{background:var(--green-dim);color:#2b6b2e;}
+
+  footer{margin-top:40px;text-align:center;color:var(--ink-soft);font-size:12px;font-family:'IBM Plex Mono',monospace;}
+
+  @media (max-width:720px){
+    .line-rail{display:none;}
+    .phase-progress{flex-basis:90px;}
+    .phase-titles .t{font-size:18px;}
+  }
+  @media print{
+    body{padding:0;background:#fff;}
+    .line-rail{display:none;}
+    .phase-body{max-height:none !important;}
+    .chev{display:none;}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <div class="eyebrow">IEG Enterprise Group × Temasek Polytechnic</div>
+    <h1>Engagement <span>Line</span></h1>
+    <div class="sub">Action tracker for the proposed 5-phase collaboration roadmap (semiconductor &amp; smart manufacturing training infrastructure). Check off items as they're completed — timing shown is suggested and can be adjusted once TP confirms availability.</div>
+
+    <div class="overall">
+      <svg class="ring" width="56" height="56" viewBox="0 0 56 56">
+        <circle cx="28" cy="28" r="24" fill="none" stroke="#EFECE7" stroke-width="6"/>
+        <circle id="ringFill" cx="28" cy="28" r="24" fill="none" stroke="#D9622B" stroke-width="6"
+          stroke-linecap="round" stroke-dasharray="150.8" stroke-dashoffset="150.8"
+          transform="rotate(-90 28 28)"/>
+      </svg>
+      <div class="txt">
+        <div class="label">Overall Progress</div>
+        <div class="count" id="overallCount">0 / 0 action items complete</div>
+        <div class="bar-track"><div class="bar-fill" id="overallBar" style="width:0%"></div></div>
+      </div>
+    </div>
+  </header>
+
+  <div class="line-rail" id="lineRail"></div>
+
+  <div class="phases" id="phases"></div>
+
+  <footer>IEG ENTERPRISE GROUP — Semiconductor &amp; Smart Manufacturing Training Infrastructure — www.ieg.kr</footer>
+</div>
+
+<script>
+const DATA = [
+  {
+    title: "Preparation",
+    weeks: "Week 0–2",
+    focus: "Internal groundwork before first outside contact — curriculum research and asset mapping.",
+    items: [
+      { t: "Finalize collaboration proposal document and reference visuals", o: "ieg" },
+      { t: "Research TP's existing Mechanical Engineering / Mechatronics curriculum structure", o: "ieg" },
+      { t: "Map IEG equipment/simulator assets against Track A (Maintenance) and Track B (Design)", o: "ieg" },
+      { t: "Identify the right first point of contact at TP (faculty lead / department head)", o: "ieg" },
+    ]
+  },
+  {
+    title: "Introductory Meeting",
+    weeks: "Week 2–3",
+    focus: "First outside contact — share the proposal and gauge interest.",
+    items: [
+      { t: "Send proposal document to TP contact", o: "ieg" },
+      { t: "Schedule introductory call or meeting", o: "both" },
+      { t: "Present reference cases (Samsung Display / Samsung Electronics Vietnam) and market context", o: "ieg" },
+      { t: "TP confirms attending faculty / stakeholders", o: "tp" },
+      { t: "Gauge TP's initial track preference — Maintenance (A) vs. Design (B)", o: "both" },
+    ]
+  },
+  {
+    title: "Needs Workshop",
+    weeks: "Week 4–6",
+    focus: "Joint session to pin down scope, cohort size, and lab constraints.",
+    items: [
+      { t: "Confirm priority track and target department/cohort with TP faculty", o: "both" },
+      { t: "TP shares student cohort size and existing lab space / power / safety constraints", o: "tp" },
+      { t: "IEG prepares equipment demo materials or short video walkthrough for the workshop", o: "ieg" },
+      { t: "Agree on rough budget range and decision timeline with TP", o: "both" },
+    ]
+  },
+  {
+    title: "Module Design",
+    weeks: "Week 6–10",
+    focus: "Turn the agreed direction into a concrete, priced module proposal.",
+    items: [
+      { t: "Draft customized proposal for 1–2 equipment modules scoped to TP's confirmed priorities", o: "ieg" },
+      { t: "Prepare cost estimate, delivery timeline, and installation requirements", o: "ieg" },
+      { t: "TP runs internal review / procurement approval process", o: "tp" },
+      { t: "Align on instructor training plan (train-the-trainer) ahead of pilot", o: "both" },
+    ]
+  },
+  {
+    title: "Pilot",
+    weeks: "Week 10–16+",
+    focus: "Small-scale trial before any broader partnership agreement.",
+    items: [
+      { t: "Define pilot scope — single course or one semester", o: "both" },
+      { t: "Equipment delivery and on-site installation", o: "ieg" },
+      { t: "Conduct instructor training for TP teaching staff", o: "ieg" },
+      { t: "Run the pilot course with enrolled students", o: "tp" },
+      { t: "Joint review of pilot outcomes and decision on broader partnership", o: "both" },
+    ]
+  },
+];
+
+const phasesEl = document.getElementById('phases');
+const railEl = document.getElementById('lineRail');
+
+DATA.forEach((phase, pi) => {
+  // station
+  const st = document.createElement('button');
+  st.className = 'station';
+  st.id = 'station-' + pi;
+  st.innerHTML = `<div class="dot">${pi}</div><div class="st-label">${phase.title}</div><div class="st-pct">0%</div>`;
+  st.addEventListener('click', () => {
+    document.getElementById('phase-' + pi).scrollIntoView({behavior:'smooth', block:'center'});
+    openPhase(pi, true);
+  });
+  railEl.appendChild(st);
+
+  // phase card
+  const card = document.createElement('div');
+  card.className = 'phase';
+  card.id = 'phase-' + pi;
+
+  const itemsHtml = phase.items.map((it, ii) => `
+    <li class="item" data-phase="${pi}" data-item="${ii}">
+      <input type="checkbox" id="chk-${pi}-${ii}">
+      <label class="item-txt" for="chk-${pi}-${ii}">${it.t}</label>
+      <span class="owner ${it.o}">${it.o === 'ieg' ? 'IEG' : it.o === 'tp' ? 'TP' : 'BOTH'}</span>
+    </li>`).join('');
+
+  card.innerHTML = `
+    <div class="phase-head">
+      <div class="phase-num">${pi}</div>
+      <div class="phase-titles">
+        <div class="t">${phase.title}</div>
+        <div class="w">${phase.weeks}</div>
+      </div>
+      <div class="phase-progress">
+        <div class="bar-track"><div class="bar-fill" id="pbar-${pi}" style="width:0%"></div></div>
+        <div class="pct" id="ppct-${pi}">0 / ${phase.items.length}</div>
+      </div>
+      <div class="chev">▾</div>
+    </div>
+    <div class="phase-body">
+      <div class="phase-focus">${phase.focus}</div>
+      <ul class="items">${itemsHtml}</ul>
+    </div>`;
+
+  card.querySelector('.phase-head').addEventListener('click', () => togglePhase(pi));
+  phasesEl.appendChild(card);
+});
+
+function togglePhase(pi){
+  const card = document.getElementById('phase-' + pi);
+  const body = card.querySelector('.phase-body');
+  const isOpen = card.classList.contains('open');
+  if(isOpen){
+    body.style.maxHeight = null;
+    card.classList.remove('open');
+  } else {
+    card.classList.add('open');
+    body.style.maxHeight = body.scrollHeight + 'px';
+  }
+}
+function openPhase(pi, forceOpen){
+  const card = document.getElementById('phase-' + pi);
+  if(forceOpen && !card.classList.contains('open')) togglePhase(pi);
+}
+
+// open phase 0 by default
+togglePhase(0);
+
+function recalc(){
+  let totalItems = 0, totalChecked = 0;
+  DATA.forEach((phase, pi) => {
+    let checked = 0;
+    phase.items.forEach((it, ii) => {
+      const cb = document.getElementById(`chk-${pi}-${ii}`);
+      if(cb.checked) checked++;
+    });
+    const total = phase.items.length;
+    totalItems += total; totalChecked += checked;
+    const pct = total ? Math.round(checked/total*100) : 0;
+
+    document.getElementById(`pbar-${pi}`).style.width = pct + '%';
+    document.getElementById(`ppct-${pi}`).textContent = `${checked} / ${total}`;
+
+    const card = document.getElementById('phase-' + pi);
+    card.classList.toggle('done', pct === 100);
+
+    const st = document.getElementById('station-' + pi);
+    st.classList.toggle('done', pct === 100);
+    st.querySelector('.st-pct').textContent = pct + '%';
+  });
+
+  // mark "current" station = first not-done phase
+  DATA.forEach((_, pi) => document.getElementById('station-' + pi).classList.remove('active'));
+  DATA.forEach((phase, pi) => {
+    let checked = 0;
+    phase.items.forEach((it, ii) => { if(document.getElementById(`chk-${pi}-${ii}`).checked) checked++; });
+    if(checked < phase.items.length){
+      document.getElementById('station-' + pi).classList.add('active');
+      document.getElementById('phase-' + pi).classList.add('current');
+    } else {
+      document.getElementById('phase-' + pi).classList.remove('current');
+    }
+  });
+  // ensure only first incomplete gets "current" (remove from later ones)
+  let markedCurrent = false;
+  DATA.forEach((_, pi) => {
+    const el = document.getElementById('phase-' + pi);
+    if(el.classList.contains('current')){
+      if(markedCurrent) el.classList.remove('current');
+      else markedCurrent = true;
+    }
+  });
+
+  const overallPct = totalItems ? totalChecked/totalItems : 0;
+  document.getElementById('overallCount').textContent = `${totalChecked} / ${totalItems} action items complete`;
+  document.getElementById('overallBar').style.width = (overallPct*100) + '%';
+  const ring = document.getElementById('ringFill');
+  const circumference = 150.8;
+  ring.style.strokeDashoffset = circumference - (overallPct * circumference);
+}
+
+phasesEl.addEventListener('change', (e) => {
+  if(e.target.matches('input[type=checkbox]')){
+    e.target.closest('.item').classList.toggle('checked', e.target.checked);
+    recalc();
+    // keep open phase heights in sync after content shifts
+    document.querySelectorAll('.phase.open .phase-body').forEach(b => { b.style.maxHeight = b.scrollHeight + 'px'; });
+  }
+});
+
+recalc();
+</script>
+</body>
+</html>
