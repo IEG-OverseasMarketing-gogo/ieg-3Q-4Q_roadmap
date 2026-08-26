@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IEG Digital Twin Suite | Semiconductor TVET Simulation Portfolio</title>
+<style>
+  :root{
+    --bg-0:#48494E;
+    --bg-1:#55565C;
+    --bg-2:#63646A;
+    --line:#797A80;
+    --red:#E4342B;
+    --red-dim:#7A231F;
+    --gold:#D9A441;
+    --text-0:#F7F7F8;
+    --text-1:#C7C8CC;
+    --text-2:#9A9BA1;
+    --mono:'JetBrains Mono','SFMono-Regular',Consolas,Menlo,monospace;
+    --sans:'Inter',-apple-system,'Segoe UI',sans-serif;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;background:var(--bg-0);color:var(--text-0);font-family:var(--sans);}
+  body{
+    background-image:
+      radial-gradient(ellipse 800px 420px at 8% -8%, rgba(125,143,214,0.18), transparent 55%),
+      radial-gradient(ellipse 700px 400px at 40% -12%, rgba(87,201,194,0.16), transparent 55%),
+      radial-gradient(ellipse 700px 400px at 72% -8%, rgba(127,206,122,0.13), transparent 55%),
+      radial-gradient(ellipse 800px 450px at 100% 10%, rgba(214,154,90,0.15), transparent 58%),
+      radial-gradient(ellipse 700px 420px at 115% 30%, rgba(201,106,143,0.13), transparent 58%);
+  }
+  .wrap{max-width:1080px;margin:0 auto;padding:0 24px;}
+
+  /* header */
+  header{border-bottom:1px solid var(--line);padding:22px 0;}
+  .headrow{display:flex;align-items:center;gap:14px;}
+  .headrow img{width:44px;height:34px;object-fit:contain;filter:drop-shadow(0 0 8px rgba(228,52,43,.25));}
+  .headtext .org{font-family:var(--mono);font-size:10.5px;letter-spacing:.16em;color:var(--red);text-transform:uppercase;}
+  .headtext .div{font-size:13px;color:var(--text-1);margin-top:1px;}
+
+  /* hero */
+  .hero{padding:64px 0 44px;border-bottom:1px solid var(--line);}
+  .hero .eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.2em;color:var(--gold);text-transform:uppercase;margin-bottom:16px;}
+  .hero h1{font-size:clamp(30px,4.4vw,46px);line-height:1.15;font-weight:800;margin:0 0 18px;letter-spacing:-.01em;}
+  .hero h1 span{color:var(--red);}
+  .hero p{font-size:15.5px;line-height:1.75;color:var(--text-1);max-width:640px;margin:0;}
+  .hero-stats{display:flex;gap:36px;margin-top:34px;flex-wrap:wrap;}
+  .stat .num{font-family:var(--mono);font-size:26px;font-weight:700;color:var(--text-0);}
+  .stat .lbl{font-family:var(--mono);font-size:10px;color:var(--text-2);letter-spacing:.1em;margin-top:2px;}
+
+  /* grid */
+  .section-label{
+    font-family:var(--mono);font-size:11px;letter-spacing:.18em;color:var(--text-2);
+    text-transform:uppercase;margin:52px 0 20px;display:flex;align-items:center;gap:10px;
+  }
+  .section-label::after{content:'';flex:1;height:1px;background:var(--line);}
+
+  .grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;}
+  .card{
+    background:var(--bg-1);border:1px solid var(--line);border-radius:12px;padding:24px;
+    display:flex;flex-direction:column;gap:12px;text-decoration:none;color:inherit;
+    transition:border-color .18s, transform .18s, background .18s;position:relative;overflow:hidden;
+  }
+  .card:hover{border-color:var(--red-dim);background:var(--bg-2);transform:translateY(-2px);}
+  .card::before{
+    content:'';position:absolute;top:0;left:0;width:3px;height:100%;background:var(--tag-color,var(--red));
+    opacity:0;transition:opacity .18s;
+  }
+  .card:hover::before{opacity:1;}
+  .card-top{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;}
+  .card-tag{
+    font-family:var(--mono);font-size:9.5px;letter-spacing:.1em;font-weight:700;
+    color:var(--tag-color,var(--red));border:1px solid var(--tag-color,var(--red-dim));
+    padding:3px 8px;border-radius:20px;text-transform:uppercase;white-space:nowrap;
+  }
+  .card-num{font-family:var(--mono);font-size:11px;color:var(--text-2);}
+  .card h3{font-size:17px;font-weight:700;margin:2px 0 0;line-height:1.35;}
+  .card p{font-size:12.8px;line-height:1.65;color:var(--text-1);margin:0;flex:1;}
+  .card-foot{display:flex;justify-content:space-between;align-items:center;margin-top:6px;padding-top:14px;border-top:1px solid var(--line);}
+  .card-meta{font-family:var(--mono);font-size:10px;color:var(--text-2);}
+  .card-cta{font-family:var(--mono);font-size:11.5px;font-weight:700;color:var(--text-0);display:flex;align-items:center;gap:5px;}
+  .card:hover .card-cta{color:var(--tag-color,var(--red));}
+  .card.wide{grid-column:1 / -1;}
+  .card.disabled{opacity:.55;cursor:default;}
+  .card.disabled:hover{border-color:var(--line);background:var(--bg-1);transform:none;}
+  .card.disabled:hover::before{opacity:0;}
+
+  /* footer */
+  footer{margin-top:70px;border-top:1px solid var(--line);padding:28px 0 40px;}
+  .foot-grid{display:flex;justify-content:space-between;flex-wrap:wrap;gap:20px;}
+  .foot-col .k{font-family:var(--mono);font-size:9.5px;color:var(--text-2);letter-spacing:.1em;text-transform:uppercase;margin-bottom:5px;}
+  .foot-col .v{font-size:12.5px;color:var(--text-1);line-height:1.6;}
+  .foot-note{font-size:11px;color:var(--text-2);margin-top:26px;line-height:1.6;}
+
+  @media (max-width:720px){
+    .grid{grid-template-columns:1fr;}
+    .hero{padding:48px 0 32px;}
+  }
+
+  #loginGate{position:fixed;inset:0;z-index:9999;background:radial-gradient(ellipse 900px 500px at 50% 30%, rgba(228,52,43,.12), transparent 60%), var(--bg-0);display:flex;align-items:center;justify-content:center;}
+  #loginGate .gateBox{background:var(--bg-1);border:1px solid var(--line);border-radius:14px;padding:36px 40px;width:320px;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,.4);}
+  #loginGate img{width:44px;height:34px;object-fit:contain;margin-bottom:14px;filter:drop-shadow(0 0 8px rgba(228,52,43,.35));}
+  #loginGate h2{font-size:17px;margin:0 0 6px;color:var(--text-0);font-weight:700;}
+  #loginGate p.gsub{font-size:12px;color:var(--text-1);margin:0 0 22px;line-height:1.5;}
+  #loginGate input{width:100%;background:var(--bg-2);border:1px solid var(--line);border-radius:7px;color:var(--text-0);padding:10px 12px;font-size:13px;margin-bottom:10px;font-family:var(--sans);box-sizing:border-box;}
+  #loginGate input:focus{outline:none;border-color:var(--red);}
+  #loginGate button{width:100%;margin-top:6px;background:var(--red);border:1px solid var(--red);color:#fff;padding:11px;font-size:13px;font-weight:700;border-radius:7px;cursor:pointer;}
+  #loginGate button:hover{background:#c72c24;}
+  #loginGate .gerr{color:var(--red);font-size:11.5px;margin-top:10px;min-height:16px;}
+  #loginGate .ghint{font-family:var(--mono);font-size:9.5px;color:var(--text-2);margin-top:18px;letter-spacing:.03em;}
+</style>
+</head>
+<body>
+<div id="loginGate">
+  <div class="gateBox">
+    <img src="data:image/png;base64,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" alt="IEG logo">
+    <h2>Trial Access</h2>
+    <p class="gsub">Enter your demo credentials to open the IEG Digital Twin Suite.</p>
+    <input type="text" id="gateId" placeholder="ID" autocomplete="off">
+    <input type="password" id="gatePw" placeholder="Password" autocomplete="off">
+    <button id="gateBtn">Enter Hub</button>
+    <div class="gerr" id="gateErr"></div>
+    <div class="ghint">IEG Co., Ltd. &middot; Demo Access Only</div>
+  </div>
+</div>
+<div class="wrap" id="hubWrap" style="display:none;">
+
+  <header>
+    <div class="headrow">
+      <img src="data:image/png;base64,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" alt="IEG logo">
+      <div class="headtext">
+        <div class="org">IEG Co., Ltd.</div>
+        <div class="div">Global Business Division · Semiconductor TVET</div>
+      </div>
+    </div>
+  </header>
+
+  <section class="hero">
+    <div class="eyebrow">6D Digital Twin Portfolio</div>
+    <h1>From Wafer to Package,<br>Every Process Read in <span>6D</span>.</h1>
+    <p>All of IEG's front-end and back-end semiconductor digital twin simulators and curriculum materials, in one unified journey — wafer through to finished package, 13 stations end to end, on a shared 6D framework with materials verified against real silicon and packaging references. Experience the full process flow without physical equipment — training content that carries learners from hands-on practice through diagnosis to certification.</p>
+    <div class="hero-stats">
+      <div class="stat"><div class="num">6D</div><div class="lbl">Digital Twin Framework</div></div>
+      <div class="stat"><div class="num">13</div><div class="lbl">Front + Back-End Modules</div></div>
+      <div class="stat"><div class="num">8</div><div class="lbl">Digital Twin Resources</div></div>
+      <div class="stat"><div class="num">48+</div><div class="lbl">Learning Objectives Mapped</div></div>
+    </div>
+  </section>
+
+  <div class="section-label">Front-End · Wafer Processing</div>
+  <div class="grid">
+
+    <a class="card" style="--tag-color:#E4342B" href="https://ieg-overseasmarketing-gogo.github.io/Middle-East/IEG_Semiconductor_8Process_Simulator_v2.html" target="_blank" rel="noopener">
+      <div class="card-top">
+        <span class="card-tag">Interactive · v2</span>
+        <span class="card-num">01</span>
+      </div>
+      <h3>8-Process Interactive Simulator</h3>
+      <p>Wafer Prep → Oxidation → Photolithography → Etching → Ion Implantation → CVD → Metallisation → Testing. A complete walkthrough with station-level calculators grounded in real formulas (Deal-Grove, Rayleigh, Preston's Equation, etc.), built around BTEC Unit 4039/4040 learning objectives.</p>
+      <div class="card-foot">
+        <span class="card-meta">BTEC NQF 3–4 · 48 Learning Objectives</span>
+        <span class="card-cta">Open →</span>
+      </div>
+    </a>
+
+    <a class="card" style="--tag-color:#D9A441" href="https://ieg-overseasmarketing-gogo.github.io/Middle-East/semiconductor-3d-digitaltwin-EN.html" target="_blank" rel="noopener">
+      <div class="card-top">
+        <span class="card-tag">3D · Dashboard</span>
+        <span class="card-num">02</span>
+      </div>
+      <h3>3D Simulator & Digital Twin Dashboard</h3>
+      <p>The original 8-step digital twin dashboard prototype, tracking Temperature, Pressure, Yield, and Defect Rate in real time. The reference screen that first established IEG's Process Anomaly detection UI concept.</p>
+      <div class="card-foot">
+        <span class="card-meta">Dashboard Concept · STEP 01–08</span>
+        <span class="card-cta">Open →</span>
+      </div>
+    </a>
+
+    <a class="card wide" style="--tag-color:#2FE3C9" href="Semiconductor_FrontEnd_6D_Digital_Twin_Simulator.html" target="_blank" rel="noopener">
+      <div class="card-top">
+        <span class="card-tag">New · 6D Digital Twin</span>
+        <span class="card-num">03</span>
+      </div>
+      <h3>Front-End 6D Digital Twin Simulator</h3>
+      <p>The dashboard concept (02) fully realized as a working 3D simulator. Each of the 8 front-end processes has adjustable parameters, anomaly injection/resolution, and checkpoint Q&amp;A. Wafer and ingot materials are calibrated to real silicon photography — metallic-gray raw silicon, oxide-interference iridescence after oxidation — not stylized color.</p>
+      <div class="card-foot">
+        <span class="card-meta">10 Sessions · 8 Anomaly Scenarios · Three.js</span>
+        <span class="card-cta">Open Simulator →</span>
+      </div>
+    </a>
+
+    <a class="card wide" style="--tag-color:#0E7C7B" href="Semiconductor_FrontEnd_6D_Digital_Twin_Instructor_Guide_EN.pdf" target="_blank" rel="noopener">
+      <div class="card-top">
+        <span class="card-tag">Instructor Guide · EN</span>
+        <span class="card-num">04</span>
+      </div>
+      <h3>Front-End 6D Instructor Script Guide</h3>
+      <p>The 10-session script guide matched 1:1 to Simulator (03) — full instructor dialogue, development steps, and checkpoint Q&amp;A per session. Each of the 8 process sessions now includes a 6D Fault Case box predicting which wafer-map spatial pattern (Edge · Center · Donut · Local Cluster) that session's anomaly would produce, teaching learners that shape alone narrows — but doesn't replace — station-level diagnosis.</p>
+      <div class="card-foot">
+        <span class="card-meta">10 Sessions · 8 Fault Cases · PDF</span>
+        <span class="card-cta">View Guide (PDF) →</span>
+      </div>
+    </a>
+
+    <a class="card wide" style="--tag-color:#E4342B" href="Front_End_Curriculum_Roadmap_EN.html" target="_blank" rel="noopener">
+      <div class="card-top">
+        <span class="card-tag">Curriculum Roadmap</span>
+        <span class="card-num">05</span>
+      </div>
+      <h3>Front-End Semiconductor Simulator — Curriculum Roadmap</h3>
+      <p>Wafer Fabrication → Thermal Oxidation → Photolithography → Etching → Deposition → Ion Implantation → Metallization → EDS — an 8-process × 3-layer commercial architecture, the Front-End counterpart to the Back-End roadmap. Layer 2 is deliberately scoped around real metrology instruments rather than full process equipment, since front-end process tools are not economically feasible at training-lab scale.</p>
+      <div class="card-foot">
+        <span class="card-meta">192h · 8 Modules · Lite/Standard/Full Tiers</span>
+        <span class="card-cta">Open →</span>
+      </div>
+    </a>
+
+  </div>
+
+  <div class="section-label">Back-End · Assembly &amp; Test</div>
+  <div class="grid">
+
+    <a class="card wide" style="--tag-color:#2FE3C9" href="Semiconductor_BackEnd_6D_Digital_Twin_Simulator.html" target="_blank" rel="noopener">
+      <div class="card-top">
+        <span class="card-tag">New · 6D Digital Twin</span>
+        <span class="card-num">06</span>
+      </div>
+      <h3>Back-End 6D Digital Twin Simulator</h3>
+      <p>Die Bonding → Wire Bonding → Molding → Saw/Dicing → Package Testing — all 5 modules built on the same 6D framework as Front-End (03): 3D geometry + 4D time + 5D data/AI + 6D spatial pattern intelligence. Each module's bottleneck and yield-critical spec values are built in as SPEC LIMITs, alongside 5 anomaly scenarios, a Wafer/Package Map Pattern Drill, and an integrated root-cause-tracing capstone. Die and package materials are grounded in real references — dark passivation-purple bare die pre-mold, black EMC after Molding — verified against die photography and EMC manufacturer specs, not assumed color.</p>
+      <div class="card-foot">
+        <span class="card-meta">7 Stages · 5 Anomaly Scenarios · Three.js</span>
+        <span class="card-cta">Open Simulator →</span>
+      </div>
+    </a>
+
+    <a class="card wide" style="--tag-color:#0E7C7B" href="Semiconductor_BackEnd_6D_Digital_Twin_Instructor_Guide_EN.pdf" target="_blank" rel="noopener">
+      <div class="card-top">
+        <span class="card-tag">Instructor Guide · EN</span>
+        <span class="card-num">07</span>
+      </div>
+      <h3>Back-End 6D Instructor Script Guide</h3>
+      <p>The 7-session script guide matched 1:1 to Simulator (06). Each of the 5 process sessions includes a 6D Fault Case box — including the deliberate case where Wire Bonding and Saw/Dicing produce the identical Scratch pattern for two different physical reasons, reinforcing that station-level data is what actually confirms a diagnosis.</p>
+      <div class="card-foot">
+        <span class="card-meta">7 Sessions · 5 Fault Cases · PDF</span>
+        <span class="card-cta">View Guide (PDF) →</span>
+      </div>
+    </a>
+
+    <a class="card wide" style="--tag-color:#E4342B" href="Post_End_Curriculum_Roadmap_EN.html" target="_blank" rel="noopener">
+      <div class="card-top">
+        <span class="card-tag">Curriculum Roadmap</span>
+        <span class="card-num">08</span>
+      </div>
+      <h3>Back-End Semiconductor Simulator — Curriculum Roadmap</h3>
+      <p>Die Bonding → Wire Bonding → Molding → Saw/Dicing → Package Testing — a 5-process × 3-layer (SW simulator / real-equipment integration / automated assessment &amp; certification) commercial architecture. Built for TAFE Arabia and TVTC delivery, with BTEC-mapping gap closure across 6 units, Lite/Standard/Full package tiers, and a 2026 H2 development roadmap.</p>
+      <div class="card-foot">
+        <span class="card-meta">TAFE Arabia · TVTC Certification Linkage · Phase 0–4</span>
+        <span class="card-cta">Open →</span>
+      </div>
+    </a>
+
+  </div>
+
+  <footer>
+    <div class="foot-grid">
+      <div class="foot-col">
+        <div class="k">Company</div>
+        <div class="v">IEG Co., Ltd.<br>7 Sunhwan-ro 198beon-gil, Jungwon-gu, Seongnam-si, Gyeonggi-do, Korea</div>
+      </div>
+      <div class="foot-col">
+        <div class="k">Contact</div>
+        <div class="v">Global Business Division<br>kellycho824@ieg.kr</div>
+      </div>
+      <div class="foot-col">
+        <div class="k">Response Time</div>
+        <div class="v">Response within 2 business days</div>
+      </div>
+    </div>
+    <div class="foot-note">This page is an internal portfolio hub consolidating IEG's front-end and back-end semiconductor digital twin materials. Each card links to that resource's actual page. Instructor guides (04, 07) open as PDF directly in the browser.</div>
+  </footer>
+
+</div>
+<script>
+  const DEMO_ID = "IEG_Demo";
+  const DEMO_PW = "6982200!";
+  function unlockHub(){
+    document.getElementById('loginGate').style.display = 'none';
+    document.getElementById('hubWrap').style.display = 'block';
+  }
+  if(localStorage.getItem('iegDemoUnlocked') === 'true'){
+    unlockHub();
+  } else {
+    const doLogin = () => {
+      const id = document.getElementById('gateId').value.trim();
+      const pw = document.getElementById('gatePw').value;
+      if(id === DEMO_ID && pw === DEMO_PW){
+        try{ localStorage.setItem('iegDemoUnlocked','true'); }catch(e){}
+        unlockHub();
+      } else {
+        document.getElementById('gateErr').textContent = 'Incorrect ID or password.';
+      }
+    };
+    document.getElementById('gateBtn').onclick = doLogin;
+    document.getElementById('gateId').addEventListener('keydown', e=>{ if(e.key==='Enter') doLogin(); });
+    document.getElementById('gatePw').addEventListener('keydown', e=>{ if(e.key==='Enter') doLogin(); });
+  }
+</script>
+</body>
+</html>
