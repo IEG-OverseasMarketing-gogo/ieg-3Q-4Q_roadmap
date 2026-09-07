@@ -1,0 +1,1100 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IEG 해외사업 관제판 — 입찰 파이프라인 · PoC 트래킹</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css">
+
+<style>
+  :root{
+    --bg:#EEF0F3;
+    --panel:#FFFFFF;
+    --panel-2:#F4F5F8;
+    --line:#DFE2E8;
+    --line-soft:#EAECF0;
+    --text:#1C2331;
+    --text-dim:#636D80;
+    --text-faint:#98A0B0;
+    --amber:#C7811E;
+    --amber-soft:rgba(199,129,30,.12);
+    --teal:#1F9488;
+    --teal-soft:rgba(31,148,136,.12);
+    --blue:#3E6FD9;
+    --blue-soft:rgba(62,111,217,.12);
+    --red:#D3453C;
+    --red-soft:rgba(211,69,60,.12);
+    --grey:#767F91;
+    --grey-soft:rgba(118,127,145,.12);
+    --green:#2E9E68;
+    --green-soft:rgba(46,158,104,.12);
+    font-variant-numeric: tabular-nums;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:
+      radial-gradient(1200px 500px at 15% -10%, rgba(199,129,30,.05), transparent 60%),
+      radial-gradient(1000px 600px at 100% 0%, rgba(31,148,136,.06), transparent 55%),
+      var(--bg);
+    color:var(--text);
+    font-family:"Pretendard Variable","Pretendard",-apple-system,BlinkMacSystemFont,"Malgun Gothic",sans-serif;
+    min-height:100vh;
+    padding:28px 32px 80px;
+  }
+  a{color:inherit;}
+
+  /* ---------- Header ---------- */
+  .topbar{
+    display:flex; justify-content:space-between; align-items:flex-start;
+    gap:24px; flex-wrap:wrap;
+    border-bottom:1px solid var(--line);
+    padding-bottom:20px; margin-bottom:22px;
+  }
+  .brand-row{display:flex; align-items:center; gap:12px;}
+  .brand-mark{
+    width:52px;height:41px;border-radius:9px;
+    background:#FFFFFF;
+    display:flex;align-items:center;justify-content:center;
+    flex:none; border:1px solid var(--line); padding:5px;
+    box-shadow:0 1px 2px rgba(28,35,49,.04);
+  }
+  .brand-mark img{width:100%;height:100%;object-fit:contain;display:block;}
+  h1{font-size:20px; margin:0; font-weight:700; letter-spacing:-.01em;}
+  .subline{color:var(--text-dim); font-size:12.5px; margin-top:4px; display:flex; gap:6px; flex-wrap:wrap;}
+  .subline .sep{color:var(--line);}
+
+  .sync-panel{display:flex; align-items:center; gap:14px; flex-wrap:wrap;}
+  .sync-status{
+    display:flex; align-items:center; gap:10px;
+    border:1px solid var(--line); border-radius:10px;
+    background:var(--panel); padding:11px 16px;
+  }
+  .sync-dot{width:9px; height:9px; border-radius:50%; background:var(--text-faint); flex:none; transition:background .2s, box-shadow .2s;}
+  .sync-dot.live{background:var(--teal); box-shadow:0 0 8px var(--teal);}
+  .sync-dot.error{background:var(--red); box-shadow:0 0 8px var(--red);}
+  .sync-dot.pending{background:var(--amber); box-shadow:0 0 8px var(--amber);}
+  .sync-text{display:flex; flex-direction:column; gap:2px;}
+  .sync-label{font-size:12.5px; font-weight:700; color:var(--text);}
+  .sync-sub{font-size:11px; color:var(--text-faint);}
+  .btn-refresh{
+    display:flex; align-items:center; gap:7px;
+    border:1px solid var(--line); border-radius:10px;
+    background:var(--panel); padding:11px 16px; cursor:pointer;
+    font-family:inherit; font-size:12.5px; font-weight:600; color:var(--text-dim);
+    transition:border-color .15s, color .15s;
+  }
+  .btn-refresh:hover{border-color:var(--text-faint); color:var(--text);}
+  .btn-refresh .icon{font-size:13px; line-height:1;}
+
+  /* ---------- Tabs ---------- */
+  .tabs{display:flex; gap:8px; margin-bottom:22px;}
+  .tab-btn{
+    display:flex; align-items:center; gap:9px;
+    padding:11px 18px; border-radius:10px; border:1px solid var(--line);
+    background:var(--panel); color:var(--text-dim); cursor:pointer;
+    font-family:inherit; font-size:14px; font-weight:600;
+    transition:all .15s;
+  }
+  .tab-btn .indicator{width:8px;height:8px;border-radius:50%; background:var(--text-faint); transition:background .15s;}
+  .tab-btn.active{color:var(--text); background:var(--panel-2); border-color:var(--text-faint);}
+  .tab-btn[data-tab="bid"].active .indicator{background:var(--amber); box-shadow:0 0 8px var(--amber);}
+  .tab-btn[data-tab="poc"].active .indicator{background:var(--teal); box-shadow:0 0 8px var(--teal);}
+  .tab-btn .count{font-size:11px; color:var(--text-faint); font-weight:500;}
+
+  .panel{display:none;}
+  .panel.active{display:block; animation:fade .25s ease;}
+  @keyframes fade{from{opacity:0; transform:translateY(3px);} to{opacity:1; transform:translateY(0);}}
+
+  /* ---------- Empty state ---------- */
+  .empty{
+    border:1px solid var(--line); border-radius:14px; background:var(--panel);
+    padding:56px 24px; text-align:center; color:var(--text-dim); font-size:13.5px;
+  }
+  .empty b{color:var(--text); font-weight:600;}
+
+  /* ---------- KPI grid ---------- */
+  .kpi-grid{display:grid; grid-template-columns:repeat(5,1fr); gap:12px; margin-bottom:20px;}
+  @media (max-width:1100px){.kpi-grid{grid-template-columns:repeat(2,1fr);}}
+  .kpi{
+    background:var(--panel); border:1px solid var(--line); border-radius:12px;
+    padding:16px 16px 14px;
+  }
+  .kpi-label{font-size:11.5px; color:var(--text-dim); font-weight:600;}
+  .kpi-value{font-size:23px; font-weight:800; margin-top:8px; letter-spacing:-.01em;}
+  .kpi-sub{font-size:11.5px; color:var(--text-faint); margin-top:5px; line-height:1.4;}
+  .kpi-bar{height:5px; border-radius:3px; background:var(--line-soft); margin-top:10px; overflow:hidden;}
+  .kpi-bar > div{height:100%; border-radius:3px;}
+  .kpi.accent-amber .kpi-value{color:var(--amber);}
+  .kpi.accent-teal .kpi-value{color:var(--teal);}
+  .kpi.accent-blue .kpi-value{color:var(--blue);}
+  .kpi.accent-red .kpi-value{color:var(--red);}
+  .kpi.accent-green .kpi-value{color:var(--green);}
+
+  /* ---------- Section card ---------- */
+  .card{background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:20px 20px 8px; margin-bottom:18px;}
+  .card-head{display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; flex-wrap:wrap; gap:10px;}
+  .card-title{font-size:14px; font-weight:700;}
+  .card-title small{color:var(--text-faint); font-weight:500; margin-left:6px;}
+
+  .controls{display:flex; gap:8px; flex-wrap:wrap;}
+  select, input[type=text]{
+    background:var(--panel-2); border:1px solid var(--line); color:var(--text);
+    border-radius:8px; padding:7px 10px; font-family:inherit; font-size:12.5px;
+  }
+  select:focus, input:focus{outline:1px solid var(--text-faint);}
+
+  /* ---------- Bars ---------- */
+  .barlist{display:flex; flex-direction:column; gap:10px; padding-bottom:18px;}
+  .barrow{display:grid; grid-template-columns:120px 1fr 96px; gap:12px; align-items:center; font-size:12.5px;}
+  .barrow .name{color:var(--text-dim); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+  .bartrack{height:16px; background:var(--line-soft); border-radius:5px; overflow:hidden; position:relative;}
+  .barfill{height:100%; border-radius:5px; min-width:2px;}
+  .barrow .val{text-align:right; font-weight:600; font-variant-numeric:tabular-nums;}
+
+  /* ---------- Table ---------- */
+  .tablewrap{overflow-x:auto; padding-bottom:16px;}
+  table{width:100%; border-collapse:collapse; font-size:12.5px; min-width:900px;}
+  thead th{
+    text-align:left; color:var(--text-faint); font-weight:600; font-size:11px;
+    text-transform:uppercase; letter-spacing:.03em;
+    padding:8px 10px; border-bottom:1px solid var(--line); white-space:nowrap;
+  }
+  tbody td{padding:10px 10px; border-bottom:1px solid var(--line-soft); vertical-align:top;}
+  tbody tr:hover{background:var(--panel-2);}
+  td.num{text-align:right; font-variant-numeric:tabular-nums; white-space:nowrap;}
+  td.notes{color:var(--text-dim); max-width:260px;}
+  .badge{
+    display:inline-flex; align-items:center; gap:5px; padding:3px 9px; border-radius:20px;
+    font-size:11px; font-weight:600; white-space:nowrap;
+  }
+  .badge .dot{width:5px;height:5px;border-radius:50%;}
+
+  /* ---------- PoC cards / gantt ---------- */
+  .poc-row{
+    display:grid; grid-template-columns:190px 1fr 190px; gap:16px;
+    padding:14px 0; border-bottom:1px solid var(--line-soft); align-items:center;
+  }
+  .poc-row:last-child{border-bottom:none;}
+  .poc-id{}
+  .poc-org{font-weight:700; font-size:13.5px;}
+  .poc-meta{color:var(--text-faint); font-size:11.5px; margin-top:3px; line-height:1.5;}
+  .poc-track{position:relative; height:34px;}
+  .poc-track-bg{position:absolute; left:0; right:0; top:14px; height:6px; background:var(--line-soft); border-radius:3px;}
+  .poc-track-fill{position:absolute; top:14px; height:6px; border-radius:3px;}
+  .poc-track-today{position:absolute; top:6px; width:2px; height:22px; background:var(--text-faint); border-radius:1px;}
+  .poc-track-today::after{content:"오늘"; position:absolute; top:-16px; left:50%; transform:translateX(-50%); font-size:9.5px; color:var(--text-faint); white-space:nowrap;}
+  .poc-track-label{position:absolute; top:22px; font-size:10.5px; color:var(--text-faint); white-space:nowrap;}
+  .poc-right{text-align:right;}
+  .poc-pct{font-size:19px; font-weight:800;}
+  .poc-days{font-size:11px; color:var(--text-faint); margin-top:2px;}
+
+  .legend{display:flex; gap:16px; flex-wrap:wrap; font-size:11.5px; color:var(--text-dim); padding:14px 0 4px; border-top:1px solid var(--line-soft); margin-top:6px;}
+  .legend span{display:inline-flex; align-items:center; gap:6px;}
+  .legend .dot{width:7px;height:7px;border-radius:50%;}
+
+  footer{margin-top:30px; color:var(--text-faint); font-size:11px; text-align:center;}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div>
+    <div class="brand-row">
+      <div class="brand-mark"><img src="data:image/png;base64,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" alt="IEG Co., Ltd. 로고"></div>
+      <div>
+        <h1>해외사업 관제판 — 입찰 파이프라인 · PoC 트래킹</h1>
+      </div>
+    </div>
+    <div class="subline">
+      <span id="metaReportDate">보고 기준일 —</span>
+      <span class="sep">·</span>
+      <span id="metaPreparer">담당 조경형</span>
+    </div>
+  </div>
+
+  <div class="sync-panel">
+    <div class="sync-status">
+      <span class="sync-dot pending" id="syncDot"></span>
+      <div class="sync-text">
+        <span class="sync-label" id="syncLabel">Google Sheets 연동 대기 중</span>
+        <span class="sync-sub" id="syncSub">최초 로드 중…</span>
+      </div>
+    </div>
+    <button class="btn-refresh" id="btnRefresh" type="button">
+      <span class="icon">⟳</span>지금 새로고침
+    </button>
+  </div>
+</div>
+
+<div class="tabs">
+  <button class="tab-btn active" data-tab="bid"><span class="indicator"></span>입찰 파이프라인<span class="count" id="tabCountBid"></span></button>
+  <button class="tab-btn" data-tab="poc"><span class="indicator"></span>PoC 트래킹<span class="count" id="tabCountPoc"></span></button>
+</div>
+
+<!-- ============ BID PANEL ============ -->
+<div class="panel active" id="panelBid">
+  <div id="bidEmpty" class="empty">Google Sheets에서 파이프라인 데이터를 불러오는 중입니다…</div>
+  <div id="bidContent" style="display:none;">
+
+    <div class="kpi-grid">
+      <div class="kpi"><div class="kpi-label">FY 매출 목표</div><div class="kpi-value" id="kpiTarget">—</div><div class="kpi-sub" id="kpiTargetSub">&nbsp;</div></div>
+      <div class="kpi accent-teal"><div class="kpi-label">H2 확정매출 합계</div><div class="kpi-value" id="kpiConfirmed">—</div><div class="kpi-bar"><div id="kpiConfirmedBar" style="background:var(--teal); width:0%;"></div></div></div>
+      <div class="kpi accent-teal"><div class="kpi-label">목표 달성률</div><div class="kpi-value" id="kpiRate">—</div><div class="kpi-sub" id="kpiRateSub">&nbsp;</div></div>
+      <div class="kpi accent-blue"><div class="kpi-label">2027 예상매출</div><div class="kpi-value" id="kpi2027">—</div><div class="kpi-sub">금액 확인된 항목 기준</div></div>
+      <div class="kpi accent-amber"><div class="kpi-label">신규리드</div><div class="kpi-value" id="kpiLeads">—</div><div class="kpi-sub" id="kpiLeadsSub">&nbsp;</div></div>
+    </div>
+
+    <div class="card">
+      <div class="card-head"><div class="card-title">국가별 파이프라인 금액<small>전체 14건 기준, 금액 미확정 항목 제외</small></div></div>
+      <div class="barlist" id="countryBars"></div>
+    </div>
+
+    <div class="card">
+      <div class="card-head"><div class="card-title">진행단계별 합계</div></div>
+      <div class="barlist" id="stageBars"></div>
+    </div>
+
+    <div class="card">
+      <div class="card-head">
+        <div class="card-title">전체 파이프라인<small id="pipelineCount"></small></div>
+        <div class="controls">
+          <select id="filterStage"><option value="">전체 진행단계</option></select>
+          <input type="text" id="searchBid" placeholder="국가·거래처·사업내용·비고 검색">
+        </div>
+      </div>
+      <div class="tablewrap">
+        <table>
+          <thead><tr>
+            <th>국가</th><th>거래처</th><th>사업내용</th><th>예상금액</th><th>진행단계</th><th>매출구분</th><th>담당</th><th>최종 컨택일</th><th>비고</th>
+          </tr></thead>
+          <tbody id="pipelineTbody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ POC PANEL ============ -->
+<div class="panel" id="panelPoc">
+  <div id="pocEmpty" class="empty">Google Sheets에서 PoC 데이터를 불러오는 중입니다…</div>
+  <div id="pocContent" style="display:none;">
+
+    <div class="kpi-grid">
+      <div class="kpi"><div class="kpi-label">전체 PoC</div><div class="kpi-value" id="pocTotal">—</div><div class="kpi-sub">진행 중 + 종료</div></div>
+      <div class="kpi accent-amber"><div class="kpi-label">진행 중</div><div class="kpi-value" id="pocActive">—</div><div class="kpi-sub" id="pocActiveSub">&nbsp;</div></div>
+      <div class="kpi accent-teal"><div class="kpi-label">평균 진행률</div><div class="kpi-value" id="pocAvgPct">—</div><div class="kpi-sub">진행 중 건 기준</div></div>
+      <div class="kpi accent-red"><div class="kpi-label">7일 이내 종료 예정</div><div class="kpi-value" id="pocSoon">—</div><div class="kpi-sub">후속 컨택 필요</div></div>
+      <div class="kpi accent-green"><div class="kpi-label">유료 전환</div><div class="kpi-value" id="pocConverted">—</div><div class="kpi-sub">Converted to Paid Adoption</div></div>
+    </div>
+
+    <div class="card">
+      <div class="card-head">
+        <div class="card-title">PoC 타임라인<small id="pocCount"></small></div>
+        <div class="controls">
+          <select id="filterStatus"><option value="">전체 상태</option></select>
+        </div>
+      </div>
+      <div id="pocRows"></div>
+      <div class="legend" id="pocLegend"></div>
+    </div>
+  </div>
+</div>
+
+<footer id="footerNote">Google Sheets 연동 URL이 설정되지 않아 내장 스냅샷을 표시 중입니다. 스크립트 하단 SHEET_CONFIG.appsScriptUrl에 Apps Script 배포 URL을 넣으면, 이 파일을 열 때마다(그리고 설정된 주기마다) 구글 시트 최신값을 자동으로 불러옵니다.</footer>
+
+<script>
+/* ===================== helpers ===================== */
+const $ = s => document.querySelector(s);
+const fmtKRW = n => {
+  if(n===null||n===undefined||isNaN(n)) return '—';
+  const sign = n<0 ? '-' : '';
+  n = Math.abs(n);
+  if(n>=100000000) return sign + (n/100000000).toFixed(2).replace(/\.00$/,'') + '억원';
+  if(n>=10000) return sign + Math.round(n/10000).toLocaleString() + '만원';
+  return sign + n.toLocaleString() + '원';
+};
+const fmtPct = f => (f===null||f===undefined||isNaN(f)) ? '—' : (f*100).toFixed(1)+'%';
+const toDate = v => {
+  if(v instanceof Date) return v;
+  if(typeof v === 'number') return new Date(Math.round((v-25569)*86400*1000)); // excel serial fallback
+  if(typeof v === 'string' && v.trim()){ const d = new Date(v); if(!isNaN(d)) return d; }
+  return null;
+};
+const daysBetween = (a,b) => Math.round((b-a)/86400000);
+const escapeHtml = s => (s===null||s===undefined) ? '' : String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+function findHeaderRow(rows, mustInclude){
+  for(let i=0;i<rows.length;i++){
+    const row = (rows[i]||[]).map(c => (c===null||c===undefined) ? '' : String(c));
+    if(mustInclude.every(k => row.some(cell => cell.includes(k)))) return i;
+  }
+  return -1;
+}
+
+/* ===================== stage / status styling ===================== */
+const STAGE_STYLE = {
+  'H2 확정매출':            {c:'var(--teal)',  bg:'var(--teal-soft)'},
+  'H2 소액확정(사용료)':      {c:'var(--teal)',  bg:'var(--teal-soft)'},
+  '입찰예정(매출 2027)':     {c:'var(--amber)', bg:'var(--amber-soft)'},
+  '예산검토':                {c:'var(--grey)',  bg:'var(--grey-soft)'},
+  '2027 전환예상':           {c:'var(--blue)',  bg:'var(--blue-soft)'},
+  '신규리드':                {c:'var(--grey)',  bg:'var(--grey-soft)'},
+  '이관/제외':               {c:'var(--red)',   bg:'var(--red-soft)'}
+};
+const STAGE_DEFAULT = {c:'var(--grey)', bg:'var(--grey-soft)'};
+function stageStyle(s){ return STAGE_STYLE[s] || STAGE_DEFAULT; }
+
+const STATUS_STYLE = {
+  'not started': {c:'var(--grey)', bg:'var(--grey-soft)', label:'시작 전'},
+  'in progress': {c:'var(--amber)', bg:'var(--amber-soft)', label:'진행 중'},
+  'completed':   {c:'var(--teal)', bg:'var(--teal-soft)', label:'완료'},
+  'extended':    {c:'var(--blue)', bg:'var(--blue-soft)', label:'연장'},
+  'converted to paid adoption': {c:'var(--green)', bg:'var(--green-soft)', label:'유료 전환'},
+  'discontinued':{c:'var(--red)', bg:'var(--red-soft)', label:'중단'}
+};
+function statusStyle(s){
+  const k = (s||'').trim().toLowerCase();
+  return STATUS_STYLE[k] || {c:'var(--grey)', bg:'var(--grey-soft)', label:s||'미상'};
+}
+
+/* ===================== state ===================== */
+let bidState = null; // {rows, target, reportDate, preparer}
+let pocState = null; // {rows}
+
+/* ===================== parse: pipeline (row-array core) ===================== */
+function parseSettingsRows(setRows){
+  let target = null, reportDate = null, preparer = '';
+  if(setRows && setRows.length){
+    for(const r of setRows){
+      if(!r || !r[0]) continue;
+      const label = String(r[0]);
+      if(label.includes('매출 목표') && typeof r[1]==='number') target = r[1];
+      if(label.includes('보고 기준일')) reportDate = r[1];
+      if(label.includes('담당목록') && r[1]) preparer = String(r[1]).trim();
+    }
+  }
+  return {target, reportDate, preparer};
+}
+
+function parsePipelineRows(rows, setRows){
+  const hIdx = findHeaderRow(rows, ['국가','거래처','예상금액']);
+  if(hIdx<0) throw new Error('파이프라인 시트에서 헤더(국가/거래처/예상금액)를 찾지 못했습니다.');
+  const header = rows[hIdx].map(h => (h||'').toString().trim());
+  const col = name => header.findIndex(h => h.includes(name));
+  const cCountry=col('국가'), cClient=col('거래처'), cBiz=col('사업내용'), cAmt=col('예상금액'),
+        cStage=col('진행단계'), cCat=col('매출구분'), cTiming=col('매출인식'), cLastContact=col('최종 컨택'),
+        cOwner=col('담당'), cNotes=col('비고');
+
+  const data = [];
+  for(let i=hIdx+1;i<rows.length;i++){
+    const r = rows[i];
+    if(!r || !r[cCountry]) break; // stop at first blank -> summary tables follow
+    data.push({
+      country: r[cCountry] || '',
+      client: r[cClient] || '',
+      business: r[cBiz] || '',
+      amount: (typeof r[cAmt]==='number') ? r[cAmt] : null,
+      stage: r[cStage] || '',
+      category: r[cCat] || '',
+      timing: r[cTiming] || '',
+      lastContact: cLastContact>=0 ? toDate(r[cLastContact]) : null,
+      owner: r[cOwner] || '',
+      notes: r[cNotes] || ''
+    });
+  }
+
+  const {target, reportDate, preparer} = parseSettingsRows(setRows);
+  return {rows:data, target, reportDate, preparer};
+}
+
+/* ===================== derived PoC calc (shared) ===================== */
+function computePocDerived(start, durDays, end, status){
+  if(!end && start && durDays) end = new Date(start.getTime() + durDays*86400000);
+  const today = new Date(); today.setHours(0,0,0,0);
+  let elapsed=null, remaining=null, pct=null;
+  if(start && end){
+    elapsed = Math.max(0, daysBetween(start, today));
+    remaining = daysBetween(today, end);
+    pct = durDays ? Math.min(1, Math.max(0, elapsed/durDays)) : null;
+  }
+  const stLower = String(status||'').toLowerCase();
+  if(stLower.includes('completed') || stLower.includes('converted') || stLower.includes('discontinued')){
+    pct = 1; remaining = 0;
+  }
+  return {end, elapsed, remaining, pct};
+}
+
+/* ===================== parse: PoC (row-array core) ===================== */
+function parsePocRows(rows){
+  const hIdx = findHeaderRow(rows, ['Country','Status']);
+  if(hIdx<0) throw new Error('PoC Overview 시트에서 헤더(Country/Status)를 찾지 못했습니다.');
+  const header = rows[hIdx].map(h => (h||'').toString().trim());
+  const col = name => header.findIndex(h => h.toLowerCase() === name.toLowerCase());
+  const colInc = name => header.findIndex(h => h.toLowerCase().includes(name.toLowerCase()));
+
+  const cNo=colInc('no.'), cCountry=colInc('country'), cOrg=colInc('organization'), cContact=colInc('contact'),
+        cType=colInc('poc type'), cDurDisp=colInc('duration (display)'), cModules=colInc('simulator'),
+        cStart=colInc('start date'), cDurDays=colInc('duration (days)'), cEnd=colInc('end date'),
+        cElapsed=colInc('days elapsed'), cRemain=colInc('days remaining'), cPct=colInc('% complete'),
+        cStatus=colInc('status'), cLastContact=colInc('last contact'), cNext=colInc('next follow'),
+        cNotes=colInc('notes');
+
+  const data = [];
+  for(let i=hIdx+1;i<rows.length;i++){
+    const r = rows[i];
+    if(!r || !r[cCountry]) continue;
+    // guard against footnote/instruction rows that only fill the Country column
+    if(cNo>=0 && typeof r[cNo] !== 'number') continue;
+    const start = cStart>=0 ? toDate(r[cStart]) : null;
+    const durDays = (cDurDays>=0 && typeof r[cDurDays]==='number') ? r[cDurDays] : null;
+    let end = cEnd>=0 ? toDate(r[cEnd]) : null;
+    const status = cStatus>=0 ? (r[cStatus]||'') : '';
+    const der = computePocDerived(start, durDays, end, status);
+    end = der.end;
+    let elapsed = der.elapsed, remaining = der.remaining, pct = der.pct;
+
+    data.push({
+      country: r[cCountry]||'', org: cOrg>=0 ? (r[cOrg]||'') : '', contact: cContact>=0 ? (r[cContact]||'') : '',
+      type: cType>=0 ? (r[cType]||'') : '', durationDisplay: cDurDisp>=0 ? (r[cDurDisp]||'') : '',
+      modules: cModules>=0 ? (r[cModules]||'') : '',
+      start, end, durationDays: durDays,
+      elapsed: elapsed!==null?elapsed:(cElapsed>=0?r[cElapsed]:null),
+      remaining: remaining!==null?remaining:(cRemain>=0?r[cRemain]:null),
+      pct: pct!==null?pct:(cPct>=0 && typeof r[cPct]==='number' ? r[cPct] : null),
+      status,
+      lastContact: cLastContact>=0 ? toDate(r[cLastContact]) : null,
+      next: cNext>=0 ? toDate(r[cNext]) : null,
+      notes: cNotes>=0 ? (r[cNotes]||'') : ''
+    });
+  }
+  return {rows: data};
+}
+
+/* ===================== render: bidding ===================== */
+function renderBid(){
+  if(!bidState) return;
+  $('#bidEmpty').style.display='none';
+  $('#bidContent').style.display='block';
+  const rows = bidState.rows;
+
+  const sum = (pred) => rows.filter(pred).reduce((a,r)=>a+(r.amount||0),0);
+  const confirmed = sum(r => r.category==='확정매출');
+  const outlook2027 = sum(r => r.category==='2027 예상매출');
+  const leadsRows = rows.filter(r => r.category==='신규리드');
+  const leadsAmt = sum(r => r.category==='신규리드');
+  const target = bidState.target;
+
+  $('#kpiTarget').textContent = target ? fmtKRW(target) : '설정 시트 미확인';
+  $('#kpiTargetSub').textContent = bidState.reportDate ? ('보고 기준일 ' + bidState.reportDate) : '';
+  $('#kpiConfirmed').textContent = fmtKRW(confirmed);
+  $('#kpiRate').textContent = target ? fmtPct(confirmed/target) : '—';
+  $('#kpiRateSub').textContent = target ? (fmtKRW(confirmed) + ' / ' + fmtKRW(target)) : '목표 금액 미확인';
+  $('#kpiConfirmedBar').style.width = target ? Math.min(100, (confirmed/target*100)).toFixed(1)+'%' : '0%';
+  $('#kpi2027').textContent = fmtKRW(outlook2027);
+  $('#kpiLeads').textContent = leadsRows.length + '건';
+  $('#kpiLeadsSub').textContent = leadsAmt ? ('금액 확인 ' + fmtKRW(leadsAmt)) : '대부분 금액 미확정';
+
+  $('#metaReportDate').textContent = '보고 기준일 ' + (bidState.reportDate || '—');
+  $('#metaPreparer').textContent = '담당 조경형'; // 고정값 — 시트 값과 무관하게 항상 표시
+  $('#tabCountBid').textContent = rows.length + '건';
+
+  // country bars
+  const byCountry = {};
+  rows.forEach(r => { if(r.amount) byCountry[r.country] = (byCountry[r.country]||0) + r.amount; });
+  const countryList = Object.entries(byCountry).sort((a,b)=>b[1]-a[1]);
+  const maxCountry = countryList.length ? countryList[0][1] : 1;
+  $('#countryBars').innerHTML = countryList.map(([name,amt]) => `
+    <div class="barrow">
+      <div class="name">${escapeHtml(name)}</div>
+      <div class="bartrack"><div class="barfill" style="width:${(amt/maxCountry*100).toFixed(1)}%; background:var(--amber);"></div></div>
+      <div class="val">${fmtKRW(amt)}</div>
+    </div>`).join('') || '<div class="kpi-sub">표시할 금액 확정 항목이 없습니다.</div>';
+
+  // stage bars
+  const byStage = {};
+  rows.forEach(r => { byStage[r.stage] = (byStage[r.stage]||0) + (r.amount||0); });
+  const stageOrder = Object.keys(STAGE_STYLE).filter(s => s in byStage).concat(Object.keys(byStage).filter(s=>!(s in STAGE_STYLE)));
+  const maxStage = Math.max(1, ...Object.values(byStage));
+  $('#stageBars').innerHTML = stageOrder.map(s => {
+    const st = stageStyle(s);
+    return `<div class="barrow">
+      <div class="name">${escapeHtml(s||'미분류')}</div>
+      <div class="bartrack"><div class="barfill" style="width:${(byStage[s]/maxStage*100).toFixed(1)}%; background:${st.c};"></div></div>
+      <div class="val">${fmtKRW(byStage[s])}</div>
+    </div>`;
+  }).join('');
+
+  // filter dropdown (재조회 시에도 현재 선택된 필터 유지)
+  const stageSet = [...new Set(rows.map(r=>r.stage).filter(Boolean))];
+  const filterStage = $('#filterStage');
+  const prevStageSel = filterStage.value;
+  filterStage.innerHTML = '<option value="">전체 진행단계</option>' + stageSet.map(s=>`<option>${escapeHtml(s)}</option>`).join('');
+  if(stageSet.includes(prevStageSel)) filterStage.value = prevStageSel;
+
+  renderBidTable();
+}
+
+function renderBidTable(){
+  const rows = bidState.rows;
+  const stageF = $('#filterStage').value;
+  const q = $('#searchBid').value.trim().toLowerCase();
+  const searchable = r => [r.country, r.client, r.business, r.category, r.owner, r.notes]
+    .map(v => (v===null||v===undefined) ? '' : String(v))
+    .join(' ')
+    .toLowerCase();
+  const filtered = rows.filter(r =>
+    (!stageF || r.stage===stageF) &&
+    (!q || searchable(r).includes(q))
+  );
+  $('#pipelineCount').textContent = ` · ${filtered.length}/${rows.length}건 표시`;
+  $('#pipelineTbody').innerHTML = filtered.map(r => {
+    const st = stageStyle(r.stage);
+    return `<tr>
+      <td>${escapeHtml(r.country)}</td>
+      <td>${escapeHtml(r.client)}</td>
+      <td>${escapeHtml(r.business)}</td>
+      <td class="num">${r.amount ? fmtKRW(r.amount) : '미확정'}</td>
+      <td><span class="badge" style="background:${st.bg}; color:${st.c};"><span class="dot" style="background:${st.c};"></span>${escapeHtml(r.stage)}</span></td>
+      <td>${escapeHtml(r.category)}</td>
+      <td>${escapeHtml(r.owner)}</td>
+      <td>${r.lastContact ? r.lastContact.toISOString().slice(0,10) : '—'}</td>
+      <td class="notes">${escapeHtml(r.notes)}</td>
+    </tr>`;
+  }).join('');
+}
+
+/* ===================== render: PoC ===================== */
+function renderPoc(){
+  if(!pocState) return;
+  $('#pocEmpty').style.display='none';
+  $('#pocContent').style.display='block';
+  const rows = pocState.rows;
+  $('#tabCountPoc').textContent = rows.length + '건';
+
+  const isActive = r => { const s=(r.status||'').toLowerCase(); return s.includes('progress') || s.includes('not started') || s.includes('extended'); };
+  const active = rows.filter(isActive);
+  const avgPct = active.length ? active.reduce((a,r)=>a+(r.pct||0),0)/active.length : null;
+  const soon = active.filter(r => r.remaining!==null && r.remaining<=7 && r.remaining>=0);
+  const converted = rows.filter(r => (r.status||'').toLowerCase().includes('converted'));
+
+  $('#pocTotal').textContent = rows.length;
+  $('#pocActive').textContent = active.length;
+  $('#pocActiveSub').textContent = (rows.length-active.length) + '건 종료/중단';
+  $('#pocAvgPct').textContent = avgPct===null ? '—' : (avgPct*100).toFixed(0)+'%';
+  $('#pocSoon').textContent = soon.length;
+  $('#pocConverted').textContent = converted.length;
+
+  // status filter (재조회 시에도 현재 선택된 필터 유지)
+  const statusSet = [...new Set(rows.map(r=>r.status).filter(Boolean))];
+  const filterStatus = $('#filterStatus');
+  const prevStatusSel = filterStatus.value;
+  filterStatus.innerHTML = '<option value="">전체 상태</option>' + statusSet.map(s=>`<option>${escapeHtml(s)}</option>`).join('');
+  if(statusSet.includes(prevStatusSel)) filterStatus.value = prevStatusSel;
+
+  $('#pocLegend').innerHTML = Object.entries(STATUS_STYLE).map(([k,v]) =>
+    `<span><span class="dot" style="background:${v.c};"></span>${v.label}</span>`).join('');
+
+  renderPocRows();
+}
+
+function renderPocRows(){
+  const rows = pocState.rows;
+  const statusF = $('#filterStatus').value;
+  const filtered = rows.filter(r => !statusF || r.status===statusF);
+  $('#pocCount').textContent = ` · ${filtered.length}/${rows.length}건 표시`;
+
+  const withDates = filtered.filter(r=>r.start && r.end);
+  const now = new Date();
+  let gmin = withDates.length ? new Date(Math.min(...withDates.map(r=>r.start.getTime()))) : new Date(now.getTime()-7*86400000);
+  let gmax = withDates.length ? new Date(Math.max(...withDates.map(r=>r.end.getTime()))) : new Date(now.getTime()+7*86400000);
+  gmin = new Date(gmin.getTime() - 2*86400000);
+  gmax = new Date(gmax.getTime() + 2*86400000);
+  const span = gmax - gmin;
+  const pctPos = d => Math.min(100, Math.max(0, (d-gmin)/span*100));
+
+  $('#pocRows').innerHTML = filtered.map(r => {
+    const st = statusStyle(r.status);
+    let track = '';
+    if(r.start && r.end){
+      const left = pctPos(r.start), right = pctPos(r.end);
+      track = `<div class="poc-track">
+        <div class="poc-track-bg"></div>
+        <div class="poc-track-fill" style="left:${left}%; width:${Math.max(1,right-left)}%; background:${st.c};"></div>
+        <div class="poc-track-today" style="left:${pctPos(now)}%;"></div>
+        <div class="poc-track-label" style="left:${left}%;">${r.start.toISOString().slice(0,10)}</div>
+        <div class="poc-track-label" style="left:${right}%; transform:translateX(-100%);">${r.end.toISOString().slice(0,10)}</div>
+      </div>`;
+    } else {
+      track = `<div class="poc-track"><div class="poc-track-bg"></div><div class="poc-track-label" style="left:0;">시작일 미정</div></div>`;
+    }
+    return `<div class="poc-row">
+      <div class="poc-id">
+        <div class="poc-org">${escapeHtml(r.org)}</div>
+        <div class="poc-meta">${escapeHtml(r.country)} · ${escapeHtml(r.contact||'담당자 TBD')}</div>
+        <div class="poc-meta">${escapeHtml(r.type)}</div>
+      </div>
+      <div>
+        ${track}
+        <div style="margin-top:8px;"><span class="badge" style="background:${st.bg}; color:${st.c};"><span class="dot" style="background:${st.c};"></span>${escapeHtml(st.label)}</span></div>
+      </div>
+      <div class="poc-right">
+        <div class="poc-pct" style="color:${st.c};">${r.pct!==null ? Math.round(r.pct*100)+'%' : '—'}</div>
+        <div class="poc-days">${r.remaining!==null ? (r.remaining>=0 ? r.remaining+'일 남음' : (-r.remaining)+'일 경과') : ''}</div>
+        <div class="poc-days">${r.next ? '다음 컨택 ' + r.next.toISOString().slice(0,10) : ''}</div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+/* ===================== filters ===================== */
+$('#searchBid').addEventListener('input', renderBidTable);
+$('#filterStage').addEventListener('change', renderBidTable);
+$('#filterStatus').addEventListener('change', renderPocRows);
+
+/* ===================== tabs ===================== */
+document.querySelectorAll('.tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+    document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+    btn.classList.add('active');
+    $('#panel' + (btn.dataset.tab==='bid'?'Bid':'Poc')).classList.add('active');
+  });
+});
+
+/* ===================== baked-in default dataset ===================== */
+/* 마지막으로 전달받은 엑셀(파이프라인 rev2 / PoC Tracking, 260831 업로드분)의 내용입니다.
+   더 최신 파일이 있으면 위 드롭존에 직접 끌어놓아 덮어쓰거나, Claude에게 새 파일을 전달해
+   이 기본값 자체를 다시 구워달라고 요청하세요. */
+const DEFAULT_ASOF = '2026-08-31 업로드분 (rev2)';
+const DEFAULT_DATA = {
+  "bid": {
+    "rows": [
+      {
+        "country": "말레이시아",
+        "client": "Galaxy Global (Sean Lim)",
+        "business": "PCS 3450 2대 공급",
+        "amount": 33669240,
+        "stage": "H2 확정매출",
+        "category": "확정매출",
+        "timing": "2026 Q3",
+        "lastContact": "2026-08-28",
+        "owner": "조경형",
+        "notes": "$11,599 x 2대 + $1,200(부대비용). 왕복 항공권은 회사 부담, 매출액 미포함"
+      },
+      {
+        "country": "사우디아라비아",
+        "client": "Prince Sattam Bin Abdulaziz University / (Emad Abdelaal)",
+        "business": "유공압(Pneumatic & Hydraulic) 실습장비 공급",
+        "amount": 178907340,
+        "stage": "H2 확정매출",
+        "category": "확정매출",
+        "timing": "2026 Q4",
+        "lastContact": "2026-08-28",
+        "owner": "조경형",
+        "notes": "2026.4월 견적 제시, 정부 기술 서류 검토 중. "
+      },
+      {
+        "country": "사우디아라비아",
+        "client": "Imam University / (Emad Adbelaal)",
+        "business": "FMS Integrated system",
+        "amount": null,
+        "stage": "입찰예정(매출 2027)",
+        "category": "2027 예상매출",
+        "timing": "2027 (낙찰시 인도/매출인식)",
+        "lastContact": "2026-08-28",
+        "owner": "조경형",
+        "notes": "승인된 예산 범주 내  9/10 까지 견적서 제출"
+      },
+      {
+        "country": "인도네시아",
+        "client": "SMK (Arif Setiyawan)",
+        "business": "시뮬레이터 사용료 + SKKNI No.8/2024 협업",
+        "amount": 883200,
+        "stage": "H2 소액확정(사용료)",
+        "category": "확정매출",
+        "timing": "2026 Q3",
+        "lastContact": "2026-08-28",
+        "owner": "조경형",
+        "notes": "사용료 $640 확정. 컨설팅 비용 별도 협의 예정(금액 미정)"
+      },
+      {
+        "country": "우간다",
+        "client": "Ntinda VTI (Gilbert)",
+        "business": "12주 EV 강사양성 프로그램 + 시뮬레이터 사용료",
+        "amount": 621000,
+        "stage": "H2 소액확정(사용료)",
+        "category": "확정매출",
+        "timing": "2026 Q3",
+        "lastContact": "2026-08-25",
+        "owner": "조경형",
+        "notes": "8/19 첫수업 진행. 사용료 $450 확정. 컨설팅 비용 10월말 협의 예정"
+      },
+      {
+        "country": "베트남",
+        "client": "Quy Nhon Univ.- 빈딘 (Le Thanh Minh)",
+        "business": "로봇 트레이너 입찰",
+        "amount": 274390000,
+        "stage": "입찰예정(매출 2027)",
+        "category": "2027 예상매출",
+        "timing": "2027 (낙찰시 인도/매출인식)",
+        "lastContact": "2026-08-25",
+        "owner": "조경형",
+        "notes": "10월 입찰 진행, 낙찰 여부 미확정. 낙찰되어도 매출인식은 2027"
+      },
+      {
+        "country": "베트남",
+        "client": "Tumiki JSC / TECOTEC Group (Nguyen Tuan)",
+        "business": "CSP/Smart Factory Test Bed - Regional Center L1~L3",
+        "amount": null,
+        "stage": "신규리드",
+        "category": "신규리드",
+        "timing": "2027-2029 (L1/2 2027입찰, L3 2028입찰)",
+        "lastContact": "2026-08-15",
+        "owner": "조경형",
+        "notes": "정부예산 기반 국가/지역거점센터 사업. 학교리스트/예산 미확정, 시스템 매핑 논의 중"
+      },
+      {
+        "country": "싱가포르",
+        "client": "TEMASEK Polytec (Keene)",
+        "business": "반도체 시뮬레이터 14일 체험평가판 제공",
+        "amount": null,
+        "stage": "신규리드",
+        "category": "2026 예상매출",
+        "timing": "2026 Q3",
+        "lastContact": "2026-08-27",
+        "owner": "조경형",
+        "notes": "구글링을 통해 반도체 후공정 협력 제안, 반도체시뮬레이터에 관심 가짐"
+      },
+      {
+        "country": "우즈베키스탄",
+        "client": "LUPIC-계명문화대/KOICA, ADM Jizzakh(BYD)",
+        "business": "EV 제조라인 5D 디지털트윈 시뮬레이터",
+        "amount": null,
+        "stage": "2027 전환예상",
+        "category": "2027 예상매출",
+        "timing": "2027",
+        "lastContact": "2026-08-20",
+        "owner": "조경형",
+        "notes": "사마르칸트 직훈 채널 형성 단계, 파일럿 포지셔닝"
+      },
+      {
+        "country": "미국",
+        "client": "Bluewortkz",
+        "business": "TVET 협력 (세부 미정)",
+        "amount": null,
+        "stage": "신규리드",
+        "category": "신규리드",
+        "timing": "2027",
+        "lastContact": "2026-08-27",
+        "owner": "조경형",
+        "notes": "리드 발굴 초기 단계"
+      },
+      {
+        "country": "에티오피아",
+        "client": "SIFA (Ayele Gizachew)",
+        "business": "TVET 협력 - AI based EV 정비/진단 훈련 ",
+        "amount": null,
+        "stage": "2027 전환예상",
+        "category": "2027 예상매출",
+        "timing": "2027-2028 (통상 1~2년 소요)",
+        "lastContact": "2026-08-17",
+        "owner": "조경형",
+        "notes": "24년 정부 ICE차량 수입금지 이후 EV 대부분 전환, 현지 정비 인프라 부재로 수요 파악 단계"
+      },
+      {
+        "country": "르완다",
+        "client": "UNIDO (Jonas)",
+        "business": "EV (자동차/오토바이) 인력 양성 ",
+        "amount": null,
+        "stage": "신규리드",
+        "category": "신규리드",
+        "timing": "2027-2028 (통상 1~2년 소요)",
+        "lastContact": "2026-08-24",
+        "owner": "조경형",
+        "notes": "지인인 EV 기술자에 PCP 검토 예정"
+      },
+      {
+        "country": "필리핀",
+        "client": "KOICA IBS (Cavite 지역)",
+        "business": "스마트팩토리 TVET (TESDA / Prince Valiant)",
+        "amount": 1048800000,
+        "stage": "2027 전환예상",
+        "category": "2027 예상매출",
+        "timing": "2027 (컴플라이언스 검토 중)",
+        "lastContact": "2026-08-19",
+        "owner": "조경형",
+        "notes": "KOICA IBS 2027 재지원. TESDA 컴플라이언스 리뷰 반복 진행 중. 원문 USD 760K를 1,380원/달러로 환산 "
+      },
+      {
+        "country": "필리핀",
+        "client": "UNOTRONIX (Henry)",
+        "business": "IEG6030 (컨택 초기 단계)",
+        "amount": null,
+        "stage": "신규리드",
+        "category": "신규리드",
+        "timing": "2027",
+        "lastContact": "2026-08-28",
+        "owner": "조경형",
+        "notes": "12월 말에 입찰 오픈"
+      },
+      {
+        "country": "사우디아라비아",
+        "client": "TAFE JD (Alrumaih)",
+        "business": "반도체 시뮬레이터 및 충북반도체 견학 관련 ",
+        "amount": null,
+        "stage": "예산검토",
+        "category": "신규리드",
+        "timing": "미정",
+        "lastContact": "2026-08-15",
+        "owner": "조경형",
+        "notes": "9월 방한 일정 조율 "
+      }
+    ],
+    "target": 300000000,
+    "reportDate": "2026-08-24",
+    "preparer": "조경형"
+  },
+  "poc": {
+    "rows": [
+      {
+        "country": "Singapore",
+        "org": "Temasek Polytechnic",
+        "contact": "Mr Keene ONG",
+        "type": "14-Day Trial",
+        "durationDisplay": "14 Days",
+        "modules": "반도체 파트너십 관련 시뮬레이터 (전, 후공정)",
+        "start": "2026-08-27",
+        "durationDays": 14,
+        "end": "2026-09-10",
+        "status": "In Progress",
+        "lastContact": null,
+        "next": null,
+        "notes": ""
+      },
+      {
+        "country": "Indonesia",
+        "org": "LSP GO",
+        "contact": "Tatang Raharjo",
+        "type": "14-Day Trial",
+        "durationDisplay": "14 Days",
+        "modules": "EV Line 5D Digital Twin Hub (Service & Diagnostic Track)",
+        "start": "2026-08-31",
+        "durationDays": 14,
+        "end": "2026-09-14",
+        "status": "In Progress",
+        "lastContact": null,
+        "next": null,
+        "notes": ""
+      },
+      {
+        "country": "Uzbekistan",
+        "org": "ADM Jizzakh Center",
+        "contact": "ADM Jizzakh 기술교육팀",
+        "type": "14-Day Trial",
+        "durationDisplay": "14 Days",
+        "modules": "EV Line 5D Digital Twin Hub (Service & Diagnostic Track + Manufacturing & Automation Track)",
+        "start": "2026-08-31",
+        "durationDays": 14,
+        "end": "2026-09-14",
+        "status": "In Progress",
+        "lastContact": null,
+        "next": null,
+        "notes": "해당 시뮬레이터 활성화를 위해 현지 혹은 코이카를 통해 담당자 찾아야 함."
+      },
+      {
+        "country": "Indonesia",
+        "org": "SMK (Vocational School)",
+        "contact": "Mr. Arif Setiyawan",
+        "type": "12-Week Program",
+        "durationDisplay": "12 Weeks",
+        "modules": "SMK Bridge Module",
+        "start": "2026-08-01",
+        "durationDays": 84,
+        "end": "2026-10-24",
+        "status": "In Progress",
+        "lastContact": null,
+        "next": null,
+        "notes": ""
+      },
+      {
+        "country": "Uganda",
+        "org": "Ntinda VTI",
+        "contact": "Niwamanya Gilbert",
+        "type": "12-Week Program (12 Sessions)",
+        "durationDisplay": "12 Weeks",
+        "modules": "EV/PLC Train-the-Trainer Program",
+        "start": "2026-08-19",
+        "durationDays": 84,
+        "end": "2026-11-11",
+        "status": "In Progress",
+        "lastContact": null,
+        "next": null,
+        "notes": ""
+      },
+      {
+        "country": "USA",
+        "org": "Bluworkz",
+        "contact": "Peter",
+        "type": "14-Day Trial",
+        "durationDisplay": "14 Days",
+        "modules": "",
+        "start": "2026-09-05",
+        "durationDays": 14,
+        "end": "2026-09-19",
+        "status": "In Progress",
+        "lastContact": null,
+        "next": null,
+        "notes": ""
+      }
+    ]
+  }
+};
+
+function hydrateBidDefault(d){
+  return {
+    rows: d.rows.map(r => ({...r, lastContact: r.lastContact ? new Date(r.lastContact) : null})),
+    target: d.target, reportDate: d.reportDate, preparer: d.preparer
+  };
+}
+function hydratePocDefault(d){
+  return {
+    rows: d.rows.map(r => {
+      const start = r.start ? new Date(r.start) : null;
+      let end = r.end ? new Date(r.end) : null;
+      const der = computePocDerived(start, r.durationDays, end, r.status);
+      return {
+        country:r.country, org:r.org, contact:r.contact, type:r.type,
+        durationDisplay:r.durationDisplay, modules:r.modules,
+        start, end: der.end, durationDays: r.durationDays,
+        elapsed: der.elapsed, remaining: der.remaining, pct: der.pct,
+        status: r.status,
+        lastContact: r.lastContact ? new Date(r.lastContact) : null,
+        next: r.next ? new Date(r.next) : null,
+        notes: r.notes
+      };
+    })
+  };
+}
+
+function initDefaults(){
+  bidState = hydrateBidDefault(DEFAULT_DATA.bid);
+  pocState = hydratePocDefault(DEFAULT_DATA.poc);
+  renderBid();
+  renderPoc();
+}
+
+/* ===================== Google Sheets live sync (Apps Script JSON endpoint) ===================== */
+// 구글 시트에 묶어둔 Apps Script를 배포하면 나오는 .../exec URL을 여기 붙여넣으세요.
+// doGet()이 {pipeline:[[...]], settings:[[...]], poc:[[...]]} 형태의 JSON을 돌려주는 그 스크립트입니다.
+const SHEET_CONFIG = {
+  appsScriptUrl: 'https://script.google.com/macros/s/AKfycbyB5LTUgsbBzp4DVW-Y_MvK-UaA_7MRKlJj7LswpzGgla3kaiPrt3h0zWBTM6FE34F6/exec',    // 예: https://script.google.com/macros/s/AKfycb.../exec
+  autoRefreshMinutes: 1 // 0으로 두면 자동 재조회 안 함 (수동 새로고침 버튼은 항상 동작)
+};
+
+function sheetsConfigured(){
+  return !!SHEET_CONFIG.appsScriptUrl;
+}
+let hasSyncedOnce = false; // 최소 한 번이라도 연동에 성공했는지 — 실패 시 화면 유지 여부 판단용
+
+function setSyncStatus(state, label, sub){
+  const dot = $('#syncDot');
+  dot.classList.remove('live','error','pending');
+  if(state) dot.classList.add(state);
+  $('#syncLabel').textContent = label;
+  $('#syncSub').textContent = sub;
+}
+
+async function fetchAppsScriptData(){
+  const url = SHEET_CONFIG.appsScriptUrl;
+  const bust = url.includes('?') ? '&' : '?';
+  const res = await fetch(url + bust + '_ts=' + Date.now(), {cache:'no-store'});
+  if(!res.ok) throw new Error('Apps Script 요청 실패: HTTP ' + res.status);
+  const json = await res.json();
+  if(!json || (!json.pipeline && !json.poc)) throw new Error('응답 형식이 예상과 다릅니다 (pipeline/poc 키 없음)');
+  return json;
+}
+
+function formatUpdateTimestamp(){
+  const d = new Date();
+  const pad = n => String(n).padStart(2,'0');
+  return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}`;
+}
+
+async function syncFromSheets(isManual){
+  if(!sheetsConfigured()){
+    if(isManual){ alert('SHEET_CONFIG.appsScriptUrl에 Apps Script 배포 URL을 먼저 넣어주세요.'); return; }
+    setSyncStatus('pending', 'Google Sheets 연동 대기 중', '내장 스냅샷 표시 중 · ' + DEFAULT_ASOF);
+    return;
+  }
+  setSyncStatus('pending', '불러오는 중…', SHEET_CONFIG.appsScriptUrl);
+  let okAny = false, errMsg = '';
+  try{
+    const json = await fetchAppsScriptData();
+
+    if(json.pipeline && json.pipeline.length){
+      const parsedBid = parsePipelineRows(json.pipeline, json.settings);
+      parsedBid.reportDate = formatUpdateTimestamp(); // 보고 기준일 = 이 데이터를 불러온 시각
+      bidState = hydrateBidDefault(parsedBid);
+      renderBid();
+      okAny = true;
+    }
+
+    if(json.poc && json.poc.length){
+      const parsedPoc = parsePocRows(json.poc);
+      pocState = hydratePocDefault(parsedPoc);
+      renderPoc();
+      okAny = true;
+    }
+  } catch(e){
+    errMsg = e.message;
+    console.error('Google Sheets(Apps Script) 로드 실패', e);
+  }
+
+  const now = new Date().toLocaleString('ko-KR');
+  if(okAny){
+    hasSyncedOnce = true;
+    setSyncStatus('live', 'Google Sheets 실시간 연동 중', '마지막 갱신 ' + now);
+    $('#footerNote').textContent = '이 대시보드는 Apps Script를 통해 구글 시트를 열 때마다, ' + (SHEET_CONFIG.autoRefreshMinutes||'수동') + '분마다, 그리고 다른 탭에 있다가 이 탭으로 돌아올 때마다 자동 재조회합니다. 시트에서 값을 바꾼 뒤 이 탭으로 돌아오면 곧바로 반영됩니다.';
+  } else {
+    // 실패해도 화면엔 에러를 노출하지 않고, 마지막으로 성공한 상태를 그대로 유지합니다.
+    // (일시적인 네트워크/CORS 지연일 수 있고, 다음 자동 재조회 때 조용히 다시 시도합니다)
+    console.error('Google Sheets 동기화 실패(화면에는 표시하지 않음):', errMsg);
+    if(!hasSyncedOnce){
+      setSyncStatus('pending', 'Google Sheets 연동 대기 중', '내장 스냅샷 표시 중 · ' + DEFAULT_ASOF);
+    }
+    // 이미 한 번이라도 성공했다면 상태 표시줄은 손대지 않고 그대로 둡니다.
+  }
+}
+
+$('#btnRefresh').addEventListener('click', () => syncFromSheets(true));
+
+async function initApp(){
+  initDefaults(); // 내장 스냅샷을 먼저 그려서 빈 화면 방지
+  if(sheetsConfigured()){
+    await syncFromSheets(false);
+    if(SHEET_CONFIG.autoRefreshMinutes > 0){
+      setInterval(() => syncFromSheets(false), SHEET_CONFIG.autoRefreshMinutes*60*1000);
+    }
+    // 다른 탭(구글 시트 등)에 갔다가 이 탭으로 돌아오면 즉시 재조회 — 체감상 실시간에 가깝게
+    let lastFocusSync = Date.now();
+    const focusResync = () => {
+      const now = Date.now();
+      if(now - lastFocusSync > 5000){ // 너무 잦은 중복 호출 방지 (5초 쿨다운)
+        lastFocusSync = now;
+        syncFromSheets(false);
+      }
+    };
+    window.addEventListener('focus', focusResync);
+    document.addEventListener('visibilitychange', () => {
+      if(document.visibilityState === 'visible') focusResync();
+    });
+  } else {
+    setSyncStatus('pending', 'Google Sheets 연동 대기 중', '내장 스냅샷 표시 중 · ' + DEFAULT_ASOF);
+  }
+}
+initApp();
+
+</script>
+</body>
+</html>
