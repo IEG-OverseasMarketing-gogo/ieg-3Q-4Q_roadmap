@@ -1,0 +1,599 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>국제 공공입찰 업무 매뉴얼 · 대시보드</title>
+<style>
+:root{
+  --bg:#EEF1F4; --panel:#FFFFFF; --ink:#17232E; --muted:#5B6B79; --line:#D5DCE3;
+  --accent:#0E6F8F; --accent-soft:#DCEEF4; --accent-ink:#FFFFFF;
+  --ok:#2B7A55; --ok-soft:#DDF0E6; --warn:#8F5A08; --warn-soft:#FBEFD9;
+  --radius:6px;
+  --font:"Noto Sans KR","Apple SD Gothic Neo","Malgun Gothic","Segoe UI",system-ui,sans-serif;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --bg:#0F161C; --panel:#17212A; --ink:#E6ECF1; --muted:#93A3B1; --line:#2B3946;
+    --accent:#4DB6D6; --accent-soft:#16323D; --accent-ink:#0F161C;
+    --ok:#5CC28E; --ok-soft:#183427; --warn:#E0A54A; --warn-soft:#3A2E17;
+  }
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:16px}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font);font-size:15px;line-height:1.65}
+a{color:var(--accent)}
+.layout{display:grid;grid-template-columns:220px minmax(0,1fr);gap:0;max-width:1240px;margin:0 auto}
+nav.side{position:sticky;top:0;align-self:start;height:100vh;padding:28px 18px;border-right:1px solid var(--line);overflow:auto}
+nav.side .brand{font-weight:700;font-size:15px;line-height:1.4;margin-bottom:4px}
+nav.side .brand-sub{font-size:12.5px;color:var(--muted);margin-bottom:22px}
+nav.side a{display:block;padding:7px 10px;margin:2px 0;border-radius:var(--radius);color:var(--ink);text-decoration:none;font-size:14px}
+nav.side a:hover,nav.side a:focus-visible{background:var(--accent-soft);outline:none}
+main{padding:32px 32px 80px;min-width:0}
+h1{font-size:26px;line-height:1.3;margin:0 0 6px}
+h2{font-size:20px;margin:0 0 6px}
+h3{font-size:16px;margin:22px 0 8px}
+.lede{color:var(--muted);margin:0 0 18px;max-width:70ch}
+section{margin-bottom:56px}
+.toolbar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:14px 0 6px}
+button,.btn{font:inherit;font-size:13.5px;padding:7px 12px;border-radius:var(--radius);border:1px solid var(--line);background:var(--panel);color:var(--ink);cursor:pointer}
+button:hover{border-color:var(--accent)}
+button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.note{font-size:13px;color:var(--muted)}
+.summary{display:flex;gap:22px;flex-wrap:wrap;padding:14px 16px;background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);margin:14px 0 22px}
+.summary b{font-size:22px;display:block;line-height:1.2}
+.summary span{font-size:12.5px;color:var(--muted)}
+.cases{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:16px 16px 14px}
+.card h3{margin:0 0 2px;font-size:17px}
+.card .sub{font-size:13px;color:var(--muted);margin:0 0 12px}
+.track{display:grid;grid-template-columns:repeat(5,1fr);gap:4px;margin:8px 0 12px}
+.track button{padding:6px 2px;font-size:12px;line-height:1.3;text-align:center;border-radius:4px}
+.track button.past{background:var(--accent-soft);border-color:var(--accent-soft)}
+.track button.now{background:var(--accent);border-color:var(--accent);color:var(--accent-ink);font-weight:700}
+.facts{margin:0 0 10px;padding:0;list-style:none;font-size:13px;color:var(--muted)}
+.facts li{padding-left:14px;position:relative}
+.facts li::before{content:"";position:absolute;left:2px;top:.7em;width:5px;height:5px;background:var(--accent);border-radius:50%}
+.row{display:flex;gap:10px;align-items:center;margin:8px 0;flex-wrap:wrap}
+.row label{font-size:13px;color:var(--muted)}
+input[type=date],textarea,select{font:inherit;font-size:13.5px;border:1px solid var(--line);border-radius:4px;background:var(--bg);color:var(--ink);padding:6px 8px}
+textarea{width:100%;min-height:58px;resize:vertical}
+.grp{margin-top:10px}
+.grp-head{display:flex;justify-content:space-between;align-items:center;font-size:13px;color:var(--muted);margin-bottom:4px}
+.bar{height:4px;background:var(--line);border-radius:2px;overflow:hidden;margin-bottom:6px}
+.bar i{display:block;height:100%;width:0;background:var(--ok);transition:width .2s}
+.chk{display:flex;gap:9px;align-items:flex-start;padding:5px 0;font-size:14px;cursor:pointer}
+.chk input{margin-top:5px;accent-color:var(--accent);width:16px;height:16px;flex:none}
+.chk input:checked + span{color:var(--muted);text-decoration:line-through;text-decoration-color:var(--line)}
+.tbl{overflow-x:auto;background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);margin:10px 0 14px}
+table{border-collapse:collapse;width:100%;font-size:14px}
+th,td{padding:9px 12px;text-align:left;vertical-align:top;border-bottom:1px solid var(--line)}
+th{background:var(--bg);font-weight:600;font-size:13px;white-space:nowrap}
+tr:last-child td{border-bottom:0}
+.tag{display:inline-block;font-size:11.5px;padding:1px 7px;border-radius:10px;background:var(--warn-soft);color:var(--warn);margin-left:6px;white-space:nowrap}
+.grade{display:inline-block;min-width:26px;text-align:center;font-weight:700;padding:1px 8px;border-radius:4px}
+.gA{background:var(--ok-soft);color:var(--ok)} .gB{background:var(--warn-soft);color:var(--warn)} .gC{background:var(--line);color:var(--muted)}
+.two{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.judge{display:grid;grid-template-columns:1fr auto;gap:16px;align-items:center}
+.judge .out{text-align:center;padding:10px 18px;border-radius:var(--radius);background:var(--bg);min-width:130px}
+.judge .out b{font-size:30px;display:block;line-height:1.1}
+.filter{display:grid;grid-template-columns:110px minmax(0,1fr);gap:8px 12px;align-items:center;margin-bottom:12px}
+.filter select{width:100%}
+.fout{border-top:1px solid var(--line);padding-top:12px}
+.fout p{margin:6px 0}
+.fout ul{margin:6px 0 0;padding-left:18px;font-size:13.5px;color:var(--muted)}
+.fbadge{display:flex;gap:10px;align-items:center;font-size:16px;flex-wrap:wrap}
+.tpl{white-space:pre-wrap;font-size:13.5px;background:var(--bg);border:1px solid var(--line);border-radius:var(--radius);padding:14px;margin:8px 0}
+.country{margin:10px 0}
+.country h3{margin-top:0}
+.country ul{margin:0;padding-left:18px}
+.country li{margin:3px 0}
+footer{font-size:12.5px;color:var(--muted);margin-top:40px}
+@media (max-width:860px){
+  .layout{grid-template-columns:1fr}
+  nav.side{position:static;height:auto;display:flex;gap:4px;overflow-x:auto;padding:10px 12px;border-right:0;border-bottom:1px solid var(--line)}
+  nav.side .brand,nav.side .brand-sub{display:none}
+  nav.side a{white-space:nowrap;margin:0}
+  main{padding:20px 16px 60px}
+  .cases,.two,.judge,.filter{grid-template-columns:1fr}
+}
+@media print{
+  nav.side,.toolbar,.no-print,.track button:not(.now){display:none}
+  body{background:#fff;color:#000}
+  main{padding:0}
+  .card,.tbl{break-inside:avoid}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
+</style>
+</head>
+<body>
+<div class="layout">
+<nav class="side" aria-label="섹션 이동">
+  <div class="brand">국제 공공입찰<br>업무 매뉴얼</div>
+  <div class="brand-sub">IEG 글로벌사업부 내부용</div>
+  <a href="#status">진행 현황</a>
+  <a href="#screen">진성 입찰 선별</a>
+  <a href="#quote">견적 제공</a>
+  <a href="#follow">팔로우업</a>
+  <a href="#docs">서류 요청</a>
+  <a href="#terms">용어 매핑표</a>
+  <a href="#country">국가별 특이점</a>
+  <a href="#roadmap">기한별 로드맵</a>
+  <a href="#tpl">문의 답변 템플릿</a>
+</nav>
+
+<main>
+<header>
+  <h1>국제 공공입찰 업무 매뉴얼 · 대시보드</h1>
+  <p class="lede">문의 접수부터 낙찰 후 이행까지 한 화면에서 확인하고 체크하는 내부 작업 파일입니다. 체크와 메모는 이 브라우저에 저장됩니다(같은 PC, 같은 브라우저에서 유지).</p>
+  <div class="toolbar no-print">
+    <button id="btn-print">인쇄 / PDF 저장</button>
+    <button id="btn-export">체크 상태 JSON 저장</button>
+    <button id="btn-reset">전체 초기화</button>
+    <span class="note">작성 기준일 2026-09-28 (수주 가능성 기준 반영) · 말레이시아 항목은 실제 공고문 기준, 그 외 국가 제도는 <span class="tag" style="margin:0">확인 필요</span> 표시 항목을 원문으로 재확인하세요.</span>
+  </div>
+</header>
+
+<section id="status">
+  <h2>진행 현황</h2>
+  <p class="lede">국가별 건의 현재 단계를 누르면 바뀝니다. 다음 확인일과 메모, 액션 아이템은 자동 저장됩니다.</p>
+  <div class="summary" aria-live="polite">
+    <div><b id="sum-done">0</b><span>완료한 체크</span></div>
+    <div><b id="sum-all">0</b><span>전체 체크 항목</span></div>
+    <div><b id="sum-pct">0%</b><span>진행률</span></div>
+    <div><b id="sum-grade">-</b><span>수주 가능성 (상/중/하)</span></div>
+  </div>
+  <div class="cases" id="cases"></div>
+</section>
+
+<section id="screen">
+  <h2>1. 진성 입찰 선별</h2>
+  <p class="lede">웹사이트로 들어오는 견적 문의는 허수가 많습니다. 견적 전에 견적 용도, 제출처, 응찰 주체를 먼저 묻고, 답으로 진성 여부와 보낼 견적 유형을 가립니다.</p>
+  <h3>진성 판별 필터: 사전 문의 3문항</h3>
+  <p class="note">문의자에게 받은 답을 아래에서 선택하면 판정과 다음 행동이 자동으로 나옵니다.</p>
+  <div class="card">
+    <div class="filter" id="f-form"></div>
+    <div class="fout" id="f-out" aria-live="polite"></div>
+    <div class="no-print" style="margin-top:8px"><button data-freset="1" style="font-size:12px;padding:3px 9px">필터 초기화</button></div>
+  </div>
+  <div class="tbl"><table>
+    <thead><tr><th>판정</th><th>조건</th><th>대응</th></tr></thead>
+    <tbody>
+      <tr><td><span class="grade gA">진성</span></td><td>제출처를 기관·플랫폼·입찰번호까지 특정하고, 응찰 주체가 자격 갖춘 특정 업체이며, 견적 용도에 답함</td><td>용도에 맞는 견적 제공(입찰용 또는 사전 견적)</td></tr>
+      <tr><td><span class="grade gB">보류</span></td><td>위 조건에는 못 미치지만 회피한 항목이 1개 이하</td><td>부족한 항목만 재질문. 입찰용 확정 견적은 보류하고, 필요하면 범위 가격대의 사전 견적만 제공</td></tr>
+      <tr><td><span class="grade gC">허수 의심</span></td><td>견적 용도를 모름, 제출처가 모호하거나 무응답, 응찰 주체가 불명이거나 무응답 중 2개 이상</td><td>카탈로그와 일반 안내만 발송하고 견적은 보류. 7일 내 무응답이면 종결</td></tr>
+    </tbody>
+  </table></div>
+
+  <h3>참고: 전체 사전 확인 질문</h3>
+  <div class="tbl"><table>
+    <thead><tr><th>질문</th><th>진성 신호</th><th>허수 신호</th></tr></thead>
+    <tbody>
+      <tr><td>견적 용도가 사전 견적(예산·견적용)인가, 입찰용인가?</td><td>용도를 명확히 구분</td><td>용도 모호, 모름</td></tr>
+      <tr><td>견적을 어디에 제출하는가?</td><td>기관, 플랫폼, 입찰번호 특정</td><td>"곧 나온다"만 반복, 무응답</td></tr>
+      <tr><td>응찰 주체는 누구인가? 자격은 갖췄나?</td><td>자격 갖춘 특정 업체</td><td>불명, 무응답</td></tr>
+      <tr><td>발주기관과 최종 사용처는?</td><td>기관명, 담당부서 특정</td><td>기관명 불명, 무료 메일</td></tr>
+      <tr><td>예산 상태(재원, 회계연도, 추정가 범위)는?</td><td>재원과 연도를 구체적으로 답변</td><td>예산 미정, 답변 회피</td></tr>
+      <tr><td>스펙은 누가 작성하며 초안이 있나?</td><td>스펙 문서 공유</td><td>스펙 없이 가격만 요구</td></tr>
+      <tr><td>IEG 품목을 단독으로 응찰하는가, 다른 공급사 품목과 혼합 응찰하는가? 전체 품목 수는?</td><td>구조와 품목 수를 구체적으로 답변</td><td>답변 회피</td></tr>
+      <tr><td>입찰과 납기 일정은?</td><td>구체적 날짜</td><td>모호</td></tr>
+      <tr><td>회사 실체(도메인, 사업자등록)는 확인되나?</td><td>확인됨</td><td>확인 불가</td></tr>
+    </tbody>
+  </table></div>
+
+  <h3>수주 가능성 판정기 (상 / 중 / 하)</h3>
+  <p class="note">진성 판별 필터와는 다른 개념입니다. 위에서부터 확인해 처음 충족하는 등급을 부여합니다.</p>
+  <div class="card judge">
+    <div id="win-list"></div>
+    <div class="out" id="win-out" aria-live="polite"><b>-</b><span class="note">항목을 체크하세요</span></div>
+  </div>
+  <div class="tbl"><table>
+    <thead><tr><th>등급</th><th>조건</th></tr></thead>
+    <tbody>
+      <tr><td><span class="grade gA">상</span></td><td>입찰서류 있음 + 입찰번호가 공공입찰 사이트에서 검색됨 + 우리 사양 반영됨</td></tr>
+      <tr><td><span class="grade gB">중</span></td><td>우리 사양 반영됨 + 입찰서류 또는 공고문 있음</td></tr>
+      <tr><td><span class="grade gC">하</span></td><td>견적가와 스펙을 문의해 오면서 아직 공고문이나 입찰서류를 확보하지 못한 상태 (공고문만 있고 우리 사양이 반영되지 않은 경우 포함)</td></tr>
+    </tbody>
+  </table></div>
+  <p class="note"><b>보수적 반영 원칙:</b> 정식 입찰 여부나 서류가 서면으로 확인되지 않은 건은 하로 두고, 매출 인식 시점은 공식 입찰서류가 발행된 이후 분기로 잡습니다. 금액이 확정되지 않은 건은 금액을 비워 두어 합계에서 제외하고, 가중 계수는 서류를 확보한 뒤에 적용합니다.</p>
+  <p class="note">서류는 있으나 우리 사양이 반영되지 않은 건도 임시로 하로 분류합니다(기준 확정 필요). 응찰 구조(단독 / 혼합)는 등급에 넣지 않고 진행 현황의 별도 항목으로 추적하며, 문의에서 LOA까지 걸린 일수와 함께 기록해 단독이 실제로 빠른지 확인합니다.</p>
+</section>
+
+<section id="quote">
+  <h2>2. 견적 제공</h2>
+  <p class="lede">견적은 사전 견적(견적용)과 입찰용으로 분리합니다. 어느 쪽인지는 사전 문의에서 확인하고, 한 입찰에는 가격을 하나로 통일합니다.</p>
+  <div class="two">
+    <div class="card">
+      <h3>사전 견적 (budgetary · 견적용)</h3>
+      <ul class="facts">
+        <li>소비자가 기준, 입찰 단가와 구분</li>
+        <li>"for budget estimation only" 명시</li>
+        <li>유효기간은 짧게(30~60일)</li>
+        <li>입찰서류·스펙 인용은 서면 동의 필요</li>
+        <li>장비, 예비부품, 시뮬레이터 라이선스, 교육, 보증, 배송, 세금을 분리 표시</li>
+        <li>구성 옵션을 함께 제시</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>입찰용 (firm)</h3>
+      <ul class="facts">
+        <li>유효기간은 입찰 유효기간에 여유를 더해 설정 (말레이시아 0046/2026은 마감 후 180일)</li>
+        <li>환율·원가 변동 조건, 인코텀즈(CIF/LOCAL), 납기</li>
+        <li>보증과 유지보수 조건</li>
+        <li>제조사 인증서, 대리점 계약서 정리</li>
+      </ul>
+    </div>
+  </div>
+  <div class="card" style="margin-top:16px" id="g-quote"></div>
+</section>
+
+<section id="follow">
+  <h2>3. 견적 후 팔로우업</h2>
+  <p class="lede">견적을 보낸 뒤 각 시점에 확인할 것입니다. 건별로 새로 체크하려면 해당 묶음의 초기화 버튼을 쓰세요.</p>
+  <div class="two" id="g-follow"></div>
+</section>
+
+<section id="docs">
+  <h2>4. 서류 요청 목록</h2>
+  <p class="lede">파트너가 "공식 서류가 아직 없다"고 답할 때, 이미 진행된 입찰 건의 실체를 확인하기 위해 요청할 수 있는 서류입니다. 현재 추진 중인 프로젝트의 서류(RFQ, POA/LOA, 사업 승인 결정)와 이미 나간 입찰의 서류는 다르다는 점에 유의하세요. 베트남 VNU-HCM 자연과학대학 PLC 건을 기준으로 정리했습니다.</p>
+  <div class="two" id="g-docs"></div>
+  <h3>요청 전에 직접 확인</h3>
+  <p class="note" style="font-size:14px">베트남 국가 조달 사이트에서 기관명, 연도, PLC로 검색해 입찰 공고와 결과 공고가 나오는지 먼저 봅니다. 나오면 서류를 요청하지 않아도 실체가 확인됩니다. 서류 명칭(HSMT, KHLCNT, HSDT 등)은 통상 쓰이는 표현이라, 실제 요청 전에 현지 파트너와 한 번 확인하세요.</p>
+  <h3>요청 요령</h3>
+  <ul style="margin:0 0 8px;padding-left:20px">
+    <li>처음부터 전부 요구하면 부담스러워하므로, [필수] 표시 항목(공고 번호, 결과, IEG 제출본, 파트너 권한)부터 요청합니다.</li>
+    <li>이유는 "내부 승인과 견적 유효기간을 맞추기 위해"라는 식으로 붙이면 협조를 받기 쉽습니다.</li>
+    <li>공개된 공고나 결과조차 공유하지 못한다면 그 자체가 이 건의 신뢰도를 낮게 반영해야 하는 신호입니다.</li>
+  </ul>
+  <h3>등급 반영</h3>
+  <p class="note" style="font-size:14px">파트너 답변대로 사업 승인이 진행 중이고 입찰서류가 올해 말이나 2027년에 나올 예정이라면, 공고문과 서류가 모두 없는 상태이므로 수주 가능성은 하이고 가중 파이프라인에서도 보수적으로 반영합니다.</p>
+</section>
+
+<section id="terms">
+  <h2>5. 국가별 용어 매핑표</h2>
+  <p class="lede">나라마다 같은 개념을 다르게 부릅니다. 유통업자가 말한 NOA는 필리핀식 표현이라, 말레이시아 건에서는 SST를 뜻하는지 확인이 필요합니다.</p>
+  <div class="tbl"><table>
+    <thead><tr><th>개념</th><th>말레이시아</th><th>필리핀</th><th>베트남</th><th>사우디</th></tr></thead>
+    <tbody>
+      <tr><td>조달 플랫폼</td><td>ePerolehan, MARA는 SPEED</td><td>PhilGEPS</td><td>국가조달망(muasamcong)</td><td>Etimad</td></tr>
+      <tr><td>예산·추정가</td><td>MARA 공고문에는 미기재</td><td>ABC</td><td>입찰 패키지 가격</td><td>공개 여부 확인<span class="tag">확인 필요</span></td></tr>
+      <tr><td>연간 계획</td><td>확인 필요</td><td>APP / PPMP</td><td>계약자 선정 계획(KHLCNT)</td><td>확인 필요</td></tr>
+      <tr><td>입찰서류</td><td>Dokumen Tender</td><td>Bidding Documents</td><td>HSMT</td><td>Tender Booklet</td></tr>
+      <tr><td>입찰보증</td><td>서류에 명시된 조건</td><td>Bid Security</td><td>입찰보증</td><td>Initial Guarantee(통상 1~2%)<span class="tag">확인 필요</span></td></tr>
+      <tr><td>낙찰 통지</td><td>SST (LOA)</td><td>NOA</td><td>결과 승인 결정과 통지</td><td>낙찰 통지 후 최종보증 요구</td></tr>
+      <tr><td>이행보증</td><td>Performance Bond</td><td>Performance Security</td><td>계약이행보증</td><td>Final Guarantee(통상 5%)<span class="tag">확인 필요</span></td></tr>
+      <tr><td>착수</td><td>계약과 발주</td><td>NTP</td><td>계약 체결</td><td>계약 체결</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section id="country">
+  <h2>6. 국가별 특이점</h2>
+  <div class="two">
+    <div class="card country"><h3>말레이시아 (MARA 0046/2026 기준)</h3><ul>
+      <li>브루미푸트라 전용. MOF 등록증, 브루미푸트라 등록증, 세금 준수 증명서(TCC)가 모두 유효해야 함</li>
+      <li>서류 구매와 설명회는 등록 사업주 본인만 가능(대리인 불가)</li>
+      <li>SPEED 온라인 업로드와 하드카피 제출(쿠알라룸푸르 MARA 본부)을 병행</li>
+      <li>현지 대리점 구조가 사실상 필수여서 Agency 계약의 범위와 기간이 중요</li>
+      <li>낙찰자 수수료(송장 금액의 0.4% 또는 0.7%)를 가격에 반영할지 결정</li>
+    </ul></div>
+    <div class="card country"><h3>필리핀</h3><ul>
+      <li>공고 전에 ABC, APP/PPMP 등재 여부 확인. ABC가 미정이면 입찰용 견적은 이름</li>
+      <li>PhilGEPS 등록과 사업자 서류 필요. 외국 공급사는 보통 현지 업체 경유<span class="tag">확인 필요</span></li>
+      <li>입찰보증과 이행보증 형태는 현행 법령 규정 확인<span class="tag">확인 필요</span></li>
+      <li>BAC 절차(설명회, 서류 심사) 일정이 공고문에 명시되므로 일정표 관리</li>
+    </ul></div>
+    <div class="card country"><h3>베트남 (껀터 직업전문대학 건)</h3><ul>
+      <li>사업 승인 단계 우선 확인: 투자 결정(chủ trương đầu tư), 2026~2030 공공투자 배정 결의, 사업 승인 결정 번호</li>
+      <li>서류는 베트남어가 기본이라 현지 파트너나 번역 필요</li>
+      <li>스펙과 견적 공유 시 스펙 선점 위험: 서면 동의 조항 필수. 스펙 작성 관여 업체의 응찰 제한 여부 확인<span class="tag">확인 필요</span></li>
+      <li>방문 전 NDA 체결 후, 구속력 있는 MOU는 이후 진행</li>
+    </ul></div>
+    <div class="card country"><h3>사우디 (Prince Sattam University 건)</h3><ul>
+      <li>Etimad 플랫폼 등록, 상업등록·세금·사회보험 관련 서류<span class="tag">확인 필요</span></li>
+      <li>입찰보증 1~2%, 최종보증 5%가 일반적이라 계획서에 반영<span class="tag">확인 필요</span></li>
+      <li>현지 에이전시 구조, 현지 조달 비중 가점, 제품 적합성 인증 요건<span class="tag">확인 필요</span></li>
+      <li>아랍어 서류, 주말(금·토)과 이슬람 공휴일 일정 유의</li>
+    </ul></div>
+  </div>
+  <h3>공통 유의점</h3>
+  <div class="card" id="g-common"></div>
+</section>
+
+<section id="roadmap">
+  <h2>7. 기한별 로드맵</h2>
+  <div class="tbl"><table>
+    <thead><tr><th>시점</th><th>액션</th><th>산출물</th></tr></thead>
+    <tbody>
+      <tr><td>접수 D0~D2</td><td>양식 기록, 선별 질문 발송</td><td>문의 대장</td></tr>
+      <tr><td>D3~D7</td><td>응답 평가, A/B/C 판정</td><td>판정 메모</td></tr>
+      <tr><td>D7~D14</td><td>예산용 견적 발송(A/B), 유효기간과 사용 제한 명시</td><td>견적서, 견적 대장</td></tr>
+      <tr><td>견적 후 2~4주</td><td>공고, 예산 확인</td><td>상태 업데이트</td></tr>
+      <tr><td>공고 후</td><td>마감일 역산 일정, 갱신 견적, 자격 서류 확인</td><td>입찰 일정표</td></tr>
+      <tr><td>마감 전 2주</td><td>견적 최종화, 서류 준비, 파트너 서명</td><td>최종 견적, 서류 패키지</td></tr>
+      <tr><td>마감 후</td><td>평가 추적, 보완 요청 대응</td><td>결과 확인 기록</td></tr>
+      <tr><td>낙찰 후</td><td>수락 기한, 보증, 발주, 납기 계획</td><td>계약서, 발주서</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section id="tpl">
+  <h2>8. 문의 답변 템플릿 (진성 선별 메일)</h2>
+  <p class="lede">웹사이트 견적 문의에 처음 보내는 영문 메일입니다. 복사해서 수신자에 맞게 수정하세요.</p>
+  <div class="tpl" id="tpl-text">Subject: Your quotation request – a few questions to prepare the right offer
+
+Dear [Name],
+
+Thank you for your interest in IEG equipment. We provide two types of quotation (a budgetary pre-quotation and a bid quotation). To prepare the right one, could you please confirm the following?
+
+1. Purpose of this quotation: (a) budget estimation / reference price, or (b) bid submission
+2. Where the quotation will be submitted (institution, procurement platform, and tender number if available)
+3. Who will be the bidding entity (company name and eligibility)
+
+If available, please also share:
+4. Contracting authority / end-user institution and department
+5. Tender number, portal link, or expected publication date
+6. Funding source, fiscal year, and expected budget range
+7. Who is preparing the technical specifications, and whether a draft can be shared
+8. Expected tender and delivery dates
+9. Whether IEG's items will be bid on a stand-alone basis or as part of a mixed package with other suppliers' items, and the total number of items in the tender
+
+Please note that budgetary quotations are for estimation only and may not be quoted in bidding documents without our written consent.
+
+Best regards,
+[Name]
+IEG Co., Ltd.</div>
+  <div class="no-print"><button id="btn-copy">템플릿 복사</button> <span class="note" id="copy-msg"></span></div>
+</section>
+
+<footer>이 파일은 내부 업무 정리용입니다. 국가별 제도는 실제 입찰서류와 최신 법령을 기준으로 재확인하세요.</footer>
+</main>
+</div>
+
+<script>
+(function(){
+  var KEY='ieg-bid-manual-v1';
+  var STAGES=['문의·선별','견적 제공','공고·응찰','평가·결과','낙찰 후 이행'];
+
+  var CASES=[
+    {id:'my',name:'말레이시아',sub:'MARA 0046/2026 · KKTM Pasir Mas IR4.0 (Galaxy Global 경유)',stage:3,grade:'미분류',struct:'혼합',
+     facts:['입찰 마감 2026-08-06 종료','입찰 유효기간 2027-02-02까지(마감 후 180일)','SST 발행 대기, 예상 시점 확인 필요'],
+     actions:['SPEED 등재 여부와 IEG 사양 반영 여부 확인 후 판정기로 수주 가능성 등급 결정',
+              'Galaxy Global에 SST 시점, 이행보증 요구, 결과 확인 채널 문의 이메일 발송',
+              'Galaxy Global의 응찰 주체와 브루미푸트라 자격 확인',
+              'IEG 3454 견적이 입찰서류에 그대로 쓰였는지 확인',
+              'IEG 3454 견적 유효기간을 입찰 유효기간까지 연장할지 검토',
+              'Agency 계약의 범위, 기간, 책임 분담 점검',
+              '유통업자가 말한 NOA가 SST를 뜻하는지 확인']},
+    {id:'ph',name:'필리핀',sub:'대학 장비 입찰 건 (ABC 미정)',stage:1,grade:'하',struct:'미확인',
+     facts:['ABC가 아직 정해지지 않음','5가지 질문 답변 대기'],
+     actions:['5가지 질문 답변 확인: 시장 조사 여부, 회계연도와 재원, ABC 범위, 스펙 작성 주체, 입찰 일정',
+              '예산용 견적서 준비: 시뮬레이터 비용, 스펙, 세금과 배송 분리 표기',
+              '"서면 동의 없이 입찰서류 인용 불가" 조항 포함',
+              '응찰 구조(단독/혼합)와 전체 품목 수 문의']},
+    {id:'vn',name:'베트남',sub:'껀터 직업전문대학 · 방문 10/6~8',stage:1,grade:'하',struct:'미확인',
+     facts:['10/5, 10/9는 한국 공휴일이라 방문 실작업일 3일','NDA 먼저, 구속력 있는 MOU는 이후'],
+     actions:['사업자등록증, 법정대리인 서류 또는 위임장, 계약 주체명 사전 수령',
+              '참석자 직함 확인 후 아젠다 확정',
+              'NDA 초안 준비',
+              '사업 승인 서류 확인 요청: 투자 결정, 배정 결의(6·7차 회기), 사업 승인 결정 번호',
+              '"예산 한도"의 의미 확인: 배정 축소인지, 승인액 하향인지',
+              '스펙·가격 자료의 용도 확인: 예산 산정용인지, 입찰서류 포함인지']},
+    {id:'vn2',name:'베트남 (VNU-HCM)',sub:'호치민 국립대 자연과학대학 · PLC 트레이닝 장비 (작년 건의 성격 확인 중)',stage:1,grade:'하',struct:'미확인',
+     facts:['최종 고객은 VNU Hanoi가 아니라 VNU-HCM 자연과학대학(파트너 정정)','작년 건은 정식 입찰이 아니라 사업 승인용 사전 견적일 가능성이 큼(미확인)','RFQ, POA/LOA, 사업 승인 결정 모두 없음, 사업 승인 진행 중','정식 입찰서류는 올해 말 또는 2027년 예정(파트너 구두 안내, 근거 없음)','보수적 반영: 하 유지, 매출 인식은 공식 서류 발행 이후로 분류'],
+     actions:['작년에 무엇이 제출됐는지 확인: 제출일, 제출 대상, 형식(입찰서/견적서), 주고받은 메일과 제출 증빙 요청',
+              '작년에 정식 입찰 공고가 있었는지 확인: 있으면 공고 번호와 결과, 없으면 사전 견적이었다는 서면 확인',
+              '작년 건과 현재 프로젝트의 관계 확인: 재추진인지, 별개의 새 프로젝트인지',
+              '사업 승인 상태 확인: 승인 기관과 단계, 재원, "올해 말 또는 2027년"의 근거',
+              'IEG 견적이 사업 승인 서류의 추정가나 스펙에 반영됐는지 확인',
+              '작년 견적의 유효기간 갱신이 필요한지 확인',
+              '베트남 국가 조달 사이트에서 기관명·연도·PLC로 공고와 결과 공고 직접 검색',
+              '내부 기록의 기관명을 VNU-HCM 자연과학대학으로 정정']},
+    {id:'sa',name:'사우디',sub:'Prince Sattam University · 재응찰 건 (Espranza 경유)',stage:3,grade:'하',struct:'미확인',
+     facts:['견적 최초 요청 2026-03-03, 우리 장비 견적을 요청해 와서 사양 반영으로 판단','이후 "진행 중"이라는 답변만 받음','입찰서류, 검색 가능한 입찰번호, LOA 미확보, 단독/혼합 여부 불명','Espranza 담당자 구두 안내: 행정 절차상 결과는 12월'],
+     actions:['공공조달 사이트에서 검색 가능한 입찰번호 확인 요청',
+              '입찰서류(스펙 부분 포함) 사본 요청, 서류에서 IEG 사양 반영 최종 확인',
+              '재입찰 사유와 변경 사항(스펙, 수량, 일정) 확인',
+              '3월 견적이 입찰서류에 그대로 제출됐는지, 견적 유효기간 갱신이 필요한지 확인',
+              '응찰 주체(Espranza인지 다른 업체인지)와 IEG와의 서면 합의 범위 확인',
+              '단독/혼합 응찰 여부와 전체 품목 수 확인 (서류가 없으면 IEG 장비가 별도 로트인지 다른 품목과 묶였는지부터 문의)',
+              '현재 평가 단계와 12월 예상 시점의 근거 확인']}
+  ];
+
+  var GROUPS={
+    quote:{title:'견적 발송 전 점검',items:[
+      '용도 문구 명시(예산용 / 입찰용)','유효기간 확인',
+      '항목 분리 표시(장비, 예비부품, SW 라이선스, 교육, 보증, 배송, 세금)',
+      '"서면 동의 없이 입찰서류 인용 불가" 조항 포함','인코텀즈(CIF/LOCAL)와 납기 명시',
+      '발주기관 수수료, 보증 비용 반영 여부 결정','같은 입찰의 파트너 간 가격 통일',
+      '견적번호, 버전, 발송일, 수신자를 견적 대장에 기록']},
+    f7:{title:'발송 후 7일',items:['수신 확인','추가 질문 답변','선별 질문 미응답분 재확인']},
+    f24:{title:'2~4주',items:['공고 게시 여부 확인(해당 플랫폼 검색)','예산 확정 여부 확인']},
+    fpub:{title:'공고 후',items:['마감일 확인','설명회 일정 확인','응찰자 확인','IEG 품목 반영 여부 확인','갱신 견적 필요 여부 확인']},
+    fclose:{title:'마감 후',items:['평가 진행 상황 확인','보완 질의 수신 여부 확인','결과 게시 채널 확인']},
+    fwin:{title:'낙찰 후',items:['낙찰자 확인','수락 기한 확인','보증 요구 확인','발주 일정 확인']},
+    dreal:{title:'입찰의 실체 확인',items:['[필수] 입찰 공고와 공고 번호','[필수] 입찰서류(HSMT) 중 기술 스펙 부분','[권장] 계약자 선정 계획(KHLCNT)에 해당 패키지가 포함된 승인 결정']},
+    dres:{title:'결과 확인',items:['[필수] 결과 공고 또는 결과 통지','[권장] 낙찰자 선정 승인 결정문','[권장] 낙찰 시 계약 체결 여부']},
+    dieg:{title:'IEG 견적·사양 사용 확인',items:['[필수] 파트너가 제출한 입찰서(HSDT) 중 IEG 품목 부분, 제출일, 제출처','[권장] 입찰보증 사본(실제로 응찰했다는 증거)']},
+    dauth:{title:'파트너 권한 확인',items:['[필수] 파트너 사업자등록증과 응찰 자격 서류','[필수] 위임장(POA/LOA)과 IEG와의 대리점·협력 서면 합의']},
+    dstat:{title:'현재 프로젝트 상태',items:['[권장] 사업 승인 절차의 기관과 단계를 서면으로 회신','[권장] 예상 발주 시점(올해 말 또는 2027)과 담당자']},
+    common:{title:'공통 유의점',items:[
+      '입찰보증, 이행보증, 발주기관 수수료, 통관·물류비를 가격에 포함할지 명시',
+      '스펙이 입찰서류에 들어갈 때 스펙 작성 관여 업체의 응찰 제한 조항 확인',
+      '견적 대장에 발송일, 용도, 유효기간, 수신자 기록']}
+  };
+
+  var WIN=['입찰서류가 있음','공고문이 있음','입찰번호가 공공입찰 사이트에서 검색됨','우리 사양이 반영됨','견적가·스펙을 문의해 옴 (전제)'];
+  var GRADES=['상','중','하','미분류'];
+  var STRUCTS=['단독','혼합','미확인'];
+  var FQ=[
+    {k:'q1',label:'① 견적 용도',opts:[['','선택'],['bid','입찰용 (응찰에 사용)'],['est','사전 견적 (예산·견적용, 소비자가)'],['none','답변 없음·모름']]},
+    {k:'q2',label:'② 제출처',opts:[['','선택'],['exact','기관·플랫폼·입찰번호까지 특정'],['org','기관만 특정 (번호·플랫폼 없음)'],['vague','모호함'],['none','답변 없음']]},
+    {k:'q3',label:'③ 응찰 주체',opts:[['','선택'],['firm','자격 갖춘 특정 업체'],['self','문의자 본인 (자격 확인 필요)'],['unknown','불명·미정'],['none','답변 없음']]}
+  ];
+  var FASK={
+    q1:'Is this quotation for budget estimation (pre-quotation / reference price) or for bid submission?',
+    q2:'Where will the quotation be submitted (institution, procurement platform, and tender number if available)?',
+    q3:'Who will be the bidding entity (company name and eligibility)? If you will bid directly, please confirm your registration and eligibility.'
+  };
+
+  var S={c:{},stage:{},date:{},note:{},grade:{},struct:{},loa:{},f:{q1:'',q2:'',q3:''}};
+  try{var raw=localStorage.getItem(KEY);if(raw){var p=JSON.parse(raw);if(p&&typeof p==='object'){S.c=p.c||{};S.stage=p.stage||{};S.date=p.date||{};S.note=p.note||{};S.grade=p.grade||{};S.struct=p.struct||{};S.loa=p.loa||{};if(p.f&&typeof p.f==='object'){S.f={q1:p.f.q1||'',q2:p.f.q2||'',q3:p.f.q3||''};}Object.keys(S.grade).forEach(function(k){if(S.grade[k]==='\uad00\ucc30')S.grade[k]='하';});}}}catch(e){}
+  function save(){try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){}}
+
+  function esc(s){return String(s).replace(/[&<>"]/g,function(m){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m];});}
+  function chk(id,text){return '<label class="chk"><input type="checkbox" data-k="'+id+'"'+(S.c[id]?' checked':'')+'><span>'+esc(text)+'</span></label>';}
+  function group(gid,title,items,extraClass){
+    var h='<div class="grp" data-g="'+gid+'"><div class="grp-head"><b>'+esc(title)+'</b><span><span class="cnt">0/'+items.length+'</span> <button class="no-print" data-reset="'+gid+'" style="padding:2px 8px;font-size:12px">초기화</button></span></div><div class="bar"><i></i></div>';
+    items.forEach(function(t,i){h+=chk(gid+':'+i,t);});
+    return h+'</div>';
+  }
+
+  function renderCases(){
+    var el=document.getElementById('cases'),h='';
+    CASES.forEach(function(c){
+      var st=(S.stage[c.id]!==undefined)?S.stage[c.id]:c.stage;
+      h+='<div class="card" data-case="'+c.id+'"><h3>'+esc(c.name)+'</h3><p class="sub">'+esc(c.sub)+'</p>';
+      h+='<div class="track" role="group" aria-label="'+esc(c.name)+' 단계">';
+      STAGES.forEach(function(s,i){h+='<button data-stage="'+c.id+':'+i+'" class="'+(i===st?'now':(i<st?'past':''))+'" aria-pressed="'+(i===st)+'">'+s+'</button>';});
+      h+='</div><ul class="facts">'+c.facts.map(function(f){return '<li>'+esc(f)+'</li>';}).join('')+'</ul>';
+      h+='<div class="row"><label for="d-'+c.id+'">다음 확인일</label><input type="date" id="d-'+c.id+'" data-date="'+c.id+'" value="'+esc(S.date[c.id]||'')+'"></div>';
+      var g=(S.grade[c.id]!==undefined)?S.grade[c.id]:c.grade, sv=(S.struct[c.id]!==undefined)?S.struct[c.id]:c.struct;
+      h+='<div class="row"><label for="g-'+c.id+'">수주 가능성</label><select id="g-'+c.id+'" data-grade="'+c.id+'">'+GRADES.map(function(o){return '<option'+(o===g?' selected':'')+'>'+o+'</option>';}).join('')+'</select>';
+      h+='<label for="s-'+c.id+'">응찰 구조</label><select id="s-'+c.id+'" data-struct="'+c.id+'">'+STRUCTS.map(function(o){return '<option'+(o===sv?' selected':'')+'>'+o+'</option>';}).join('')+'</select></div>';
+      h+='<div class="row"><label for="l-'+c.id+'">문의→LOA 소요일</label><input type="number" min="0" id="l-'+c.id+'" data-loa="'+c.id+'" style="width:90px" value="'+esc(S.loa[c.id]||'')+'"><span class="note">낙찰 후 기록</span></div>';
+      h+=group('case-'+c.id,'액션 아이템',c.actions);
+      h+='<div class="row" style="display:block"><label for="n-'+c.id+'">메모</label><textarea id="n-'+c.id+'" data-note="'+c.id+'" placeholder="진행 내용, 연락처, 결정 사항">'+esc(S.note[c.id]||'')+'</textarea></div></div>';
+    });
+    el.innerHTML=h;
+  }
+
+  function renderGroups(){
+    document.getElementById('g-quote').innerHTML=group('quote',GROUPS.quote.title,GROUPS.quote.items);
+    var f='';['f7','f24','fpub','fclose','fwin'].forEach(function(k){f+='<div class="card">'+group(k,GROUPS[k].title,GROUPS[k].items)+'</div>';});
+    document.getElementById('g-follow').innerHTML=f;
+    var dd='';['dreal','dres','dieg','dauth','dstat'].forEach(function(k){dd+='<div class="card">'+group(k,GROUPS[k].title,GROUPS[k].items)+'</div>';});
+    document.getElementById('g-docs').innerHTML=dd;
+    document.getElementById('g-common').innerHTML=group('common',GROUPS.common.title,GROUPS.common.items);
+    var w='';WIN.forEach(function(t,i){w+=chk('win:'+i,t);});
+    document.getElementById('win-list').innerHTML=w+'<div class="no-print"><button data-reset="win" style="margin-top:6px;font-size:12px;padding:3px 9px">판정기 초기화</button></div>';
+  }
+
+  function updateCounts(){
+    var done=0,all=0;
+    document.querySelectorAll('.grp').forEach(function(g){
+      var ins=g.querySelectorAll('input[type=checkbox]'),n=0;
+      ins.forEach(function(i){if(i.checked)n++;});
+      g.querySelector('.cnt').textContent=n+'/'+ins.length;
+      g.querySelector('.bar i').style.width=(ins.length?Math.round(n/ins.length*100):0)+'%';
+      done+=n;all+=ins.length;
+    });
+    document.getElementById('sum-done').textContent=done;
+    document.getElementById('sum-all').textContent=all;
+    document.getElementById('sum-pct').textContent=(all?Math.round(done/all*100):0)+'%';
+    var docs=!!S.c['win:0'],notice=!!S.c['win:1'],search=!!S.c['win:2'],spec=!!S.c['win:3'],inq=!!S.c['win:4'];
+    var wout=document.getElementById('win-out');
+    if(!(docs||notice||search||spec||inq)){wout.innerHTML='<b>-</b><span class="note">항목을 체크하세요</span>';}
+    else if(docs&&search&&spec){wout.innerHTML='<b class="grade gA" style="font-size:26px">상</b><span class="note">서류·검색·사양 반영</span>';}
+    else if(spec&&(docs||notice)){wout.innerHTML='<b class="grade gB" style="font-size:26px">중</b><span class="note">사양 반영, 서류 또는 공고문</span>';}
+    else{wout.innerHTML='<b class="grade gC" style="font-size:26px">하</b><span class="note">'+((docs||notice)?'사양 미반영(임시 분류)':'견적·스펙 문의, 공고문·서류 미확보')+'</span>';}
+    var cnt={'상':0,'중':0,'하':0};
+    CASES.forEach(function(c){var g=(S.grade[c.id]!==undefined)?S.grade[c.id]:c.grade;if(cnt[g]!==undefined)cnt[g]++;});
+    document.getElementById('sum-grade').textContent=cnt['상']+'/'+cnt['중']+'/'+cnt['하'];
+  }
+
+  function renderFilter(){
+    var h='';
+    FQ.forEach(function(q){
+      h+='<label for="f-'+q.k+'">'+q.label+'</label><select id="f-'+q.k+'" data-f="'+q.k+'">'+q.opts.map(function(o){return '<option value="'+o[0]+'"'+(S.f[q.k]===o[0]?' selected':'')+'>'+o[1]+'</option>';}).join('')+'</select>';
+    });
+    document.getElementById('f-form').innerHTML=h;
+    evalFilter();
+  }
+
+  function evalFilter(){
+    var f=S.f,out=document.getElementById('f-out');
+    if(!f.q1||!f.q2||!f.q3){out.innerHTML='<span class="note">세 문항의 답을 모두 선택하세요.</span>';return;}
+    var ev=(f.q1==='none'?1:0)+((f.q2==='vague'||f.q2==='none')?1:0)+((f.q3==='unknown'||f.q3==='none')?1:0);
+    var R={
+      q1:{bid:'견적 용도: 입찰용',est:'견적 용도: 사전 견적(예산·견적용)',none:'견적 용도를 밝히지 않음'},
+      q2:{exact:'제출처를 입찰번호까지 특정함',org:'기관만 특정, 입찰번호·플랫폼은 미확인',vague:'제출처가 모호함',none:'제출처를 밝히지 않음'},
+      q3:{firm:'응찰 주체가 자격 갖춘 특정 업체',self:'문의자 본인이 응찰, 자격 확인 필요',unknown:'응찰 주체 불명',none:'응찰 주체를 밝히지 않음'}
+    };
+    var reasons=[R.q1[f.q1],R.q2[f.q2],R.q3[f.q3]];
+    if(f.q1==='bid'&&(f.q2==='vague'||f.q2==='none'||f.q3==='unknown'||f.q3==='none')){reasons.push('입찰용이라면서 제출처나 응찰 주체를 밝히지 않아 입찰용 견적은 보류');}
+    var cls,label,title,next,follow='';
+    if(ev>=2){cls='C';label='허수 의심';title='견적 보류';next='카탈로그와 일반 안내만 발송합니다. 7일 내 무응답이면 종결합니다.';}
+    else if(f.q2==='exact'&&f.q3==='firm'&&f.q1!=='none'){
+      cls='A';label='진성';
+      if(f.q1==='bid'){title='입찰용 견적 진행';next='입찰용 견적 절차로 진행합니다: 유효기간, 인코텀즈·납기, 보증 조건, 제조사 인증·대리점 서류를 정리한 뒤 발송합니다. 공고문과 서류를 확보하면 수주 가능성 판정기로 등급을 정합니다.';}
+      else{title='사전 견적 제공';next='소비자가 기준 사전 견적을 발송하고, "for budget estimation only"와 입찰서류 인용 시 서면 동의 문구를 넣습니다. 공고문이 나오면 입찰용 견적을 따로 준비합니다.';}
+    }else{
+      cls='B';label='보류';title='보완 질문 필요';
+      next='부족한 항목만 다시 묻습니다. 그동안 입찰용 확정 견적은 보류하고, 필요하면 범위 가격대의 사전 견적만 제공합니다.';
+      var miss=[];
+      if(f.q1==='none')miss.push(FASK.q1);
+      if(f.q2!=='exact')miss.push(FASK.q2);
+      if(f.q3!=='firm')miss.push(FASK.q3);
+      follow='Dear [Name],\n\nThank you for your reply. To prepare the right quotation, could you please clarify the following?\n\n'+miss.map(function(m,i){return (i+1)+'. '+m;}).join('\n')+'\n\nPlease note that budgetary quotations are for estimation only and may not be quoted in bidding documents without our written consent.\n\nBest regards,\n[Name]\nIEG Co., Ltd.';
+    }
+    var html='<div class="fbadge"><span class="grade g'+cls+'">'+label+'</span><b>'+title+'</b></div><p>'+esc(next)+'</p><ul>'+reasons.map(function(r){return '<li>'+esc(r)+'</li>';}).join('')+'</ul>';
+    if(follow){html+='<h3 style="margin:14px 0 4px;font-size:14px">보완 질문 메일 (영문)</h3><div class="tpl" id="f-follow-text">'+esc(follow)+'</div><div class="no-print"><button id="btn-copy2">보완 질문 복사</button> <span class="note" id="copy-msg2"></span></div>';}
+    out.innerHTML=html;
+  }
+
+  document.addEventListener('change',function(e){
+    var t=e.target;
+    if(t.matches('input[type=checkbox][data-k]')){
+      S.c[t.getAttribute('data-k')]=t.checked;
+      save();updateCounts();
+    }else if(t.matches('input[data-date]')){S.date[t.getAttribute('data-date')]=t.value;save();}
+    else if(t.matches('select[data-grade]')){S.grade[t.getAttribute('data-grade')]=t.value;save();updateCounts();}
+    else if(t.matches('select[data-f]')){S.f[t.getAttribute('data-f')]=t.value;save();evalFilter();}
+    else if(t.matches('select[data-struct]')){S.struct[t.getAttribute('data-struct')]=t.value;save();}
+    else if(t.matches('input[data-loa]')){S.loa[t.getAttribute('data-loa')]=t.value;save();}
+  });
+  document.addEventListener('input',function(e){
+    var t=e.target;
+    if(t.matches('textarea[data-note]')){S.note[t.getAttribute('data-note')]=t.value;save();}
+  });
+  document.addEventListener('click',function(e){
+    var t=e.target;
+    if(t.matches('button[data-stage]')){
+      var p=t.getAttribute('data-stage').split(':');S.stage[p[0]]=parseInt(p[1],10);save();renderCases();updateCounts();
+    }else if(t.matches('button[data-freset]')){
+      S.f={q1:'',q2:'',q3:''};save();renderFilter();
+    }else if(t.id==='btn-copy2'){
+      copyText(document.getElementById('f-follow-text').innerText,document.getElementById('copy-msg2'),document.getElementById('f-follow-text'));
+    }else if(t.matches('button[data-reset]')){
+      var g=t.getAttribute('data-reset');
+      Object.keys(S.c).forEach(function(k){if(k.indexOf(g+':')===0)delete S.c[k];});
+      save();renderCases();renderGroups();renderFilter();updateCounts();
+    }
+  });
+
+  document.getElementById('btn-print').onclick=function(){window.print();};
+  document.getElementById('btn-reset').onclick=function(){
+    if(confirm('모든 체크, 단계, 날짜, 메모를 초기화할까요? 되돌릴 수 없습니다.')){
+      S={c:{},stage:{},date:{},note:{},grade:{},struct:{},loa:{},f:{q1:'',q2:'',q3:''}};save();renderCases();renderGroups();renderFilter();updateCounts();
+    }
+  };
+  document.getElementById('btn-export').onclick=function(){
+    var blob=new Blob([JSON.stringify(S,null,2)],{type:'application/json'});
+    var a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='bid-manual-state.json';
+    document.body.appendChild(a);a.click();document.body.removeChild(a);
+  };
+  function copyText(txt,msg,node){
+    function ok(){msg.textContent='복사했습니다.';setTimeout(function(){msg.textContent='';},2000);}
+    function fb(){var r=document.createRange();r.selectNodeContents(node);var s=window.getSelection();s.removeAllRanges();s.addRange(r);try{document.execCommand('copy');ok();}catch(e){msg.textContent='선택된 텍스트를 직접 복사하세요.';}}
+    if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(txt).then(ok,fb);}else{fb();}
+  }
+  document.getElementById('btn-copy').onclick=function(){
+    copyText(document.getElementById('tpl-text').innerText,document.getElementById('copy-msg'),document.getElementById('tpl-text'));
+  };
+
+  renderCases();renderGroups();renderFilter();updateCounts();
+})();
+</script>
+</body>
+</html>
