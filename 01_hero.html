@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>IEG — Semiconductor VR Station (Print-Ready)</title>
+<style>
+  /* ==== Print settings — A4 portrait, 3 mm bleed ==== */
+  /* Trim: 210 × 297 mm  ·  Bleed: 3 mm  →  Artboard: 216 × 303 mm */
+  @page {
+    size: A4 portrait;
+    margin: 0;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body {
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    color: #262626;
+    background: #ffffff;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  .sheet {
+    width: 216mm;   /* bleed-extended width  */
+    height: 303mm;  /* bleed-extended height */
+    padding: 8mm 8mm 8mm 8mm; /* bleed margin around content */
+    position: relative;
+    page-break-after: always;
+    background: #ffffff;
+  }
+  /* Safe content area inside the sheet: 12 mm from trim edge */
+  .safe {
+    width: 186mm;   /* 210 - 12×2 */
+    height: 273mm;  /* 297 - 12×2 */
+    margin: 5mm auto 0;   /* center within bleed allowance */
+    position: relative;
+  }
+
+  /* ==== Palette ==== */
+  :root { }
+
+  h1, h2, h3, h4 { color: #1f4e5f; font-weight: 800; }
+  p, li { color: #3a3a3a; }
+  .small { font-size: 8pt; color: #7a7a7a; }
+  .micro { font-size: 7pt; color: #9a9a9a; }
+
+  /* ==== Cover (Page 1) ===================================== */
+  .cover { background: #ffffff; }
+  .cover-topband {
+    background: #1f4e5f; color: #ffffff;
+    height: 36mm;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 5mm;
+  }
+  .cover-topband .brand {
+    font-weight: 900; font-size: 22pt; letter-spacing: 3pt; color: #ffffff;
+  }
+  .cover-topband .meta {
+    font-size: 8pt; letter-spacing: 2pt; color: #e9d6a8;
+  }
+  .cover-title {
+    margin-top: 14mm;
+    display: grid; grid-template-columns: 1.25fr 1fr; gap: 10mm; align-items: center;
+  }
+  .cover-title h1 {
+    font-size: 32pt; line-height: 1.05; color: #1f4e5f; letter-spacing: -0.5pt;
+  }
+  .cover-title h1 .accent { color: #c76b3d; }
+  .cover-title .lede {
+    margin-top: 6mm;
+    font-size: 10.5pt; line-height: 1.55; color: #4a4a4a;
+  }
+  .cover-title .tag {
+    display: inline-block; background: #f4efe6;
+    color: #1f4e5f; font-weight: 700; font-size: 8.5pt;
+    letter-spacing: 1.2pt; padding: 1.6mm 4mm;
+    border: 1px solid #c76b3d; border-radius: 2px;
+    text-transform: uppercase;
+    margin-bottom: 5mm;
+  }
+  .cover-spacer { margin-top: 14mm; display: grid; grid-template-columns: repeat(4, 1fr); gap: 5mm; }
+  .cover-stat {
+    background: #f4efe6; border-top: 3px solid #c76b3d;
+    padding: 4mm 4mm;
+  }
+  .cover-stat .num {
+    font-weight: 900; color: #1f4e5f; font-size: 20pt; line-height: 1;
+  }
+  .cover-stat .lbl {
+    font-size: 8pt; color: #5a5a5a; line-height: 1.3; margin-top: 2mm;
+    text-transform: uppercase; letter-spacing: 1pt;
+  }
+  .cover-foot {
+    position: absolute; left: 5mm; right: 5mm; bottom: 5mm;
+    border-top: 1px solid #d8d2c5; padding-top: 3mm;
+    display: flex; justify-content: space-between; align-items: center;
+    font-size: 7.5pt; color: #6b6b6b;
+  }
+  .cover-foot .left b { color: #1f4e5f; }
+  .cover-foot .right b { color: #c76b3d; }
+  .pageno { position: absolute; right: 5mm; bottom: 2mm; font-size: 7pt; color: #b0a890; }
+
+  /* ==== Body pages shared ===== */
+  .bodypage { background: #ffffff; }
+  .pheader {
+    height: 18mm;
+    display: flex; justify-content: space-between; align-items: center;
+    border-bottom: 1px solid #d8d2c5;
+    padding-bottom: 4mm;
+  }
+  .pheader .brand-sm { font-weight: 900; font-size: 14pt; color: #1f4e5f; letter-spacing: 2pt; }
+  .pheader .crumb { font-size: 7.5pt; color: #9a9a9a; letter-spacing: 1.2pt; }
+  .pheader .crumb b { color: #1f4e5f; }
+
+  h2.pagetitle {
+    font-size: 16pt; color: #1f4e5f; letter-spacing: 0.5pt;
+    text-transform: uppercase;
+    margin-top: 8mm;
+    border-left: 4px solid #c76b3d; padding-left: 4mm;
+    line-height: 1.1;
+  }
+  .lede2 { font-size: 10pt; color: #4a4a4a; line-height: 1.5; margin-top: 4mm; max-width: 165mm; }
+
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 7mm; margin-top: 6mm; }
+  .card {
+    background: #f4efe6;
+    border: 1px solid #e0d8c2; border-left: 3px solid #1f4e5f;
+    padding: 5mm 6mm;
+  }
+  .card.copper { border-left-color: #c76b3d; }
+  .card h3 {
+    font-size: 11pt; color: #1f4e5f; font-weight: 800;
+    margin-bottom: 3mm;
+  }
+  .card p { font-size: 9.5pt; color: #3a3a3a; line-height: 1.5; }
+  .card ul { list-style: none; }
+  .card li {
+    font-size: 9pt; line-height: 1.5; color: #3a3a3a;
+    padding: 1.5mm 0 1.5mm 5mm; position: relative;
+  }
+  .card li::before {
+    content: '▸'; color: #c76b3d; font-weight: 700;
+    position: absolute; left: 0; top: 1.5mm;
+  }
+
+  /* ==== Page 3 — 8 processes grid ==== */
+  .process-grid {
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 3mm;
+    margin-top: 6mm;
+  }
+  .proc {
+    background: #ffffff;
+    border: 1px solid #e0d8c2; border-top: 3px solid #c76b3d;
+    padding: 4mm 4mm;
+    position: relative;
+  }
+  .proc .num {
+    font-weight: 900; font-size: 16pt; color: #c76b3d;
+    line-height: 1;
+  }
+  .proc .name {
+    font-weight: 800; font-size: 10pt; color: #1f4e5f;
+    margin-top: 2mm;
+  }
+  .proc .desc {
+    font-size: 8.2pt; line-height: 1.4; color: #5a5a5a; margin-top: 1.5mm;
+  }
+
+  /* ==== Experience timeline ==== */
+  .exp-row { display: grid; grid-template-columns: 1fr 36px 1fr 36px 1fr; gap: 3mm; margin-top: 5mm; align-items: stretch; }
+  .exp {
+    background: #f4efe6; border: 1px solid #e0d8c2;
+    border-top: 3px solid #1f4e5f;
+    padding: 4.5mm 4mm; text-align: center;
+  }
+  .exp .time { font-weight: 900; font-size: 18pt; color: #1f4e5f; line-height: 1; }
+  .exp .ttl  { font-weight: 800; font-size: 9.5pt; color: #1f4e5f; margin-top: 1.5mm; }
+  .exp .desc { font-size: 8.3pt; line-height: 1.35; color: #4a4a4a; margin-top: 1.5mm; }
+  .exp-arrow {
+    align-self: center; text-align: center;
+    font-size: 18pt; color: #c76b3d; font-weight: 800;
+  }
+
+  /* ==== Page 4 — specs ==== */
+  table.spec {
+    width: 100%; border-collapse: collapse; margin-top: 6mm;
+    font-size: 9pt;
+  }
+  table.spec td {
+    padding: 3mm 4mm; border-bottom: 1px solid #e0d8c2;
+  }
+  table.spec td.k {
+    width: 60mm; font-weight: 800; color: #1f4e5f;
+    background: #f4efe6;
+  }
+  table.spec td.v { color: #3a3a3a; line-height: 1.45; }
+  table.spec tr:last-child td { border-bottom: none; }
+
+  /* ==== Outcomes row ==== */
+  .outcome-row {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 4mm;
+    margin-top: 6mm;
+  }
+  .outcome {
+    background: #ffffff; border: 1px solid #e0d8c2; border-left: 3px solid #c76b3d;
+    padding: 4mm 4mm;
+  }
+  .outcome .ttl {
+    font-size: 11pt; color: #1f4e5f; font-weight: 800;
+  }
+  .outcome .desc {
+    font-size: 8.5pt; line-height: 1.4; color: #4a4a4a; margin-top: 1.5mm;
+  }
+
+  /* ==== Who-it's-for rows ==== */
+  .who-row {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 4mm;
+    margin-top: 6mm;
+  }
+  .who {
+    background: #f4efe6; border-top: 1px solid #e0d8c2;
+    padding: 4mm 4mm;
+  }
+  .who .num {
+    font-weight: 900; font-size: 9pt; color: #c76b3d;
+    letter-spacing: 1.5pt;
+  }
+  .who .ttl {
+    font-weight: 800; font-size: 10pt; color: #1f4e5f;
+    margin-top: 1mm;
+  }
+  .who .desc {
+    font-size: 8.5pt; line-height: 1.4; color: #4a4a4a; margin-top: 1.5mm;
+  }
+
+  /* ==== Hero illustration ==== */
+  .hero-svg { width: 100%; height: auto; }
+</style>
+</head>
+<body>
+
+<!-- =================== PAGE 1 — COVER =================== -->
+<div class="sheet">
+  <div class="cover">
+    <div class="safe">
+
+      <!-- Top brand band -->
+      <div class="cover-topband">
+        <div class="brand">IEG</div>
+        <div class="meta">IMMERSIVE EDUCATION SOLUTIONS  ·  SEMICONDUCTOR VR STATION</div>
+      </div>
+
+      <!-- Title block -->
+      <div class="cover-title">
+        <div>
+          <span class="tag">Schools &amp; Universities</span>
+          <h1>
+            Semiconductor<br/>
+            VR Station.
+          </h1>
+          <p class="lede">
+            An immersive VR curriculum covering all eight major
+            semiconductor manufacturing processes — for schools and
+            universities that need to teach semiconductor careers
+            without owning a fab.
+          </p>
+        </div>
+        <!-- SVG illustration: stylised wafer + headset -->
+        <svg viewBox="0 0 260 220" xmlns="http://www.w3.org/2000/svg" class="hero-svg">
+          <!-- background plate -->
+          <rect width="260" height="220" fill="#f4efe6"/>
+          <!-- wafer (back) -->
+          <ellipse cx="100" cy="130" rx="62" ry="14" fill="#e0d8c2"/>
+          <circle cx="100" cy="100" r="62" fill="#1f4e5f" opacity="0.12"/>
+          <circle cx="100" cy="100" r="55" fill="#ffffff" stroke="#1f4e5f" stroke-width="2"/>
+          <circle cx="100" cy="100" r="40" fill="none" stroke="#1f4e5f" stroke-width="0.6" opacity="0.45"/>
+          <circle cx="100" cy="100" r="28" fill="none" stroke="#1f4e5f" stroke-width="0.6" opacity="0.45"/>
+          <circle cx="100" cy="100" r="16" fill="none" stroke="#1f4e5f" stroke-width="0.6" opacity="0.45"/>
+          <line x1="38" y1="100" x2="162" y2="100" stroke="#1f4e5f" stroke-width="0.4" opacity="0.4"/>
+          <line x1="100" y1="38" x2="100" y2="162" stroke="#1f4e5f" stroke-width="0.4" opacity="0.4"/>
+          <text x="78" y="106" font-family="Helvetica" font-size="9" fill="#1f4e5f" font-weight="700" letter-spacing="2">WAFER</text>
+
+          <!-- VR headset (front) -->
+          <rect x="155" y="60" width="90" height="50" rx="10" fill="#1f4e5f"/>
+          <circle cx="175" cy="85" r="14" fill="#c76b3d"/>
+          <circle cx="225" cy="85" r="14" fill="#c76b3d"/>
+          <circle cx="175" cy="85" r="6" fill="#1f4e5f"/>
+          <circle cx="225" cy="85" r="6" fill="#1f4e5f"/>
+          <rect x="197" y="78" width="6" height="14" fill="#e9d6a8"/>
+          <path d="M155 75 Q135 88 155 105" stroke="#c76b3d" stroke-width="3" fill="none"/>
+          <path d="M245 75 Q265 88 245 105" stroke="#c76b3d" stroke-width="3" fill="none"/>
+
+          <!-- Conduit arrow from wafer into headset -->
+          <path d="M135 100 Q150 95 162 88"
+                stroke="#c76b3d" stroke-width="1.5" fill="none"
+                marker-end="url(#arr)"/>
+          <defs>
+            <marker id="arr" markerWidth="6" markerHeight="6"
+                    refX="3" refY="3" orient="auto">
+              <path d="M0,0 L6,3 L0,6 Z" fill="#c76b3d"/>
+            </marker>
+          </defs>
+
+          <text x="55" y="200" font-family="Helvetica" font-size="7"
+                fill="#6b6b6b" letter-spacing="2">WAFER · 200 MM  →  VR IMMERSION</text>
+        </svg>
+      </div>
+
+      <!-- KPI strip -->
+      <div class="cover-spacer">
+        <div class="cover-stat">
+          <div class="num">8</div>
+          <div class="lbl">Major processes covered</div>
+        </div>
+        <div class="cover-stat">
+          <div class="num">~30<span style="font-size:11pt;">min</span></div>
+          <div class="lbl">Per learner</div>
+        </div>
+        <div class="cover-stat">
+          <div class="num">5 / 15 / 5</div>
+          <div class="lbl">Animation · VR · Quiz</div>
+        </div>
+        <div class="cover-stat">
+          <div class="num">4K+</div>
+          <div class="lbl">Infinite Display VR</div>
+        </div>
+      </div>
+
+      <!-- Foot -->
+      <div class="cover-foot">
+        <div class="left">
+          <b>IEG Co., Ltd.</b> &nbsp;·&nbsp; Immersive Education Solutions
+        </div>
+        <div class="right">
+          <b>Manager Kelly Cho</b> &nbsp;·&nbsp; Overseas Business Team
+        </div>
+      </div>
+
+      <div class="pageno">01 / 04</div>
+    </div>
+  </div>
+</div>
+
+<!-- =================== PAGE 2 — WHY / WHAT =================== -->
+<div class="sheet">
+  <div class="bodypage">
+    <div class="safe">
+
+      <div class="pheader">
+        <div class="brand-sm">IEG</div>
+        <div class="crumb"><b>BROCHURE</b> &nbsp;·&nbsp; Semiconductor VR Station</div>
+      </div>
+
+      <h2 class="pagetitle">The Educational Gap &amp; What Changes</h2>
+
+      <p class="lede2">
+        Fab equipment is too expensive and too hazardous to put in a classroom.
+        Text and 2D image-based lessons flatten complex clean-room processes,
+        and students miss the hands-on anchor that decides whether a STEM career
+        "clicks" or not. A VR station brings all eight major processes inside
+        a headset — safe, repeatable, classroom-ready.
+      </p>
+
+      <div class="two-col">
+        <div class="card">
+          <h3>Why semiconductors are hard to teach in-school</h3>
+          <ul>
+            <li>Fab equipment is too expensive for a classroom.</li>
+            <li>Clean-room chemicals make real hands-on practice unsafe.</li>
+            <li>Text and 2D diagrams hide process flow and equipment scale.</li>
+            <li>Career exploration in STEM lacks a tactile "anchor".</li>
+          </ul>
+        </div>
+        <div class="card copper">
+          <h3>What changes with VR</h3>
+          <ul>
+            <li>Learners stand inside working equipment, in safe conditions.</li>
+            <li>Process flow becomes 3D, animated and interactive.</li>
+            <li>Schools add a flagship STEM experience without owning a fab.</li>
+            <li>Every learner gets the same procedure — fair assessment.</li>
+          </ul>
+        </div>
+      </div>
+
+      <h2 class="pagetitle" style="margin-top: 12mm;">Who It's For</h2>
+
+      <div class="who-row">
+        <div class="who">
+          <div class="num">01</div>
+          <div class="ttl">Middle &amp; high schools</div>
+          <div class="desc">STEM career exploration with a flagship VR lab.</div>
+        </div>
+        <div class="who">
+          <div class="num">02</div>
+          <div class="ttl">Semiconductor specialised high schools</div>
+          <div class="desc">Curriculum-aligned immersion for process fundamentals.</div>
+        </div>
+        <div class="who">
+          <div class="num">03</div>
+          <div class="ttl">Universities &amp; colleges</div>
+          <div class="desc">Pre-lab orientation and lab experience for engineering freshmen.</div>
+        </div>
+      </div>
+
+      <div class="two-col" style="margin-top: 10mm;">
+        <div class="card">
+          <h3>Core Educational Objectives</h3>
+          <ul>
+            <li>Whole-flow understanding — wafer to packaged chip.</li>
+            <li>Equipment structure, role and position in the line.</li>
+            <li>Virtual hands-on practice that mirrors real fab operations.</li>
+            <li>Career path exploration in science &amp; engineering.</li>
+            <li>Decision-making around equipment, process variables &amp; faults.</li>
+          </ul>
+        </div>
+        <div class="card copper">
+          <h3>Outcomes Schools Report</h3>
+          <ul>
+            <li>Improved process comprehension versus text-only lessons.</li>
+            <li>An immersive virtual lab without facility expansion.</li>
+            <li>Higher educational competitiveness &amp; operational efficiency.</li>
+            <li>Shorter lesson preparation through pre-built VR stations.</li>
+            <li>Per-process quizzes streamed into a teacher LMS dashboard.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="pageno">02 / 04</div>
+    </div>
+  </div>
+</div>
+
+<!-- =================== PAGE 3 — 8 PROCESSES + EXPERIENCE =================== -->
+<div class="sheet">
+  <div class="bodypage">
+    <div class="safe">
+
+      <div class="pheader">
+        <div class="brand-sm">IEG</div>
+        <div class="crumb"><b>BROCHURE</b> &nbsp;·&nbsp; Semiconductor VR Station</div>
+      </div>
+
+      <h2 class="pagetitle">The 8 Major Semiconductor Processes</h2>
+      <p class="lede2">
+        Eight process stations — from bare wafer to packaged chip —
+        each delivered as a stand-alone VR module. A learner runs through
+        the full flow in around thirty minutes.
+      </p>
+
+      <div class="process-grid">
+        <div class="proc"><div class="num">01</div><div class="name">Wafer Production</div><div class="desc">Ingot growth, slicing, lapping, polishing — the starting point of every chip.</div></div>
+        <div class="proc"><div class="num">02</div><div class="name">Oxidation</div><div class="desc">Thermal oxide growth — the foundation of the gate dielectric.</div></div>
+        <div class="proc"><div class="num">03</div><div class="name">Photo Process</div><div class="desc">Photoresist coating, exposure &amp; development — printing the circuit pattern.</div></div>
+        <div class="proc"><div class="num">04</div><div class="name">Etching</div><div class="desc">Selective material removal to define the pattern in the silicon.</div></div>
+        <div class="proc"><div class="num">05</div><div class="name">Deposition · Ion Implant.</div><div class="desc">Thin-film growth or doping to set electrical properties.</div></div>
+        <div class="proc"><div class="num">06</div><div class="name">Metal Wiring</div><div class="desc">Interconnect layers that route signals across the chip.</div></div>
+        <div class="proc"><div class="num">07</div><div class="name">EDS</div><div class="desc">Electrical Die Sorting — probe each die for functional pass.</div></div>
+        <div class="proc"><div class="num">08</div><div class="name">Packaging</div><div class="desc">Back-grinding, dicing &amp; assembly into the final chip package.</div></div>
+      </div>
+
+      <h2 class="pagetitle" style="margin-top: 10mm;">Experience Structure · ~30 min per learner</h2>
+
+      <div class="exp-row">
+        <div class="exp">
+          <div class="time">5 min</div>
+          <div class="ttl">Process Animation</div>
+          <div class="desc">Concept walkthrough of the whole flow. Sets the mental model before VR.</div>
+        </div>
+        <div class="exp-arrow">→</div>
+        <div class="exp">
+          <div class="time">15 min</div>
+          <div class="ttl">8-Process VR</div>
+          <div class="desc">Immersive hands-on inside each of the eight processes. Repeatable &amp; safe.</div>
+        </div>
+        <div class="exp-arrow">→</div>
+        <div class="exp">
+          <div class="time">5 min</div>
+          <div class="ttl">Quiz &amp; LMS</div>
+          <div class="desc">OX / MCQ per process — feeds straight to the teacher dashboard.</div>
+        </div>
+      </div>
+
+      <p class="micro" style="margin-top: 3mm;">
+        LMS results review by teachers for class-level performance tracking &amp; feedback.
+      </p>
+
+      <div class="pageno">03 / 04</div>
+    </div>
+  </div>
+</div>
+
+<!-- =================== PAGE 4 — SPECS + CONTACT =================== -->
+<div class="sheet">
+  <div class="bodypage">
+    <div class="safe">
+
+      <div class="pheader">
+        <div class="brand-sm">IEG</div>
+        <div class="crumb"><b>BROCHURE</b> &nbsp;·&nbsp; Semiconductor VR Station</div>
+      </div>
+
+      <h2 class="pagetitle">Recommended Hardware (provided by IEG)</h2>
+
+      <table class="spec">
+        <tr>
+          <td class="k">VR Headset</td>
+          <td class="v">Meta Quest 3 (128 GB / 512 GB) &nbsp;·&nbsp; Snapdragon XR2 Gen 2 &nbsp;·&nbsp; 4K+ Infinite Display (2064 × 2208)</td>
+        </tr>
+        <tr>
+          <td class="k">VR Station PC</td>
+          <td class="v">Intel Core i7-14700 &nbsp;·&nbsp; Wi-Fi 6 (802.11ax) &nbsp;·&nbsp; Wi-Fi 6E router for mobile units</td>
+        </tr>
+        <tr>
+          <td class="k">Admin / Teacher PC</td>
+          <td class="v">Intel i5 &nbsp;·&nbsp; 16 GB RAM &nbsp;·&nbsp; Windows 10 / 11 &nbsp;·&nbsp; LMS access for class-level reporting</td>
+        </tr>
+        <tr>
+          <td class="k">Program Length</td>
+          <td class="v">~25–30 min per learner &nbsp;·&nbsp; Animation 5 min + VR 15 min + Quiz 5 min + LMS review</td>
+        </tr>
+      </table>
+
+      <h2 class="pagetitle" style="margin-top: 12mm;">What Schools &amp; Operators Gain</h2>
+
+      <div class="outcome-row">
+        <div class="outcome">
+          <div class="ttl">Safe</div>
+          <div class="desc">No exposure to process chemicals or high-vacuum chambers during training.</div>
+        </div>
+        <div class="outcome">
+          <div class="ttl">Repeatable</div>
+          <div class="desc">Every learner faces the same procedure — fair, comparable assessment.</div>
+        </div>
+        <div class="outcome">
+          <div class="ttl">Faster</div>
+          <div class="desc">Shorter lesson preparation through pre-built VR stations &amp; LMS tracking.</div>
+        </div>
+      </div>
+
+      <!-- Bottom call-to-action block, kept light for print -->
+      <div style="margin-top: 18mm; border: 2px solid #1f4e5f; padding: 8mm;">
+        <div style="display: grid; grid-template-columns: 1.4fr 1fr; gap: 8mm; align-items: center;">
+          <div>
+            <div style="font-size: 9pt; letter-spacing: 1.5pt; color: #c76b3d; font-weight: 800; text-transform: uppercase;">Contact — Overseas Business Team</div>
+            <div style="font-size: 16pt; color: #1f4e5f; font-weight: 900; margin-top: 2mm;">Manager Kelly Cho</div>
+            <div style="font-size: 11pt; color: #3a3a3a; margin-top: 1.5mm;">
+              kellycho824@ieg.kr  &nbsp;·&nbsp;  +82-10-8014-6523
+            </div>
+            <div class="small" style="margin-top: 2mm;">
+              IEG Co., Ltd. &nbsp;·&nbsp; Immersive Education Solutions for Schools &amp; Industry
+            </div>
+          </div>
+          <div style="text-align: right;">
+            <div style="font-size: 8.5pt; letter-spacing: 1.4pt; color: #7a7a7a; text-transform: uppercase;">Trial Access</div>
+            <div style="font-size: 13pt; color: #1f4e5f; font-weight: 800; margin-top: 1.5mm;">Request a guided demo</div>
+            <div style="font-size: 9pt; color: #4a4a4a; margin-top: 1.5mm;">
+              Contact our team to open the IEG Digital Twin Suite for your institution.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="pageno">04 / 04</div>
+    </div>
+  </div>
+</div>
+
+<script type="module" src="https://static.cloudflareinsights.com/beacon.min.js/v4bc70e2c01a94c73b74392e4234840661791215815920" integrity="sha512-L0ha0OXavK/8okipN9F8BtP84dg9DUhPERbBXzwI6dgTA55d2+yweo3pn5CSFYs45/r8md2+xvUPtTdvTNRfjA==" data-cf-beacon='{"version":"2024.11.0","token":"4edd5f8ec12a48cfa682ab8261b80a79","spa":2}' crossorigin="anonymous"></script>
+</body>
+</html>
